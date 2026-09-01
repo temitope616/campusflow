@@ -359,6 +359,16 @@
         const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // ============================================
+        // AUTH GUARD - block access unless logged in
+        // ============================================
+        (async function requireLogin() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                window.location.href = '/admin/login.html';
+            }
+        })();
+
         console.log('🔐 Payment Confirmation Portal Loaded');
 
         // ============================================
