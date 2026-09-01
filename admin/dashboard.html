@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusFlow Admin Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+</head>
+
+<body>
+
+    <!-- ========================= -->
+    <!-- SIDEBAR -->
+    <!-- ========================= -->
+
+    <aside class="sidebar">
+
+        <h2>CampusFlow</h2>
+
+        <ul>
+
+            <li class="active">📊 Dashboard</li>
+
+            <li>📅 Events</li>
+
+            <li>👤 Organizers</li>
+
+            <li>⚙ Settings</li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+
+    <main class="main-content">
+
+        <!-- Top Navigation -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Admin Dashboard</h1>
+
+                <p>Manage all submitted events</p>
+
+            </div>
+
+            <button id="logoutBtn">
+
+                Logout
+
+            </button>
+
+        </header>
+
+
+        <!-- Statistics -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <h3>Total Events</h3>
+
+                <h1 id="totalEvents">0</h1>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h3>Pending</h3>
+
+                <h1 id="pendingEvents">0</h1>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h3>Approved</h3>
+
+                <h1 id="approvedEvents">0</h1>
+
+            </div>
+
+        </section>
+
+
+        <!-- Search -->
+
+        <section class="search-section">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by title, organizer or venue...">
+
+        </section>
+
+
+        <!-- Events -->
+
+        <section>
+
+            <h2 style="margin-bottom:20px;">
+
+                Submitted Events
+
+            </h2>
+
+            <div id="eventsContainer">
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="../js/admin.js"></script>
+
+</body>
+
+</html>

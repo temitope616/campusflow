@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>CampusFlow | Student Events</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ============================================
+                   RESET & BASE - PARTY VIBE EDITION
+                   ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 16px;
+            background: #0a0615;
+            background-image:
+                /* Party vibe gradient overlays */
+                radial-gradient(ellipse at 10% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 90% 80%, rgba(167, 139, 250, 0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
+                /* Animated party background */
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="800"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" stop-color="%23667eea" stop-opacity="0.1"/%3E%3Cstop offset="50%25" stop-color="%23ec4899" stop-opacity="0.08"/%3E%3Cstop offset="100%25" stop-color="%23fcd34d" stop-opacity="0.05"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="800" height="800" fill="url(%23g1)"/%3E%3Ccircle cx="200" cy="200" r="100" fill="%23667eea" opacity="0.05"/%3E%3Ccircle cx="600" cy="400" r="150" fill="%23ec4899" opacity="0.04"/%3E%3Ccircle cx="400" cy="600" r="120" fill="%23fcd34d" opacity="0.03"/%3E%3C/svg%3E') center/cover,
+                linear-gradient(180deg, #0a0615 0%, #150b2e 40%, #1a0f3a 70%, #0a0615 100%);
+            color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+            animation: partyBg 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes partyBg {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+
+        /* Animated floating particles for party vibe */
+        .party-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .party-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+            opacity: 0.4;
+        }
+
+        .party-particle:nth-child(1) {
+            width: 8px;
+            height: 8px;
+            background: #a78bfa;
+            left: 10%;
+            animation-duration: 12s;
+            animation-delay: 0s;
+        }
+        .party-particle:nth-child(2) {
+            width: 12px;
+            height: 12px;
+            background: #ec4899;
+            left: 25%;
+            animation-duration: 15s;
+            animation-delay: 2s;
+            opacity: 0.3;
+        }
+        .party-particle:nth-child(3) {
+            width: 6px;
+            height: 6px;
+            background: #fcd34d;
+            left: 40%;
+            animation-duration: 10s;
+            animation-delay: 4s;
+        }
+        .party-particle:nth-child(4) {
+            width: 10px;
+            height: 10px;
+            background: #34d399;
+            left: 55%;
+            animation-duration: 18s;
+            animation-delay: 1s;
+            opacity: 0.3;
+        }
+        .party-particle:nth-child(5) {
+            width: 14px;
+            height: 14px;
+            background: #667eea;
+            left: 70%;
+            animation-duration: 14s;
+            animation-delay: 3s;
+            opacity: 0.2;
+        }
+        .party-particle:nth-child(6) {
+            width: 8px;
+            height: 8px;
+            background: #f59e0b;
+            left: 85%;
+            animation-duration: 16s;
+            animation-delay: 5s;
+        }
+        .party-particle:nth-child(7) {
+            width: 16px;
+            height: 16px;
+            background: #a78bfa;
+            left: 50%;
+            animation-duration: 20s;
+            animation-delay: 7s;
+            opacity: 0.15;
+        }
+        .party-particle:nth-child(8) {
+            width: 6px;
+            height: 6px;
+            background: #ec4899;
+            left: 15%;
+            animation-duration: 11s;
+            animation-delay: 6s;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Glowing orbs */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseOrb 5s ease-in-out infinite alternate;
+        }
+
+        .glow-orb.purple {
+            width: 500px;
+            height: 500px;
+            background: rgba(118, 75, 162, 0.25);
+            top: -150px;
+            right: -150px;
+        }
+
+        .glow-orb.pink {
+            width: 400px;
+            height: 400px;
+            background: rgba(236, 72, 153, 0.2);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: 2.5s;
+        }
+
+        .glow-orb.gold {
+            width: 350px;
+            height: 350px;
+            background: rgba(251, 191, 36, 0.12);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 4s;
+        }
+
+        @keyframes pulseOrb {
+            0% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0.8;
+            }
+        }
+
+        /* ============================================
+                   HEADER - PARTY VIBE
+                   ============================================ */
+        .header {
+            position: relative;
+            z-index: 1;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            background:
+                linear-gradient(135deg, rgba(10, 6, 21, 0.5) 0%, rgba(21, 11, 46, 0.6) 50%, rgba(26, 15, 58, 0.7) 100%),
+                url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=300&fit=crop&crop=center&q=80') center/cover;
+            background-blend-mode: overlay;
+            animation: headerPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes headerPulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.01);
+            }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            padding: 40px 30px;
+            width: 100%;
+        }
+
+        .header .party-emoji-rain {
+            font-size: 28px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            animation: bounceEmojis 2.5s ease-in-out infinite;
+        }
+
+        @keyframes bounceEmojis {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .header h1 {
+            font-size: 44px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+            background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 30%, #fcd34d 60%, #fbbf24 80%, #fcd34d 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmerGold 4s ease-in-out infinite;
+        }
+
+        @keyframes shimmerGold {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .header h1 span {
+            -webkit-text-fill-color: white;
+            background: none;
+            text-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-top: 6px;
+            color: #e0d4f0;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .header .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #e0d4f0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: pulseBadge 3s ease-in-out infinite;
+        }
+
+        .header .badge.hot {
+            background: rgba(251, 191, 36, 0.15);
+            border-color: rgba(251, 191, 36, 0.2);
+            color: #fcd34d;
+            animation-delay: 0.5s;
+        }
+
+        .header .badge.party {
+            background: rgba(236, 72, 153, 0.15);
+            border-color: rgba(236, 72, 153, 0.2);
+            color: #ec4899;
+            animation-delay: 1s;
+        }
+
+        @keyframes pulseBadge {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* ============================================
+                   SEARCH & FILTERS
+                   ============================================ */
+        .search-section {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            color: #ffffff;
+            transition: all 0.3s;
+        }
+
+        .search-bar input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.1);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 8px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #c4b5d4;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-btn:hover {
+            border-color: #a78bfa;
+            color: #ffffff;
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea, #ec4899);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* ============================================
+                   SECTION TITLES
+                   ============================================ */
+        .section-title {
+            position: relative;
+            z-index: 1;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 800;
+            margin: 28px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-title .emoji {
+            font-size: 30px;
+            animation: bounceEmoji 2s ease-in-out infinite;
+        }
+
+        @keyframes bounceEmoji {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .section-title .line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, #a78bfa, transparent);
+        }
+
+        .section-title .count-badge {
+            font-size: 14px;
+            font-weight: 600;
+            color: #9ca3af;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .section-title.past {
+            opacity: 0.5;
+        }
+
+        /* ============================================
+                   EVENTS GRID
+                   ============================================ */
+        .events-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .event-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .event-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .event-card:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+        .event-card:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+        .event-card:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+        .event-card:nth-child(6) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .event-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+            border-color: rgba(167, 139, 250, 0.25);
+        }
+
+        .event-card .flyer-wrap {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .event-card .flyer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a0f2e, #2d1b4e);
+            transition: transform 0.6s ease;
+        }
+
+        .event-card:hover .flyer {
+            transform: scale(1.08);
+        }
+
+        .event-card .flyer-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-card .flyer-overlay .status-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .event-card .flyer-overlay .status-tag.upcoming {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+        }
+
+        .event-card .flyer-overlay .status-tag.ongoing {
+            background: rgba(251, 191, 36, 0.25);
+            color: #fcd34d;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            animation: pulseOngoing 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseOngoing {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 30px 10px rgba(251, 191, 36, 0.08);
+            }
+        }
+
+        .event-card .flyer-overlay .status-tag.past {
+            background: rgba(107, 114, 128, 0.25);
+            color: #9ca3af;
+            border: 1px solid rgba(107, 114, 128, 0.15);
+        }
+
+        .event-card .flyer-overlay .countdown {
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 14px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .event-card .info {
+            padding: 20px 20px 22px;
+        }
+
+        .event-card .info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .event-card .info .organizer-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 14px;
+            background: rgba(167, 139, 250, 0.1);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #a78bfa;
+            margin-bottom: 8px;
+        }
+
+        .event-card .info .meta {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .event-card .info .meta .icon {
+            font-size: 14px;
+        }
+
+        .event-card .info .meta strong {
+            color: #d1d5db;
+        }
+
+        .event-card .info .category-tag {
+            display: inline-block;
+            padding: 2px 12px;
+            background: rgba(167, 139, 250, 0.15);
+            border-radius: 12px;
+            font-size: 11px;
+            color: #a78bfa;
+            margin-bottom: 6px;
+        }
+
+        .event-card .info .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 12px 0 14px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .event-card .info .price {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fcd34d, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .event-card .info .price small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #9ca3af;
+            -webkit-text-fill-color: #9ca3af;
+        }
+
+        .event-card .info .fee-badge {
+            font-size: 12px;
+            color: #9ca3af;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 40%, #ec4899 100%);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: shimmerBtn 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes shimmerBtn {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .buy-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transform: rotate(45deg);
+            animation: shineBtn 4s ease-in-out infinite;
+        }
+
+        @keyframes shineBtn {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            animation: none;
+        }
+
+        .buy-btn:disabled::after {
+            display: none;
+        }
+
+        .buy-btn.past-event {
+            background: rgba(107, 114, 128, 0.2);
+            animation: none;
+            cursor: not-allowed;
+            color: #9ca3af;
+        }
+
+        .buy-btn.past-event:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .buy-btn.past-event::after {
+            display: none;
+        }
+
+        /* ============================================
+                   LOADING & EMPTY STATES
+                   ============================================ */
+        .loading-state {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 80px 20px;
+            color: #c4b5d4;
+        }
+
+        .loading-state .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(167, 139, 250, 0.15);
+            border-top-color: #a78bfa;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+        }
+
+        .empty-state .icon {
+            font-size: 72px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #9ca3af;
+        }
+
+        /* ============================================
+                   RESPONSIVE
+                   ============================================ */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                min-height: 180px;
+                border-radius: 18px;
+            }
+            .header-content {
+                padding: 28px 16px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+            .header p {
+                font-size: 14px;
+            }
+            .header .party-emoji-rain {
+                font-size: 20px;
+                gap: 6px;
+            }
+            .header .badge {
+                font-size: 10px;
+                padding: 4px 12px;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .event-card .flyer-wrap {
+                height: 160px;
+            }
+            .event-card .info {
+                padding: 16px;
+            }
+            .event-card .info h3 {
+                font-size: 16px;
+            }
+            .event-card .info .price {
+                font-size: 22px;
+            }
+
+            .buy-btn {
+                font-size: 14px;
+                padding: 13px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin: 24px 0 12px 0;
+            }
+            .section-title .emoji {
+                font-size: 24px;
+            }
+
+            .search-bar input {
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+
+            .category-btn {
+                font-size: 11px;
+                padding: 6px 14px;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .events-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .header h1 {
+                font-size: 34px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .events-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+        }
+
+        /* ============================================
+                   SCROLLBAR
+                   ============================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0615;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #ec4899);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+    PARTY PARTICLES (ANIMATED BACKGROUND)
+    ========================================== -->
+    <div class="party-particles">
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+        <div class="party-particle"></div>
+    </div>
+
+    <!-- ==========================================
+    GLOWING ORBS
+    ========================================== -->
+    <div class="glow-orb purple"></div>
+    <div class="glow-orb pink"></div>
+    <div class="glow-orb gold"></div>
+
+    <!-- ==========================================
+    HEADER - PARTY VIBE WITH IMAGE
+    ========================================== -->
+    <header class="header">
+        <div class="header-content">
+            <div class="party-emoji-rain">🎉🔥🎪🎶✨🎊</div>
+            <h1>Campus<span>Flow</span></h1>
+            <p>🎓 Discover &amp; book the hottest campus events</p>
+            <div class="badge-container">
+                <span class="badge">🔥 Live Events</span>
+                <span class="badge hot">⭐ Trending Now</span>
+                <span class="badge party">🎟️ Instant Tickets</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+    SEARCH & FILTERS
+    ========================================== -->
+    <div class="search-section">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search events by title, venue, or organizer..." />
+        </div>
+        <div class="category-filters" id="categoryFilters">
+            <button class="category-btn active" data-category="all">🎯 All</button>
+            <button class="category-btn" data-category="music">🎵 Music</button>
+            <button class="category-btn" data-category="tech">💻 Tech</button>
+            <button class="category-btn" data-category="sports">⚽ Sports</button>
+            <button class="category-btn" data-category="social">🤝 Social</button>
+            <button class="category-btn" data-category="academic">📚 Academic</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    EVENTS CONTAINER
+    ========================================== -->
+    <div id="eventsContainer">
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>🎵 Getting the party ready...</p>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    JAVASCRIPT - COMPLETE WORKING VERSION
+    ========================================== -->
+    <script>
+        // ============================================
+        // SUPABASE CONFIG - YOUR CREDENTIALS
+        // ============================================
+        const SUPABASE_URL = "https://yfwxwqvksdsugxizaksj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        console.log('🎉🔥 CampusFlow - PARTY VIBE EDITION Loaded!');
+
+        // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        const eventsContainer = document.getElementById('eventsContainer');
+        const loadingState = document.getElementById('loadingState');
+        const searchInput = document.getElementById('searchInput');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+
+        let allEvents = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // ============================================
+        // LOAD EVENTS (ONLY APPROVED)
+        // ============================================
+        async function loadEvents() {
+            try {
+                console.log('📡 Fetching approved events...');
+
+                const { data: events, error } = await sb
+                    .from('events')
+                    .select('*')
+                    .eq('is_published', true)
+                    .order('event_date', { ascending: true });
+
+                if (error) {
+                    console.error('❌ Supabase Error:', error);
+                    throw error;
+                }
+
+                console.log('✅ Events fetched:', events ? events.length : 0);
+
+                // Hide loading
+                loadingState.style.display = 'none';
+
+                if (!events || events.length === 0) {
+                    eventsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🎪</div>
+                            <h3>No Events Yet!</h3>
+                            <p>Be the first to create an event on CampusFlow.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                allEvents = events;
+                renderEvents(events);
+
+            } catch (error) {
+                console.error('❌ Error loading events:', error);
+                loadingState.style.display = 'none';
+                eventsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">❌</div>
+                        <h3>Error Loading Events</h3>
+                        <p>${error.message}</p>
+                        <p style="font-size:12px;color:#6b7280;margin-top:8px;">
+                            Check console for details (F12 → Console)
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================
+        // RENDER EVENTS
+        // ============================================
+        function renderEvents(events) {
+            const now = new Date();
+
+            // Filter by category
+            let filtered = events;
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(e => e.category === currentCategory);
+            }
+
+            // Filter by search
+            if (searchQuery.trim()) {
+                const query = searchQuery.toLowerCase().trim();
+                filtered = filtered.filter(e =>
+                    e.title.toLowerCase().includes(query) ||
+                    e.venue.toLowerCase().includes(query) ||
+                    e.organizer_name.toLowerCase().includes(query)
+                );
+            }
+
+            // Split into upcoming and past
+            const upcoming = filtered.filter(e => new Date(e.event_date) >= now);
+            const past = filtered.filter(e => new Date(e.event_date) < now);
+
+            let html = '';
+
+            // UPCOMING EVENTS
+            if (upcoming.length > 0) {
+                html += `
+                    <div class="section-title">
+                        <span class="emoji">🔥</span> Upcoming Events
+                        <span class="line"></span>
+                        <span class="count-badge">${upcoming.length}</span>
+                    </div>
+                    <div class="events-grid">
+                        ${upcoming.map(event => createEventCard(event, 'upcoming')).join('')}
+                    </div>
+                `;
+            }
+
+            // PAST EVENTS
+            if (past.length > 0) {
+                html += `
+                    <div class="section-title past">
+                        <span class="emoji">📅</span> Past Events
+                        <span class="line"></span>
+                        <span class="count-badge">${past.length}</span>
+                    </div>
+                    <div class="events-grid">
+                        ${past.map(event => createEventCard(event, 'past')).join('')}
+                    </div>
+                `;
+            }
+
+            if (filtered.length === 0) {
+                html = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h3>No Results Found</h3>
+                        <p>Try adjusting your search or filters.</p>
+                    </div>
+                `;
+            }
+
+            eventsContainer.innerHTML = html;
+        }
+
+        // ============================================
+        // CREATE EVENT CARD
+        // ============================================
+        function createEventCard(event, status) {
+            const eventDate = new Date(event.event_date);
+            const now = new Date();
+            const isPast = status === 'past';
+
+            let statusClass = 'past';
+            let statusText = '📅 Past';
+
+            if (!isPast) {
+                const diffMs = eventDate - now;
+                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+
+                if (diffDays <= 1 && diffDays >= 0) {
+                    statusClass = 'ongoing';
+                    statusText = diffHours <= 24 ? `🔥 ${diffHours}h left` : '🔥 Tomorrow!';
+                } else if (diffDays <= 3) {
+                    statusClass = 'ongoing';
+                    statusText = `🔥 In ${diffDays} days`;
+                } else {
+                    statusClass = 'upcoming';
+                    statusText = `📅 In ${diffDays} days`;
+                }
+            }
+
+            let countdownText = '';
+            if (!isPast) {
+                const diffMs = eventDate - now;
+                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+                if (diffHours <= 48 && diffHours > 0) {
+                    const h = Math.floor(diffMs / (1000 * 60 * 60));
+                    const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                    countdownText = `${h}h ${m}m`;
+                } else if (diffHours > 0) {
+                    const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    countdownText = `${d}d`;
+                }
+            }
+
+            const buttonDisabled = isPast ? 'disabled' : '';
+            const buttonClass = isPast ? 'buy-btn past-event' : 'buy-btn';
+            const buttonText = isPast ? '📅 Event Passed' : '🎟️ Buy Ticket';
+
+            return `
+                <div class="event-card">
+                    <div class="flyer-wrap">
+                        <img src="${event.banner_url || ''}" class="flyer" alt="${event.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%232d1b4e%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23a78bfa%22 font-size=%2220%22%3E🎉 Event%3C/text%3E%3C/svg%3E'" />
+                        <div class="flyer-overlay">
+                            <span class="status-tag ${statusClass}">${statusText}</span>
+                            ${countdownText ? `<span class="countdown">⏱️ ${countdownText}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="info">
+                        <h3>${event.title}</h3>
+                        <div class="organizer-tag">👤 ${event.organizer_name}</div>
+                        <div class="category-tag">🏷️ ${event.category || 'General'}</div>
+                        <div class="meta"><span class="icon">📍</span> <strong>Venue:</strong> ${event.venue}</div>
+                        <div class="meta"><span class="icon">📅</span> <strong>Date:</strong> ${eventDate.toLocaleString()}</div>
+                        <div class="price-row">
+                            <span class="price">₦${event.price} <small>(+ ₦100 fee)</small></span>
+                            <span class="fee-badge">🎫 incl. fee</span>
+                        </div>
+                        <button class="${buttonClass}" onclick="openModal('${event.id}')" ${buttonDisabled}>
+                            ${buttonText}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // OPEN MODAL - REDIRECT TO PAYMENT PAGE
+        // ============================================
+        async function openModal(eventId) {
+            try {
+                console.log('🎫 Opening event:', eventId);
+
+                const { data: event, error } = await sb
+                    .from('events')
+                    .select('*')
+                    .eq('id', eventId)
+                    .single();
+
+                if (error) {
+                    console.error('❌ Error fetching event:', error);
+                    throw error;
+                }
+
+                if (new Date(event.event_date) < new Date()) {
+                    alert('📅 This event has already passed. Check out our upcoming events!');
+                    return;
+                }
+
+                console.log('✅ Redirecting to payment page');
+                window.location.href = `payment.html?eventId=${event.id}`;
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Error loading event details: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // SEARCH & FILTERS
+        // ============================================
+        searchInput.addEventListener('input', function() {
+            searchQuery = this.value;
+            renderEvents(allEvents);
+        });
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                renderEvents(allEvents);
+            });
+        });
+
+        // ============================================
+        // START
+        // ============================================
+        loadEvents();
+
+        // Auto-refresh every 60 seconds
+        setInterval(loadEvents, 60000);
+
+        console.log('🔥 CampusFlow - PARTY VIBE EDITION Live!');
+        console.log('📌 Features:');
+        console.log('  ✅ Party Vibe Background with Animation');
+        console.log('  ✅ Header with Event Image');
+        console.log('  ✅ Displays approved events');
+        console.log('  ✅ Category filters');
+        console.log('  ✅ Search events');
+        console.log('  ✅ Buy Ticket → Redirects to payment.html');
+        console.log('  ✅ Mobile responsive');
+    </script>
+</body>
+</html>

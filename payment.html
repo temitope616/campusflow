@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | CampusFlow</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #f5f7fa;
+            background-image:
+                radial-gradient(ellipse at 10% 20%, rgba(52, 211, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #f5f7fa 0%, #eef2f7 50%, #f5f7fa 100%);
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 36px 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #34d399, #3b82f6, #8b5cf6, #ec4899);
+            background-size: 300% 100%;
+            animation: gradientBar 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientBar {
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .header .icon { font-size: 48px; display: block; margin-bottom: 4px; }
+        .header h1 { font-size: 26px; font-weight: 800; color: #1a1a2e; letter-spacing: -0.5px; }
+        .header h1 span { background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: #6b7280; font-size: 14px; margin-top: 2px; }
+
+        .order-summary {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 24px;
+            border: 1px solid #e5e7eb;
+        }
+        .order-summary .label { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+        .order-summary .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; color: #374151; }
+        .order-summary .row .label-text { color: #6b7280; }
+        .order-summary .row .value-text { font-weight: 600; color: #1a1a2e; }
+        .order-summary .divider { height: 1px; background: #e5e7eb; margin: 8px 0; }
+        .order-summary .total { display: flex; justify-content: space-between; padding: 8px 0 0 0; font-size: 18px; font-weight: 800; color: #1a1a2e; }
+        .order-summary .total .amount { background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+        label .required { color: #ef4444; }
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #ffffff;
+            color: #1a1a2e;
+            transition: all 0.3s;
+        }
+        input:focus,
+        textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.08); }
+        input::placeholder,
+        textarea::placeholder { color: #9ca3af; }
+        textarea { resize: vertical; min-height: 70px; }
+
+        .upload-section {
+            border: 2px dashed #d1d5db;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafbfc;
+            margin-bottom: 16px;
+        }
+        .upload-section:hover { border-color: #8b5cf6; background: #f5f3ff; }
+        .upload-section .upload-icon { font-size: 36px; margin-bottom: 4px; }
+        .upload-section p { color: #6b7280; font-size: 14px; }
+        .upload-section p strong { color: #1a1a2e; }
+        .upload-section .file-name { color: #8b5cf6; font-weight: 600; font-size: 13px; margin-top: 6px; }
+        #receiptInput { display: none; }
+        .upload-btn {
+            padding: 8px 20px;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+        .upload-btn:hover { background: #e5e7eb; }
+
+        .back-link { display: block; text-align: center; color: #6b7280; font-size: 14px; margin-top: 16px; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .back-link:hover { color: #8b5cf6; }
+
+        .error-msg { color: #ef4444; font-size: 13px; margin-top: 8px; display: none; text-align: center; background: #fef2f2; padding: 10px; border-radius: 10px; }
+        .success-msg { color: #10b981; font-size: 13px; margin-top: 8px; display: none; text-align: center; background: #ecfdf5; padding: 10px; border-radius: 10px; }
+
+        .bank-details {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid #e5e7eb;
+        }
+        .bank-details .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; color: #374151; }
+        .bank-details .row .label-text { color: #6b7280; }
+        .bank-details .row .value-text { font-weight: 600; color: #1a1a2e; }
+        .bank-details .title { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+        .confirm-payment-section {
+            display: none;
+            text-align: center;
+            padding: 24px 0;
+            border-top: 2px solid #e5e7eb;
+            margin-top: 20px;
+        }
+        .confirm-payment-section.show { display: block; }
+        .confirm-payment-section .info-text { font-size: 15px; color: #6b7280; margin-bottom: 16px; }
+        .confirm-payment-section .info-text strong { color: #1a1a2e; font-size: 17px; }
+
+        .btn-confirm-payment {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #34d399, #059669);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(52, 211, 153, 0.3);
+        }
+        .btn-confirm-payment:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(52, 211, 153, 0.4); }
+        .btn-confirm-payment:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-confirm-payment .spinner-small {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin: 0 auto;
+        }
+        .btn-confirm-payment.loading .spinner-small { display: inline-block; }
+        .btn-confirm-payment.loading .btn-text { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Status States */
+        .status-box {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .status-box .icon { font-size: 72px; margin-bottom: 12px; }
+        .status-box h2 { font-size: 24px; margin-bottom: 4px; }
+        .status-box p { font-size: 14px; color: #6b7280; }
+        .status-box.pending { background: #fef3c7; border: 1px solid #fcd34d; }
+        .status-box.pending h2 { color: #d97706; }
+        .status-box.confirmed { background: #d1fae5; border: 1px solid #34d399; }
+        .status-box.confirmed h2 { color: #065f46; }
+        .status-box.rejected { background: #fee2e2; border: 1px solid #ef4444; }
+        .status-box.rejected h2 { color: #991b1b; }
+
+        .receipt-box {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin: 16px 0;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+        .receipt-box .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; color: #374151; }
+        .receipt-box .row .label-text { color: #6b7280; }
+        .receipt-box .row .value-text { font-weight: 600; color: #1a1a2e; }
+
+        .btn-done {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .btn-done.secondary { background: #e5e7eb; color: #374151; }
+        .btn-done.secondary:hover { background: #d1d5db; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .status-badge.pending { background: #fef3c7; color: #d97706; }
+        .status-badge.confirmed { background: #d1fae5; color: #065f46; }
+        .status-badge.rejected { background: #fee2e2; color: #991b1b; }
+
+        .status-updated {
+            animation: statusPulse 0.5s ease;
+        }
+        @keyframes statusPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 24px 16px; border-radius: 20px; }
+            .header h1 { font-size: 22px; }
+            .order-summary .total { font-size: 16px; }
+            .btn-confirm-payment { font-size: 17px; padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <span class="icon">🎟️</span>
+            <h1>Complete <span>Checkout</span></h1>
+            <p>Pay manually and upload your receipt</p>
+        </div>
+
+        <div class="order-summary" id="orderSummary">
+            <div class="label">📋 Order Summary</div>
+            <div class="row">
+                <span class="label-text">Event</span>
+                <span class="value-text" id="eventTitle">Loading...</span>
+            </div>
+            <div class="row">
+                <span class="label-text">Venue</span>
+                <span class="value-text" id="eventVenue">Loading...</span>
+            </div>
+            <div class="row">
+                <span class="label-text">Date & Time</span>
+                <span class="value-text" id="eventDate">Loading...</span>
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+                <span class="label-text">Ticket Price</span>
+                <span class="value-text" id="ticketPrice">₦0</span>
+            </div>
+            <div class="row">
+                <span class="label-text">Service Fee</span>
+                <span class="value-text">₦100</span>
+            </div>
+            <div class="divider"></div>
+            <div class="total">
+                <span>Total</span>
+                <span class="amount" id="totalAmount">₦0</span>
+            </div>
+        </div>
+
+        <div class="bank-details" id="bankDetails">
+            <div class="title">🏦 Pay to this account</div>
+            <div class="row">
+                <span class="label-text">Bank</span>
+                <span class="value-text" id="bankName">Loading...</span>
+            </div>
+            <div class="row">
+                <span class="label-text">Account Name</span>
+                <span class="value-text" id="accountName">Loading...</span>
+            </div>
+            <div class="row">
+                <span class="label-text">Account Number</span>
+                <span class="value-text" id="accountNumber">Loading...</span>
+            </div>
+            <p style="font-size:12px;color:#9ca3af;margin-top:8px;">
+                📌 Pay the exact amount above and upload your receipt.
+            </p>
+        </div>
+
+        <div id="paymentForm">
+            <div class="form-group">
+                <label for="fullName">Full Name <span class="required">*</span></label>
+                <input type="text" id="fullName" placeholder="Enter your full name" />
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" placeholder="Enter your email address" />
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="Enter your phone number" />
+            </div>
+
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-icon">📄</div>
+                <p><strong>Upload Payment Receipt</strong></p>
+                <p style="font-size:12px;color:#9ca3af;">PNG, JPG, PDF up to 5MB</p>
+                <div class="file-name" id="fileName">No file selected</div>
+                <button class="upload-btn" id="uploadBtn" type="button">📤 Choose File</button>
+                <input type="file" id="receiptInput" accept="image/png,image/jpeg,image/jpg,application/pdf" />
+            </div>
+
+            <div class="error-msg" id="errorMsg">Please fill in all required fields.</div>
+            <div class="success-msg" id="successMsg">✅ Receipt uploaded successfully!</div>
+        </div>
+
+        <div class="confirm-payment-section" id="confirmPaymentSection">
+            <div class="info-text">
+                <strong>📄 Receipt uploaded!</strong><br />
+                Click below to confirm your payment.
+            </div>
+            <button class="btn-confirm-payment" id="confirmPaymentBtn">
+                <span class="btn-text">✅ Yes, I have paid</span>
+                <div class="spinner-small"></div>
+            </button>
+        </div>
+
+        <!-- ✅ NEW: Status Display - Always checks database directly -->
+        <div id="statusDisplay" style="display:none;">
+            <div class="status-box pending" id="statusBox">
+                <div class="icon">⏳</div>
+                <h2 id="statusTitle">Payment Pending</h2>
+                <p id="statusMessage">Waiting for admin confirmation.</p>
+            </div>
+
+            <div class="receipt-box" id="receiptDisplay">
+                <div class="row">
+                    <span class="label-text">Reference</span>
+                    <span class="value-text" id="displayRef">---</span>
+                </div>
+                <div class="row">
+                    <span class="label-text">Event</span>
+                    <span class="value-text" id="displayEvent">---</span>
+                </div>
+                <div class="row">
+                    <span class="label-text">Customer</span>
+                    <span class="value-text" id="displayCustomer">---</span>
+                </div>
+                <div class="row">
+                    <span class="label-text">Amount</span>
+                    <span class="value-text" id="displayAmount">---</span>
+                </div>
+                <div class="row">
+                    <span class="label-text">Status</span>
+                    <span class="value-text"><span class="status-badge pending" id="displayStatusBadge">⏳ Pending</span></span>
+                </div>
+            </div>
+
+            <a href="index.html" class="btn-done secondary" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">
+                ← Back to Events
+            </a>
+        </div>
+
+        <a href="index.html" class="back-link" id="backLink">← Back to Events</a>
+    </div>
+
+    <script>
+        // ============================================
+        // ADMIN CONTACT - YOUR DETAILS (DO NOT MODIFY)
+        // ============================================
+        const ADMIN_PHONE = '2348146275644';
+        const ADMIN_EMAIL = 'bjay70875612@gmail.com';
+
+        console.log('📱 Admin WhatsApp:', ADMIN_PHONE);
+        console.log('📧 Admin Email:', ADMIN_EMAIL);
+
+        // ============================================
+        // SUPABASE CONFIG
+        // ============================================
+        const SUPABASE_URL = "https://yfwxwqvksdsugxizaksj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================
+        // EMAILJS CONFIG
+        // ============================================
+        const EMAILJS_PUBLIC_KEY = 'wnNnwsoS0nMAh-rEO';
+        const EMAILJS_SERVICE_ID = 'service_t3hvhro';
+        const EMAILJS_TEMPLATE_ID = 'template_69y44jr';
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        // ============================================
+        // GET EVENT FROM URL & CHECK ORDER STATUS
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('eventId');
+        let orderRef = urlParams.get('ref');
+
+        let selectedEvent = null;
+        let selectedFile = null;
+        let receiptUrl = null;
+        let orderData = null;
+        let orderId = null;
+        let isNotifying = false;
+
+        // ============================================
+        // ✅ NEW: DIRECT DATABASE FETCH - ALWAYS FRESH
+        // ============================================
+        async function fetchLatestOrderStatus() {
+            if (!orderRef) return null;
+            
+            try {
+                console.log('🔍 Fetching latest order status from database...');
+                const { data: orders, error } = await sb
+                    .from('orders')
+                    .select('*')
+                    .eq('paystack_ref', orderRef);
+
+                if (error) throw error;
+
+                if (orders && orders.length > 0) {
+                    const order = orders[0];
+                    console.log(`📡 Latest status: ${order.status}`);
+                    return order;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching order:', error);
+                return null;
+            }
+        }
+
+        // ============================================
+        // ✅ NEW: CHECK AND UPDATE STATUS
+        // ============================================
+        async function checkAndUpdateStatus() {
+            const order = await fetchLatestOrderStatus();
+            if (order) {
+                orderData = order;
+                orderId = order.id;
+                updateStatusDisplay(order.status);
+                return true;
+            }
+            return false;
+        }
+
+        // ============================================
+        // LOAD EVENT DETAILS
+        // ============================================
+        async function loadEvent() {
+            if (!eventId) {
+                document.getElementById('eventTitle').textContent = '❌ No event selected';
+                return;
+            }
+
+            try {
+                const { data: event, error } = await sb
+                    .from('events')
+                    .select('*')
+                    .eq('id', eventId)
+                    .single();
+
+                if (error) throw error;
+
+                selectedEvent = event;
+
+                const total = Number(event.price) + 100;
+
+                document.getElementById('eventTitle').textContent = event.title;
+                document.getElementById('eventVenue').textContent = event.venue;
+                document.getElementById('eventDate').textContent = new Date(event.event_date).toLocaleString();
+                document.getElementById('ticketPrice').textContent = `₦${event.price}`;
+                document.getElementById('totalAmount').textContent = `₦${total}`;
+
+                document.getElementById('bankName').textContent = event.bank_name || 'Not provided';
+                document.getElementById('accountName').textContent = event.account_name || 'Not provided';
+                document.getElementById('accountNumber').textContent = event.account_number || 'Not provided';
+
+                console.log('✅ Event loaded:', event.title);
+
+            } catch (error) {
+                console.error('Error loading event:', error);
+                document.getElementById('eventTitle').textContent = '❌ Event not found';
+            }
+        }
+
+        // ============================================
+        // UPDATE STATUS DISPLAY
+        // ============================================
+        function updateStatusDisplay(status) {
+            console.log(`🔄 updateStatusDisplay called with status: "${status}"`);
+            
+            const statusBox = document.getElementById('statusBox');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+            const statusBadge = document.getElementById('displayStatusBadge');
+
+            statusBox.classList.add('status-updated');
+            setTimeout(() => {
+                statusBox.classList.remove('status-updated');
+            }, 500);
+
+            if (status === 'success' || status === 'confirmed') {
+                statusBox.className = 'status-box confirmed';
+                statusBox.querySelector('.icon').textContent = '✅';
+                statusTitle.textContent = '✅ Payment Confirmed!';
+                statusMessage.textContent = 'Your payment has been confirmed by the admin.';
+                statusBadge.textContent = '✅ Confirmed';
+                statusBadge.className = 'status-badge confirmed';
+                document.getElementById('bankDetails').style.display = 'none';
+                document.getElementById('backLink').style.display = 'none';
+                const doneBtn = document.querySelector('.btn-done.secondary');
+                if (doneBtn) doneBtn.style.display = 'block';
+                console.log('✅ Status updated to CONFIRMED/SUCCESS');
+            } else if (status === 'rejected' || status === 'failed') {
+                statusBox.className = 'status-box rejected';
+                statusBox.querySelector('.icon').textContent = '❌';
+                statusTitle.textContent = '❌ Payment Rejected';
+                statusMessage.textContent = 'Your payment was rejected. Please contact support.';
+                statusBadge.textContent = '❌ Rejected';
+                statusBadge.className = 'status-badge rejected';
+                console.log('❌ Status updated to REJECTED');
+            } else {
+                statusBox.className = 'status-box pending';
+                statusBox.querySelector('.icon').textContent = '⏳';
+                statusTitle.textContent = '⏳ Payment Pending';
+                statusMessage.textContent = 'Your payment is waiting for admin confirmation.';
+                statusBadge.textContent = '⏳ Pending';
+                statusBadge.className = 'status-badge pending';
+                console.log('⏳ Status is PENDING');
+            }
+        }
+
+        // ============================================
+        // ✅ NEW: LOAD ORDER STATUS - DIRECT FETCH
+        // ============================================
+        async function loadOrderStatus() {
+            const order = await fetchLatestOrderStatus();
+            if (!order) {
+                console.log('⚠️ No order found');
+                return;
+            }
+
+            orderData = order;
+            orderId = order.id;
+
+            console.log(`📋 Order loaded: ID=${orderId}, Status=${orderData.status}`);
+
+            document.getElementById('paymentForm').style.display = 'none';
+            document.getElementById('confirmPaymentSection').style.display = 'none';
+            document.getElementById('backLink').style.display = 'none';
+            document.getElementById('statusDisplay').style.display = 'block';
+
+            document.getElementById('displayRef').textContent = orderData.paystack_ref;
+            document.getElementById('displayEvent').textContent = selectedEvent ? selectedEvent.title : 'Unknown';
+            document.getElementById('displayCustomer').textContent = orderData.customer_name;
+            document.getElementById('displayAmount').textContent = `₦${Number(orderData.amount_paid) + Number(orderData.service_fee)}`;
+
+            updateStatusDisplay(orderData.status);
+        }
+
+        // ============================================
+        // RECEIPT UPLOAD
+        // ============================================
+        const uploadBtn = document.getElementById('uploadBtn');
+        const receiptInput = document.getElementById('receiptInput');
+        const fileName = document.getElementById('fileName');
+        const successMsg = document.getElementById('successMsg');
+
+        uploadBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            receiptInput.click();
+        });
+
+        document.getElementById('uploadSection').addEventListener('click', function() {
+            receiptInput.click();
+        });
+
+        receiptInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File too large (max 5MB)');
+                this.value = '';
+                return;
+            }
+
+            selectedFile = file;
+            fileName.textContent = '✅ ' + file.name;
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+
+            document.getElementById('confirmPaymentSection').classList.add('show');
+        });
+
+        // ============================================
+        // UPLOAD RECEIPT TO SUPABASE
+        // ============================================
+        async function uploadReceipt(reference) {
+            if (!selectedFile) {
+                console.log('⚠️ No file selected for upload');
+                return null;
+            }
+
+            try {
+                const fileExt = selectedFile.name.split('.').pop();
+                const fileName = `receipts/${reference}.${fileExt}`;
+
+                console.log('📤 Uploading receipt:', fileName);
+
+                const { error: uploadError } = await sb.storage
+                    .from('event-posters')
+                    .upload(fileName, selectedFile);
+
+                if (uploadError) {
+                    console.error('❌ Upload error:', uploadError);
+                    throw new Error('Receipt upload failed: ' + uploadError.message);
+                }
+
+                const { data: urlData } = sb.storage
+                    .from('event-posters')
+                    .getPublicUrl(fileName);
+
+                console.log('✅ Receipt uploaded:', urlData.publicUrl);
+                return urlData.publicUrl;
+            } catch (error) {
+                console.error('❌ Receipt upload error:', error);
+                throw error;
+            }
+        }
+
+        // ============================================
+        // WHATSAPP NOTIFICATION - WORKING, DO NOT MODIFY
+        // ============================================
+        function sendWhatsAppNotification(name, email, phone, event, reference, receiptUrl) {
+            if (isNotifying) {
+                console.log('⚠️ Already notifying, skipping duplicate');
+                return;
+            }
+            isNotifying = true;
+
+            const confirmLink = `${window.location.origin}/payment-confirm.html?ref=${reference}`;
+
+            let message = `🎉 *NEW TICKET PURCHASE!*%0A%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `👤 *Customer:* ${name}%0A`;
+            message += `📧 *Email:* ${email}%0A`;
+            message += `📱 *Phone:* ${phone || 'N/A'}%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `📋 *Event:* ${event.title}%0A`;
+            message += `📍 *Venue:* ${event.venue}%0A`;
+            message += `📅 *Date:* ${new Date(event.event_date).toLocaleString()}%0A`;
+            message += `💰 *Amount:* ₦${event.price + 100}%0A`;
+            message += `🎫 *Reference:* ${reference}%0A`;
+            message += `📌 *Status:* ⏳ PENDING%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `📄 *Receipt:* ${receiptUrl || 'No receipt uploaded'}%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `🔗 *Confirm:* ${confirmLink}%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `✅ Please confirm this payment on the dashboard.`;
+
+            if (ADMIN_PHONE) {
+                const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
+                console.log('📱 Opening WhatsApp:', waUrl);
+                const newWindow = window.open(waUrl, '_blank');
+
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                    console.log('⚠️ Popup blocked, showing manual instructions');
+                    alert('📱 Please open WhatsApp and send this message to Admin:\n\n' + message.replace(/%0A/g, '\n'));
+                }
+            }
+
+            setTimeout(() => {
+                isNotifying = false;
+            }, 5000);
+
+            console.log('📱 WhatsApp notification sent to Admin!');
+        }
+
+        // ============================================
+        // SEND EMAIL NOTIFICATION
+        // ============================================
+        function sendEmailNotification(name, email, phone, event, reference) {
+            const adminTemplate = {
+                to_email: ADMIN_EMAIL,
+                to_name: 'Admin',
+                subject: `🔔 New Ticket Purchase: ${event.title}`,
+                message: `🔔 *NEW TICKET PURCHASE ALERT!*
+
+        ━━━━━━━━━━━━━━━━━━━━━━
+        👤 Customer: ${name}
+        📧 Email: ${email}
+        📱 Phone: ${phone || 'N/A'}
+        ━━━━━━━━━━━━━━━━━━━━━━
+        📋 Event: ${event.title}
+        📍 Venue: ${event.venue}
+        📅 Date: ${new Date(event.event_date).toLocaleString()}
+        💰 Amount: ₦${event.price + 100}
+        🎫 Reference: ${reference}
+        📌 Status: ⏳ PENDING
+        ━━━━━━━━━━━━━━━━━━━━━━
+        🔗 Confirm: ${window.location.origin}/payment-confirm.html?ref=${reference}
+        ━━━━━━━━━━━━━━━━━━━━━━
+
+        Please check the payment confirmation dashboard to verify.`
+            };
+
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, adminTemplate)
+                .then(() => console.log('✅ Admin email sent to:', ADMIN_EMAIL))
+                .catch(err => console.error('❌ Admin email failed:', err));
+        }
+
+        // ============================================
+        // CONFIRM PAYMENT
+        // ============================================
+        const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+        const errorMsg = document.getElementById('errorMsg');
+
+        confirmPaymentBtn.addEventListener('click', async function() {
+            const name = document.getElementById('fullName').value.trim();
+            const mail = document.getElementById('email').value.trim();
+            const phoneNum = document.getElementById('phone').value.trim();
+
+            errorMsg.style.display = 'none';
+
+            if (!name) {
+                errorMsg.textContent = 'Please enter your full name.';
+                errorMsg.style.display = 'block';
+                document.getElementById('fullName').focus();
+                return;
+            }
+
+            if (!mail || !mail.includes('@')) {
+                errorMsg.textContent = 'Please enter a valid email address.';
+                errorMsg.style.display = 'block';
+                document.getElementById('email').focus();
+                return;
+            }
+
+            if (!selectedFile) {
+                errorMsg.textContent = 'Please upload a payment receipt.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (!selectedEvent) {
+                errorMsg.textContent = 'No event selected.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            confirmPaymentBtn.disabled = true;
+            confirmPaymentBtn.classList.add('loading');
+
+            try {
+                const reference = 'MANUAL-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+
+                receiptUrl = await uploadReceipt(reference);
+
+                const { data: order, error: orderError } = await sb
+                    .from('orders')
+                    .insert([{
+                        event_id: selectedEvent.id,
+                        customer_name: name,
+                        customer_email: mail,
+                        amount_paid: selectedEvent.price,
+                        service_fee: 100,
+                        paystack_ref: reference,
+                        status: 'pending',
+                        receipt_url: receiptUrl || null
+                    }])
+                    .select()
+                    .single();
+
+                if (orderError) throw orderError;
+
+                orderId = order.id;
+                orderData = order;
+                orderRef = reference;
+
+                sendWhatsAppNotification(name, mail, phoneNum, selectedEvent, reference, receiptUrl);
+                sendEmailNotification(name, mail, phoneNum, selectedEvent, reference);
+
+                document.getElementById('paymentForm').style.display = 'none';
+                document.getElementById('confirmPaymentSection').style.display = 'none';
+                document.getElementById('backLink').style.display = 'none';
+                document.getElementById('statusDisplay').style.display = 'block';
+
+                document.getElementById('displayRef').textContent = reference;
+                document.getElementById('displayEvent').textContent = selectedEvent.title;
+                document.getElementById('displayCustomer').textContent = name;
+                document.getElementById('displayAmount').textContent = `₦${Number(selectedEvent.price) + 100}`;
+
+                const newUrl = `${window.location.pathname}?eventId=${selectedEvent.id}&ref=${reference}`;
+                window.history.replaceState({}, '', newUrl);
+
+                // ✅ NEW: Check status immediately after creation
+                await checkAndUpdateStatus();
+
+                confirmPaymentBtn.disabled = false;
+                confirmPaymentBtn.classList.remove('loading');
+
+                alert('✅ Payment submitted! Waiting for admin confirmation.');
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Error: ' + error.message);
+                confirmPaymentBtn.disabled = false;
+                confirmPaymentBtn.classList.remove('loading');
+            }
+        });
+
+        // ============================================
+        // ✅ NEW: POLL EVERY 3 SECONDS FOR STATUS CHANGE
+        // ============================================
+        let pollInterval = null;
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            
+            pollInterval = setInterval(async () => {
+                if (orderRef) {
+                    const order = await fetchLatestOrderStatus();
+                    if (order && order.status !== (orderData ? orderData.status : null)) {
+                        console.log('🔄 Polling detected status change!');
+                        orderData = order;
+                        orderId = order.id;
+                        updateStatusDisplay(order.status);
+                    }
+                }
+            }, 3000);
+        }
+
+        // ============================================
+        // START
+        // ============================================
+        async function init() {
+            await loadEvent();
+            await loadOrderStatus();
+
+            if (orderData && (orderData.status === 'confirmed' || orderData.status === 'success')) {
+                document.getElementById('bankDetails').style.display = 'none';
+            }
+            
+            // ✅ NEW: Start polling for status changes
+            startPolling();
+            
+            console.log('✅ Payment page fully initialized');
+            console.log('📌 Order ID:', orderId);
+            console.log('📌 Current Status:', orderData ? orderData.status : 'No order');
+            console.log('📌 Polling every 3 seconds for status changes');
+        }
+
+        init();
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+            }
+        });
+
+        console.log('🎟️ Payment page loaded');
+        console.log('📌 Direct database polling enabled (every 3 seconds)');
+    </script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Payments | CampusFlow</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .header .icon { font-size: 48px; display: block; }
+        .header h1 { font-size: 28px; font-weight: 800; color: #1a1a2e; }
+        .header h1 span { background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: #6b7280; font-size: 14px; }
+
+        .header .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .header .stats .stat { text-align: center; }
+        .header .stats .stat .number { font-size: 32px; font-weight: 800; color: #1a1a2e; }
+        .header .stats .stat .label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header .stats .stat.pending .number { color: #d97706; }
+        .header .stats .stat.confirmed .number { color: #10b981; }
+        .header .stats .stat.total .number { color: #3b82f6; }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+        }
+        .loading-state .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-state p { color: #6b7280; }
+
+        .refresh-btn {
+            padding: 10px 24px;
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 16px;
+        }
+        .refresh-btn:hover { background: #d1d5db; }
+
+        .event-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .event-card:hover { border-color: #8b5cf6; }
+
+        .event-card .event-header {
+            padding: 18px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+            user-select: none;
+        }
+
+        .event-card .event-header:hover { background: #f8fafc; }
+
+        .event-card .event-header .left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .event-card .event-header .event-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .event-card .event-header .event-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+        .event-card .event-header .event-meta strong { color: #1a1a2e; }
+
+        .event-card .event-header .right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .event-card .event-header .count-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .count-badge.pending { background: #fef3c7; color: #d97706; }
+        .count-badge.confirmed { background: #d1fae5; color: #065f46; }
+
+        .event-card .event-header .arrow {
+            font-size: 20px;
+            color: #9ca3af;
+            transition: transform 0.3s;
+        }
+        .event-card .event-header .arrow.open { transform: rotate(180deg); }
+
+        .event-card .event-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+            padding: 0 24px;
+        }
+
+        .event-card .event-body.open {
+            max-height: 3000px;
+            padding: 0 24px 24px 24px;
+        }
+
+        .event-card .event-body .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            padding: 12px 0 8px 0;
+            border-top: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-card .event-body .section-label .count {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+        .section-label .count.pending { background: #fef3c7; color: #d97706; }
+        .section-label .count.confirmed { background: #d1fae5; color: #065f46; }
+
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 3px solid #fcd34d;
+            transition: all 0.3s;
+        }
+
+        .payment-row.confirmed { border-left-color: #34d399; opacity: 0.85; }
+        .payment-row.rejected { border-left-color: #ef4444; opacity: 0.6; }
+
+        .payment-row .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .payment-row .customer-info .name { font-weight: 600; color: #1a1a2e; font-size: 14px; }
+        .payment-row .customer-info .email { font-size: 13px; color: #6b7280; }
+        .payment-row .customer-info .ref { font-size: 11px; color: #9ca3af; font-family: monospace; }
+
+        .payment-row .right-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .payment-row .right-section .amount {
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .payment-row .right-section .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .status-badge.pending { background: #fef3c7; color: #d97706; }
+        .status-badge.confirmed { background: #d1fae5; color: #065f46; }
+        .status-badge.rejected { background: #fee2e2; color: #991b1b; }
+
+        .payment-row .right-section .confirmed-at {
+            font-size: 11px;
+            color: #10b981;
+        }
+
+        .payment-row .right-section .action-btns { display: flex; gap: 6px; }
+
+        .payment-row .right-section .action-btns button {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btns .btn-confirm {
+            background: linear-gradient(135deg, #34d399, #059669);
+            color: white;
+        }
+        .action-btns .btn-confirm:hover { transform: scale(1.05); }
+
+        .action-btns .btn-reject {
+            background: #fee2e2;
+            color: #ef4444;
+            border: 1px solid #fca5a5;
+        }
+        .action-btns .btn-reject:hover { background: #fecaca; }
+
+        .action-btns .btn-confirm:disabled,
+        .action-btns .btn-reject:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .payment-row .receipt-link a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .payment-row .receipt-link a:hover { text-decoration: underline; }
+        .payment-row .receipt-link .no-receipt { color: #9ca3af; font-size: 12px; }
+
+        @media (max-width: 768px) {
+            .event-card .event-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .event-card .event-header .right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .payment-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .payment-row .right-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .header .stats { gap: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .event-card .event-body { padding: 0 16px; }
+            .event-card .event-body.open { padding: 0 16px 16px 16px; }
+            .event-card .event-header { padding: 14px 16px; }
+            .event-card .event-header .event-title { font-size: 16px; }
+            .payment-row { padding: 10px 12px; }
+            .payment-row .customer-info { flex-direction: column; align-items: flex-start; gap: 2px; }
+            .payment-row .right-section { flex-wrap: wrap; gap: 6px; }
+            .header h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <span class="icon">🔐</span>
+            <h1>Payment <span>Confirmation</span></h1>
+            <p>Click on any event to expand and view payments</p>
+
+            <div class="stats" id="statsBar">
+                <div class="stat pending">
+                    <div class="number" id="pendingCount">0</div>
+                    <div class="label">⏳ Pending</div>
+                </div>
+                <div class="stat confirmed">
+                    <div class="number" id="confirmedCount">0</div>
+                    <div class="label">✅ Confirmed</div>
+                </div>
+                <div class="stat total">
+                    <div class="number" id="totalCount">0</div>
+                    <div class="label">📊 Total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>⏳ Loading payments...</p>
+        </div>
+
+        <button class="refresh-btn" id="refreshBtn">🔄 Refresh Payments</button>
+
+        <div id="paymentsContainer"></div>
+
+    </div>
+
+    <script>
+        // ============================================
+        // SUPABASE CONFIG
+        // ============================================
+        const SUPABASE_URL = "https://yfwxwqvksdsugxizaksj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        console.log('🔐 Payment Confirmation Portal Loaded');
+
+        // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        const loadingState = document.getElementById('loadingState');
+        const paymentsContainer = document.getElementById('paymentsContainer');
+        const pendingCount = document.getElementById('pendingCount');
+        const confirmedCount = document.getElementById('confirmedCount');
+        const totalCount = document.getElementById('totalCount');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        let allOrders = [];
+        let isRefreshing = false;
+
+        // ============================================
+        // LOAD ALL ORDERS WITH EVENTS - FORCE FRESH
+        // ============================================
+        async function loadPayments() {
+            if (isRefreshing) return;
+            isRefreshing = true;
+
+            loadingState.style.display = 'block';
+            paymentsContainer.innerHTML = '';
+
+            try {
+                const { data: orders, error } = await sb
+                    .from('orders')
+                    .select('*, events(*)')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                loadingState.style.display = 'none';
+
+                if (!orders || orders.length === 0) {
+                    paymentsContainer.innerHTML = `
+                        <div style="text-align:center;padding:60px 20px;background:white;border-radius:16px;">
+                            <div style="font-size:64px;margin-bottom:12px;">📭</div>
+                            <h3 style="color:#1a1a2e;margin-bottom:4px;">No Payments Found</h3>
+                            <p style="color:#6b7280;">No payments have been made yet.</p>
+                        </div>
+                    `;
+                    updateStats([]);
+                    isRefreshing = false;
+                    return;
+                }
+
+                allOrders = orders;
+                updateStats(orders);
+                renderByEvent(orders);
+
+            } catch (error) {
+                console.error('Error loading payments:', error);
+                loadingState.style.display = 'none';
+                paymentsContainer.innerHTML = `
+                    <div style="text-align:center;padding:60px 20px;background:white;border-radius:16px;">
+                        <div style="font-size:64px;margin-bottom:12px;">❌</div>
+                        <h3 style="color:#1a1a2e;margin-bottom:4px;">Error Loading Payments</h3>
+                        <p style="color:#6b7280;">${error.message}</p>
+                    </div>
+                `;
+            }
+
+            isRefreshing = false;
+        }
+
+        // ============================================
+        // UPDATE STATS - RECALCULATE FROM FRESH DATA
+        // ============================================
+        function updateStats(orders) {
+            const pending = orders.filter(o => o.status === 'pending' || o.status === 'PENDING').length;
+            const confirmed = orders.filter(o => o.status === 'success' || o.status === 'confirmed' || o.status === 'CONFIRMED')
+                .length;
+
+            pendingCount.textContent = pending;
+            confirmedCount.textContent = confirmed;
+            totalCount.textContent = orders.length;
+
+            console.log(`📊 Stats updated: Pending=${pending}, Confirmed=${confirmed}, Total=${orders.length}`);
+        }
+
+        // ============================================
+        // TOGGLE EVENT CARD
+        // ============================================
+        function toggleEvent(eventId) {
+            const body = document.getElementById('body-' + eventId);
+            const arrow = document.querySelector(`#event-${eventId} .arrow`);
+
+            if (body.classList.contains('open')) {
+                body.classList.remove('open');
+                arrow.classList.remove('open');
+            } else {
+                body.classList.add('open');
+                arrow.classList.add('open');
+            }
+        }
+
+        // ============================================
+        // RENDER BY EVENT
+        // ============================================
+        function renderByEvent(orders) {
+            const eventGroups = {};
+            orders.forEach(order => {
+                const eventId = order.event_id;
+                if (!eventGroups[eventId]) {
+                    eventGroups[eventId] = {
+                        event: order.events || { title: 'Unknown Event', venue: 'N/A' },
+                        orders: []
+                    };
+                }
+                eventGroups[eventId].orders.push(order);
+            });
+
+            let html = '';
+
+            Object.keys(eventGroups).forEach(eventId => {
+                const group = eventGroups[eventId];
+                const event = group.event;
+                const eventOrders = group.orders;
+
+                const pendingOrders = eventOrders.filter(o => o.status.toLowerCase() === "pending");
+                const confirmedOrders = eventOrders.filter(o => o.status.toLowerCase() === "success" || o.status.toLowerCase() === "confirmed");
+
+                html += `
+                    <div class="event-card" id="event-${eventId}">
+                        <div class="event-header" onclick="toggleEvent('${eventId}')">
+                            <div class="left">
+                                <span class="event-title">${event.title || 'Unknown Event'}</span>
+                                <span class="event-meta">📍 ${event.venue || 'N/A'}</span>
+                                <span class="event-meta">📅 ${event.event_date ? new Date(event.event_date).toLocaleDateString() : 'N/A'}</span>
+                            </div>
+                            <div class="right">
+                                ${pendingOrders.length > 0 ? `<span class="count-badge pending">⏳ ${pendingOrders.length} Pending</span>` : ''}
+                                ${confirmedOrders.length > 0 ? `<span class="count-badge confirmed">✅ ${confirmedOrders.length} Confirmed</span>` : ''}
+                                <span class="arrow">▼</span>
+                            </div>
+                        </div>
+
+                        <div class="event-body" id="body-${eventId}">
+                            ${pendingOrders.length > 0 ? `
+                                <div class="section-label">
+                                    🟡 New Payments <span class="count pending">${pendingOrders.length}</span>
+                                </div>
+                                ${pendingOrders.map(order => createPaymentRow(order, false)).join('')}
+                            ` : ''}
+
+                            ${confirmedOrders.length > 0 ? `
+                                <div class="section-label">
+                                    🟢 Confirmed Payments <span class="count confirmed">${confirmedOrders.length}</span>
+                                </div>
+                                ${confirmedOrders.map(order => createPaymentRow(order, true)).join('')}
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            paymentsContainer.innerHTML = html;
+        }
+
+        // ============================================
+        // CREATE PAYMENT ROW
+        // ============================================
+        function createPaymentRow(order, isConfirmed) {
+            const isPending =order.status.toLowerCase() === "pending";
+            const isConfirmedStatus =order.status.toLowerCase() === "success" || order.status.toLowerCase() === "confirmed";
+            const isRejected = order.status.toLowerCase() === 'failed' || order.status.toLowerCase() === 'rejected';
+
+            let statusClass = 'pending';
+            let statusText = '⏳ Pending';
+            let rowClass = '';
+
+            if (isConfirmedStatus) {
+                statusClass = 'confirmed';
+                statusText = '✅ Confirmed';
+                rowClass = 'confirmed';
+            } else if (isRejected) {
+                statusClass = 'rejected';
+                statusText = '❌ Rejected';
+                rowClass = 'rejected';
+            }
+
+            const receiptUrl = order.receipt_url || null;
+            const confirmedAt = order.confirmed_at ? new Date(order.confirmed_at).toLocaleString() : null;
+
+            return `
+                <div class="payment-row ${rowClass}">
+                    <div class="customer-info">
+                        <span class="name">${order.customer_name}</span>
+                        <span class="email">${order.customer_email}</span>
+                        <span class="ref">Order ID:${order.id}...</span>
+                        <span style="font-size:11px;color:#9ca3af;">${new Date(order.created_at).toLocaleDateString()}</span>
+                        ${receiptUrl ? `
+                            <span class="receipt-link"><a href="${receiptUrl}" target="_blank">📷 Receipt</a></span>
+                        ` : `
+                            <span class="receipt-link"><span class="no-receipt">📷 No receipt</span></span>
+                        `}
+                    </div>
+                    <div class="right-section">
+                        <span class="amount">₦${Number(order.amount_paid) + Number(order.service_fee)}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        ${isConfirmedStatus && confirmedAt ? `<span class="confirmed-at">✅ ${confirmedAt}</span>` : ''}
+                        <div class="action-btns">
+                            ${isPending ? `
+                                <button class="btn-confirm" onclick="confirmPayment('${order.id}')">✅ Confirm</button>
+                                <button class="btn-reject" onclick="rejectPayment('${order.id}')">❌</button>
+                            ` : `
+                                <button class="btn-confirm" disabled>✅ Done</button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // ✅ FIXED: CONFIRM PAYMENT - Updates to 'success'
+        // ============================================
+        async function confirmPayment(orderId) {
+            if (!confirm('✅ Confirm this payment?')) return;
+
+            try {
+                const { data: updatedRows, error: updateError } = await sb
+                    .from('orders')
+                    .update({
+                        status: 'success',
+                        confirmed_at: new Date().toISOString()
+                    })
+                    .eq('id', orderId)
+                    .select();
+
+                if (updateError) throw updateError;
+
+                if (!updatedRows || updatedRows.length === 0) {
+                    console.error('⚠️ Update matched 0 rows. This usually means Row Level Security (RLS) is blocking the UPDATE for this key/role.');
+                    alert('⚠️ The update did not apply. This is almost always a Supabase Row Level Security (RLS) policy blocking UPDATE on the "orders" table for this key. Check Supabase → Authentication → Policies → orders table, and add/enable an UPDATE policy.');
+                    return;
+                }
+
+                console.log('✅ Payment confirmed successfully. Updated row:', updatedRows[0]);
+
+                // ✅ Force reload
+                await loadPayments();
+
+                alert('✅ Payment confirmed! Customer will see updated status.');
+
+            } catch (error) {
+                console.error('Error confirming:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // REJECT PAYMENT
+        // ============================================
+        async function rejectPayment(orderId) {
+            if (!confirm('❌ Reject this payment?')) return;
+
+            try {
+                const { error: updateError } = await sb
+                    .from('orders')
+                    .update({ status: 'failed' })
+                    .eq('id', orderId);
+
+                if (updateError) throw updateError;
+
+                console.log('❌ Payment rejected');
+
+                await loadPayments();
+
+                alert('❌ Payment rejected.');
+
+            } catch (error) {
+                console.error('Error rejecting:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // REFRESH
+        // ============================================
+        refreshBtn.addEventListener('click', function() {
+            this.innerHTML = '🔄 Refreshing...';
+            this.disabled = true;
+            loadPayments().then(() => {
+                this.innerHTML = '🔄 Refresh Payments';
+                this.disabled = false;
+            });
+        });
+
+        // ============================================
+        // AUTO-REFRESH
+        // ============================================
+        setInterval(() => {
+            loadPayments();
+            console.log('🔄 Auto-refreshed payments');
+        }, 30000);
+
+        // ============================================
+        // REAL-TIME SUBSCRIPTION
+        // ============================================
+        sb
+            .channel('orders-changes')
+            .on(
+                'postgres_changes', {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'orders'
+                },
+                (payload) => {
+                    console.log('🔄 Real-time UPDATE detected:', payload);
+                    loadPayments();
+                }
+            )
+            .subscribe();
+
+        sb
+            .channel('orders-insert')
+            .on(
+                'postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'orders'
+                },
+                (payload) => {
+                    console.log('🔄 New order INSERT detected:', payload);
+                    loadPayments();
+                }
+            )
+            .subscribe();
+
+        // ============================================
+        // START
+        // ============================================
+        loadPayments();
+
+        console.log('🔐 Payment Confirmation Portal Ready');
+        console.log('📌 Click any event to expand/collapse');
+        console.log('📌 Real-time updates enabled');
+        console.log('📌 Auto-refresh every 30 seconds');
+        console.log('📌 Stats recalculated on every update');
+        console.log('📌 Status updated to "success" on confirm');
+    </script>
+</body>
+</html>
