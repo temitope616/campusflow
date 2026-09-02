@@ -8,6 +8,12 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- Motion: smooth scroll + scroll-triggered animation -->
+    <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.26/dist/lenis.css">
+    <script src="https://unpkg.com/lenis@1.3.26/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
     <style>
         /* ============================================
                    RESET & BASE - PARTY VIBE EDITION
@@ -190,12 +196,12 @@
 
         @keyframes pulseOrb {
             0% {
-                transform: scale(1);
-                opacity: 0.4;
+                opacity: 0.35;
+                filter: blur(100px);
             }
             100% {
-                transform: scale(1.5);
-                opacity: 0.8;
+                opacity: 0.75;
+                filter: blur(130px);
             }
         }
 
@@ -694,7 +700,7 @@
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
             animation: shimmerBtn 3s ease-in-out infinite;
             position: relative;
             overflow: hidden;
@@ -920,9 +926,42 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #764ba2, #ec4899);
         }
+
+        /* ============================================
+                   GRAIN / FILM TEXTURE OVERLAY
+                   ============================================ */
+        .grain-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.035;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ============================================
+                   REDUCED MOTION - ACCESSIBILITY
+                   ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .grain-overlay {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- ==========================================
+    FILM GRAIN TEXTURE
+    ========================================== -->
+    <div class="grain-overlay"></div>
 
     <!-- ==========================================
     PARTY PARTICLES (ANIMATED BACKGROUND)
@@ -1008,6 +1047,12 @@
         const loadingState = document.getElementById('loadingState');
         const searchInput = document.getElementById('searchInput');
         const categoryBtns = document.querySelectorAll('.category-btn');
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const motionReady = !prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+        if (motionReady) {
+            gsap.registerPlugin(ScrollTrigger);
+        }
 
         let allEvents = [];
         let currentCategory = 'all';
@@ -1133,6 +1178,7 @@
             }
 
             eventsContainer.innerHTML = html;
+            animateEventCards();
         }
 
         // ============================================
@@ -1258,8 +1304,130 @@
         });
 
         // ============================================
+        // CINEMATIC MOTION - HERO INTRO
+        // ============================================
+        function initHeroIntro() {
+            if (!motionReady) return;
+
+            gsap.set(['.header .party-emoji-rain', '.header h1', '.header p', '.header .badge', '.search-section'], { opacity: 1 });
+
+            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+            tl.from('.header .party-emoji-rain', { opacity: 0, y: -20, duration: 0.6 })
+              .from('.header h1', { opacity: 0, y: 40, scale: 0.92, filter: 'blur(16px)', duration: 1.1 }, '-=0.3')
+              .from('.header p', { opacity: 0, y: 20, duration: 0.7 }, '-=0.6')
+              .from('.header .badge', { opacity: 0, y: 16, scale: 0.85, duration: 0.5, stagger: 0.12 }, '-=0.4')
+              .from('.search-section', { opacity: 0, y: 24, duration: 0.7 }, '-=0.3')
+              .set(['.header .party-emoji-rain', '.header h1', '.header p', '.header .badge', '.search-section'], { clearProps: 'all' });
+        }
+
+        // ============================================
+        // CINEMATIC MOTION - MOUSE PARALLAX ON ORBS
+        // ============================================
+        function initOrbParallax() {
+            if (prefersReducedMotion) return;
+            const orbs = document.querySelectorAll('.glow-orb');
+            if (!orbs.length) return;
+
+            window.addEventListener('mousemove', function(e) {
+                const x = (e.clientX / window.innerWidth) - 0.5;
+                const y = (e.clientY / window.innerHeight) - 0.5;
+                orbs.forEach(function(orb, i) {
+                    const depth = (i + 1) * 16;
+                    const centered = orb.classList.contains('gold') ? 'translate(-50%, -50%) ' : '';
+                    orb.style.transform = `${centered}translate(${x * depth}px, ${y * depth}px)`;
+                });
+            }, { passive: true });
+        }
+
+        // ============================================
+        // CINEMATIC MOTION - MAGNETIC BUTTONS
+        // ============================================
+        function initMagneticButtons() {
+            if (prefersReducedMotion) return;
+
+            eventsContainer.addEventListener('mousemove', function(e) {
+                const btn = e.target.closest('.buy-btn:not(.past-event):not(:disabled)');
+                if (!btn) return;
+                const rect = btn.getBoundingClientRect();
+                const relX = e.clientX - rect.left - rect.width / 2;
+                const relY = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${relX * 0.2}px, ${relY * 0.35}px)`;
+            });
+
+            eventsContainer.addEventListener('mouseout', function(e) {
+                const btn = e.target.closest('.buy-btn');
+                if (btn) btn.style.transform = '';
+            });
+        }
+
+        // ============================================
+        // SMOOTH SCROLL (LENIS)
+        // ============================================
+        function initSmoothScroll() {
+            if (prefersReducedMotion || typeof Lenis === 'undefined') return;
+
+            const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+
+            if (motionReady) {
+                lenis.on('scroll', ScrollTrigger.update);
+                gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+                gsap.ticker.lagSmoothing(0);
+            } else {
+                (function raf(time) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                })();
+            }
+        }
+
+        // ============================================
+        // CINEMATIC EVENT CARD SCROLL-REVEAL
+        // ============================================
+        function animateEventCards() {
+            const cards = document.querySelectorAll('.event-card');
+            if (!cards.length) return;
+
+            if (!motionReady) {
+                // Existing CSS fadeInUp keyframe (already in place) handles this
+                // fallback nicely when the motion library isn't available.
+                return;
+            }
+
+            cards.forEach(function(card, i) {
+                // Stop the CSS keyframe fallback from fighting with GSAP's own values.
+                card.style.animation = 'none';
+
+                gsap.fromTo(card,
+                    { opacity: 0, y: 70, scale: 0.9, filter: 'blur(12px)' },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: 'blur(0px)',
+                        duration: 0.9,
+                        delay: (i % 3) * 0.08,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 90%',
+                            once: true
+                        },
+                        onComplete: function() {
+                            gsap.set(card, { clearProps: 'all' });
+                        }
+                    }
+                );
+            });
+        }
+
+        // ============================================
         // START
         // ============================================
+        initSmoothScroll();
+        initHeroIntro();
+        initOrbParallax();
+        initMagneticButtons();
+
         loadEvents();
 
         // Auto-refresh every 60 seconds
@@ -1274,6 +1442,7 @@
         console.log('  ✅ Search events');
         console.log('  ✅ Buy Ticket → Redirects to payment.html');
         console.log('  ✅ Mobile responsive');
+        console.log('  ✅ Cinematic scroll motion:', motionReady ? 'ON (GSAP + Lenis)' : 'reduced/fallback');
     </script>
 </body>
 </html>

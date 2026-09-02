@@ -674,17 +674,17 @@
             }
         }
 
-        // ============================================
-        // WHATSAPP NOTIFICATION - WORKING, DO NOT MODIFY
+       // ============================================
+        // SEND WHATSAPP NOTIFICATION - FIXED FOR MOBILE
         // ============================================
         function sendWhatsAppNotification(name, email, phone, event, reference, receiptUrl) {
-            if (isNotifying) {
-                console.log('⚠️ Already notifying, skipping duplicate');
-                return;
-            }
-            isNotifying = true;
+         if (isNotifying) {
+        console.log('⚠️ Already notifying, skipping duplicate');
+        return;
+          }
+        isNotifying = true;
 
-            const confirmLink = `${window.location.origin}/payment-confirm.html?ref=${reference}`;
+        const confirmLink = `${window.location.origin}/payment-confirm.html?ref=${reference}`;
 
             let message = `🎉 *NEW TICKET PURCHASE!*%0A%0A`;
             message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
@@ -706,22 +706,28 @@
             message += `✅ Please confirm this payment on the dashboard.`;
 
             if (ADMIN_PHONE) {
-                const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
-                console.log('📱 Opening WhatsApp:', waUrl);
-                const newWindow = window.open(waUrl, '_blank');
-
-                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                    console.log('⚠️ Popup blocked, showing manual instructions');
-                    alert('📱 Please open WhatsApp and send this message to Admin:\n\n' + message.replace(/%0A/g, '\n'));
-                }
+        const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
+        console.log('📱 Opening WhatsApp:', waUrl);
+        
+        // ✅ FIX: Use location.href for mobile compatibility
+        if (window.innerWidth <= 768) {
+            // Mobile: Use location.href (more reliable)
+            window.location.href = waUrl;
+        } else {
+            // Desktop: Try new window first, fallback to location.href
+            const newWindow = window.open(waUrl, '_blank');
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                window.location.href = waUrl;
             }
-
-            setTimeout(() => {
-                isNotifying = false;
-            }, 5000);
-
-            console.log('📱 WhatsApp notification sent to Admin!');
         }
+             }
+
+                setTimeout(() => {
+                    isNotifying = false;
+                }, 5000);
+
+                console.log('📱 WhatsApp notification sent to Admin!');
+            }
 
         // ============================================
         // SEND EMAIL NOTIFICATION

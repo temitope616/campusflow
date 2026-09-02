@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics | CampusFlow Admin</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="./dashboard.css" />
+
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        .analytics-card .number {
+            font-size: 36px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+        .analytics-card .label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .analytics-card .change {
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .change.up { color: #10b981; }
+        .change.down { color: #ef4444; }
+
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 16px;
+            color: #1a1a2e;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 200px;
+            padding-top: 16px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #8b5cf6, #3b82f6);
+            border-radius: 6px 6px 0 0;
+            transition: height 0.6s ease;
+            min-height: 10px;
+            position: relative;
+        }
+
+        .bar .label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .bar .value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .topbar .logout-btn {
+            padding: 8px 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .bar-chart {
+                height: 150px;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <h1>📊 Analytics Dashboard</h1>
+        <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+    </div>
+
+    <div class="analytics-grid" id="analyticsGrid">
+        <div class="analytics-card">
+            <div class="number" id="totalRevenue">₦0</div>
+            <div class="label">Total Revenue</div>
+            <div class="change up" id="revenueChange">↑ 0% from last month</div>
+        </div>
+        <div class="analytics-card">
+            <div class="number" id="totalTickets">0</div>
+            <div class="label">Tickets Sold</div>
+            <div class="change up" id="ticketsChange">↑ 0% from last month</div>
+        </div>
+        <div class="analytics-card">
+            <div class="number" id="totalEvents">0</div>
+            <div class="label">Total Events</div>
+            <div class="change" id="eventsChange">📅 Active events</div>
+        </div>
+        <div class="analytics-card">
+            <div class="number" id="conversionRate">0%</div>
+            <div class="label">Conversion Rate</div>
+            <div class="change" id="conversionChange">Views → Purchases</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h3>📈 Monthly Ticket Sales</h3>
+        <div class="bar-chart" id="salesChart"></div>
+    </div>
+
+    <div class="chart-container">
+        <h3>🏷️ Events by Category</h3>
+        <div class="bar-chart" id="categoryChart"></div>
+    </div>
+
+    <script>
+        // ============================================
+        // AUTH GUARD
+        // ============================================
+        (async function checkAuth() {
+            try {
+                const { data: { session }, error } = await sb.auth.getSession();
+                if (error || !session) {
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+            } catch (err) {
+                window.location.href = '/admin/login.html';
+            }
+        })();
+
+        // ============================================
+        // SUPABASE CONFIG
+        // ============================================
+        const SUPABASE_URL = "https://yfwxwqvksdsugxizaksj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        logoutBtn.addEventListener('click', async function() {
+            await sb.auth.signOut();
+            window.location.href = '/admin/login.html';
+        });
+
+        // ============================================
+        // LOAD ANALYTICS
+        // ============================================
+        async function loadAnalytics() {
+            try {
+                const { data: events } = await sb.from('events').select('*');
+                const { data: orders } = await sb.from('orders').select('*, events(*)');
+
+                const totalRevenue = orders
+                    .filter(o => o.status === 'success')
+                    .reduce((sum, o) => sum + (o.amount_paid || 0) + (o.service_fee || 0), 0);
+
+                const totalTickets = orders.filter(o => o.status === 'success').length;
+                const totalEvents = events ? events.length : 0;
+
+                document.getElementById('totalRevenue').textContent = `₦${totalRevenue.toLocaleString()}`;
+                document.getElementById('totalTickets').textContent = totalTickets;
+                document.getElementById('totalEvents').textContent = totalEvents;
+
+                // Conversion rate (example)
+                const views = 1000;
+                const conversion = Math.round((totalTickets / views) * 100);
+                document.getElementById('conversionRate').textContent = `${conversion}%`;
+
+                // Monthly sales chart
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                const sales = [120, 200, 150, 300, 250, 450];
+
+                const salesChart = document.getElementById('salesChart');
+                const maxSales = Math.max(...sales);
+
+                salesChart.innerHTML = sales.map((sale, i) => `
+                    <div class="bar" style="height: ${(sale / maxSales) * 100}%;">
+                        <span class="value">${sale}</span>
+                        <span class="label">${months[i]}</span>
+                    </div>
+                `).join('');
+
+                // Category chart
+                const categoryMap = {};
+                events.forEach(e => {
+                    const cat = e.category || 'Other';
+                    categoryMap[cat] = (categoryMap[cat] || 0) + 1;
+                });
+
+                const categories = Object.keys(categoryMap);
+                const counts = Object.values(categoryMap);
+                const maxCount = Math.max(...counts);
+
+                const categoryChart = document.getElementById('categoryChart');
+                categoryChart.innerHTML = categories.map((cat, i) => `
+                    <div class="bar" style="height: ${(counts[i] / maxCount) * 100}%; background: ${['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'][i % 5]};">
+                        <span class="value">${counts[i]}</span>
+                        <span class="label">${cat}</span>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        loadAnalytics();
+        setInterval(loadAnalytics, 60000);
+    </script>
+</body>
+</html>
