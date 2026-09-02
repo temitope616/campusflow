@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEON NIGHTS | Party Event</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ==========================================
+    HERO — PINNED, WORD-BY-WORD REVEAL
+    ========================================== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-glow glow-purple"></div>
+        <div class="hero-glow glow-cyan"></div>
+
+        <h1 class="hero-headline" id="heroHeadline">
+            <span class="word">NEON</span>
+            <span class="word">NIGHTS</span>
+            <span class="word">2026</span>
+        </h1>
+        <p class="hero-sub" id="heroSub">The most electric night of the year — one stage, three DJs, zero rules.</p>
+
+        <a href="#lineup" class="scroll-cue">Scroll to explore ↓</a>
+    </section>
+
+    <!-- ==========================================
+    LINEUP — PINNED + HORIZONTAL SCROLL (scrub)
+    ========================================== -->
+    <section class="lineup-pin" id="lineup">
+        <h2 class="section-title">DJ LINEUP</h2>
+
+        <div class="lineup-track">
+            <article class="dj-card skew-el">
+                <div class="dj-avatar" style="background: linear-gradient(135deg, #9d4edd, #ff007f);"></div>
+                <h3>DJ VOLT</h3>
+                <p>Main Stage · 10PM</p>
+            </article>
+            <article class="dj-card skew-el">
+                <div class="dj-avatar" style="background: linear-gradient(135deg, #00f5ff, #9d4edd);"></div>
+                <h3>NEBULA</h3>
+                <p>Main Stage · 11PM</p>
+            </article>
+            <article class="dj-card skew-el">
+                <div class="dj-avatar" style="background: linear-gradient(135deg, #ff007f, #00f5ff);"></div>
+                <h3>KRYPT</h3>
+                <p>Rooftop Stage · 12AM</p>
+            </article>
+            <article class="dj-card skew-el">
+                <div class="dj-avatar" style="background: linear-gradient(135deg, #9d4edd, #00f5ff);"></div>
+                <h3>ECHO REIGN</h3>
+                <p>Rooftop Stage · 1AM</p>
+            </article>
+            <article class="dj-card skew-el">
+                <div class="dj-avatar" style="background: linear-gradient(135deg, #ff007f, #9d4edd);"></div>
+                <h3>MIDNIGHT VIBE</h3>
+                <p>Main Stage · 2AM</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- ==========================================
+    HIGHLIGHTS — STACKING CARDS
+    ========================================== -->
+    <section class="highlights-section" id="highlights">
+        <h2 class="section-title">EVENT HIGHLIGHTS</h2>
+
+        <div class="stack-wrap">
+            <div class="stack-card skew-el" style="background: radial-gradient(circle at 30% 20%, rgba(157,78,221,0.35), rgba(10,10,12,0.9));">
+                <span class="stack-tag">01</span>
+                <h3>VIP ACCESS</h3>
+                <p>Skip the line, private lounge, dedicated bar, and a view over the whole main stage.</p>
+            </div>
+            <div class="stack-card skew-el" style="background: radial-gradient(circle at 70% 30%, rgba(0,245,255,0.3), rgba(10,10,12,0.9));">
+                <span class="stack-tag">02</span>
+                <h3>LASER SHOW</h3>
+                <p>A full-room laser and light rig synced live to every DJ set on the main stage.</p>
+            </div>
+            <div class="stack-card skew-el" style="background: radial-gradient(circle at 50% 70%, rgba(255,0,127,0.3), rgba(10,10,12,0.9));">
+                <span class="stack-tag">03</span>
+                <h3>OPEN BAR</h3>
+                <p>Unlimited signature cocktails from 9PM to midnight, included with every ticket.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+    RSVP FORM
+    ========================================== -->
+    <section class="rsvp-section" id="rsvp">
+        <h2 class="section-title">RSVP NOW</h2>
+        <p class="rsvp-sub">Reserve your spot — limited capacity.</p>
+
+        <form class="rsvp-form" id="rsvpForm">
+            <input type="text" placeholder="Full name" required />
+            <input type="email" placeholder="Email address" required />
+            <input type="tel" placeholder="Phone number" />
+            <button type="submit" class="rsvp-btn">RESERVE MY SPOT</button>
+        </form>
+        <p class="rsvp-note">This is a demo form — it doesn't submit anywhere yet.</p>
+    </section>
+
+    <footer class="site-footer">
+        <p>NEON NIGHTS © 2026 — Demo page for design reference</p>
+    </footer>
+
+    <!-- GSAP + ScrollTrigger via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

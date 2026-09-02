@@ -39,7 +39,9 @@ loginForm.addEventListener("submit", async (e)=>{
 
     setTimeout(()=>{
 
-        window.location.href="dashboard.html";
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get("redirect");
+        window.location.href = redirectTo || "dashboard.html";
 
     },1000);
 

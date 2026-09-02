@@ -7,7 +7,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
     <style>
         * {
             margin: 0;
@@ -366,7 +365,7 @@
         (async function requireLogin() {
             const { data: { session } } = await sb.auth.getSession();
             if (!session) {
-                window.location.href = '/admin/login.html';
+                window.location.href = '/admin/login.html?redirect=' + encodeURIComponent(window.location.pathname);
             }
         })();
 
