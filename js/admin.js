@@ -1,188 +1,173 @@
-
-
-
-// Check Login
-async function checkLogin(){
-
-const { data:{session} } =
-await sb.auth.getSession();
-
-if(!session){
-
-window.location.href="login.html";
-
-}
-
+// ============================================
+// CHECK LOGIN (fail-safe: any error also redirects)
+// ============================================
+async function checkLogin() {
+    try {
+        const { data: { session }, error } = await sb.auth.getSession();
+        if (error || !session) {
+            window.location.href = "login.html";
+        }
+    } catch (err) {
+        console.error("Auth check failed, redirecting to login:", err);
+        window.location.href = "login.html";
+    }
 }
 
 checkLogin();
 
-
-// Logout
-document
-.getElementById("logoutBtn")
-.onclick = async ()=>{
-
-await sb.auth.signOut();
-
-window.location.href="login.html";
-
+// ============================================
+// LOGOUT
+// ============================================
+document.getElementById("logoutBtn").onclick = async () => {
+    await sb.auth.signOut();
+    window.location.href = "login.html";
 };
 
+// ============================================
+// STATE
+// ============================================
+let allEvents = [];
+let searchQuery = "";
 
-// Load Events
-async function loadEvents(){
+// ============================================
+// LOAD EVENTS
+// ============================================
+async function loadEvents() {
+    const { data, error } = await sb
+        .from("events")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-const { data, error } =
-await sb
-.from("events")
-.select("*")
-.order("created_at",{ascending:false});
+    if (error) {
+        console.error(error);
+        return;
+    }
 
-if(error){
+    allEvents = data || [];
 
-console.log(error);
+    document.getElementById("totalEvents").innerText = allEvents.length;
+    document.getElementById("pendingEvents").innerText = allEvents.filter(e => !e.is_published).length;
+    document.getElementById("approvedEvents").innerText = allEvents.filter(e => e.is_published).length;
 
-return;
-
+    renderEvents();
 }
 
-document.getElementById("totalEvents").innerText =
-data.length;
+// ============================================
+// RENDER EVENTS (respects the current search query)
+// ============================================
+function renderEvents() {
+    const container = document.getElementById("eventsContainer");
+    const resultsCount = document.getElementById("resultsCount");
 
-document.getElementById("pendingEvents").innerText =
-data.filter(e=>!e.is_published).length;
+    let events = allEvents;
 
-document.getElementById("approvedEvents").innerText =
-data.filter(e=>e.is_published).length;
+    if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        events = events.filter(e =>
+            (e.title || "").toLowerCase().includes(q) ||
+            (e.organizer_name || "").toLowerCase().includes(q) ||
+            (e.venue || "").toLowerCase().includes(q)
+        );
+    }
 
-const container =
-document.getElementById("eventsContainer");
+    resultsCount.innerText = searchQuery.trim()
+        ? `${events.length} result${events.length === 1 ? "" : "s"}`
+        : `${events.length} total`;
 
-container.innerHTML="";
+    if (events.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div style="font-size:40px;margin-bottom:10px;">🔍</div>
+                <p>No events match your search.</p>
+            </div>
+        `;
+        return;
+    }
 
-data.forEach(event=>{
+    container.innerHTML = events.map(event => `
+        <div class="event-card">
+            <img src="${event.banner_url || ''}" alt="${event.title}" onerror="this.style.display='none'">
+            <div class="event-body">
+                <h2>${event.title}</h2>
+                <p><strong>Organizer:</strong> ${event.organizer_name}</p>
+                <p><strong>Venue:</strong> ${event.venue}</p>
+                <p><strong>Date:</strong> ${event.event_date ? new Date(event.event_date).toLocaleString() : 'N/A'}</p>
+                <p><strong>Price:</strong> ₦${event.price}</p>
+                <span class="status-pill ${event.is_published ? 'approved' : 'pending'}">
+                    ${event.is_published ? '✅ Approved' : '⏳ Pending'}
+                </span>
+                <div class="buttons">
+                    <button class="approve" onclick="approveEvent('${event.id}')">Approve</button>
+                    <button class="reject" onclick="rejectEvent('${event.id}')">Reject</button>
+                    <button class="delete" onclick="deleteEvent('${event.id}')">Delete</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
 
-container.innerHTML += `
-
-<div class="event-card">
-
-<img src="${event.banner_url}">
-
-<h2>${event.title}</h2>
-
-<p><strong>Organizer:</strong>
-${event.organizer_name}</p>
-
-<p><strong>Venue:</strong>
-${event.venue}</p>
-
-<p><strong>Date:</strong>
-${event.event_date}</p>
-
-<p><strong>Price:</strong>
-₦${event.price}</p>
-
-<p><strong>Status:</strong>
-
-${event.is_published
-? "✅ Approved"
-: "⏳ Pending"}
-
-</p>
-
-<div class="buttons">
-
-<button
-class="approve"
-onclick="approveEvent('${event.id}')">
-
-Approve
-
-</button>
-
-<button
-class="reject"
-onclick="rejectEvent('${event.id}')">
-
-Reject
-
-</button>
-
-<button
-class="delete"
-onclick="deleteEvent('${event.id}')">
-
-Delete
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
+// ============================================
+// SEARCH
+// ============================================
+document.getElementById("searchInput").addEventListener("input", function() {
+    searchQuery = this.value;
+    renderEvents();
 });
 
+// ============================================
+// APPROVE / REJECT / DELETE
+// ============================================
+async function approveEvent(id) {
+    await sb.from("events").update({ is_published: true }).eq("id", id);
+    loadEvents();
 }
 
-loadEvents();
-
-
-// APPROVE
-async function approveEvent(id){
-
-await sb
-
-.from("events")
-
-.update({
-
-is_published:true
-
-})
-
-.eq("id",id);
-
-loadEvents();
-
+async function rejectEvent(id) {
+    await sb.from("events").update({ is_published: false }).eq("id", id);
+    loadEvents();
 }
 
-
-// REJECT
-async function rejectEvent(id){
-
-await sb
-
-.from("events")
-
-.update({
-
-is_published:false
-
-})
-
-.eq("id",id);
-
-loadEvents();
-
+async function deleteEvent(id) {
+    if (!confirm("Delete this event?")) return;
+    await sb.from("events").delete().eq("id", id);
+    loadEvents();
 }
 
+// ============================================
+// VIEWER / USER STATS
+// "Viewers" = every visit logged (site_visits row count)
+// "Users"   = distinct device_id values among those rows
+// ============================================
+async function loadVisitStats() {
+    try {
+        const { count, error: countError } = await sb
+            .from("site_visits")
+            .select("*", { count: "exact", head: true });
 
-// DELETE
-async function deleteEvent(id){
+        if (countError) throw countError;
 
-if(!confirm("Delete this event?")) return;
+        const { data: idsData, error: idsError } = await sb
+            .from("site_visits")
+            .select("device_id");
 
-await sb
+        if (idsError) throw idsError;
 
-.from("events")
+        const uniqueUsers = new Set((idsData || []).map(r => r.device_id)).size;
 
-.delete()
-
-.eq("id",id);
-
-loadEvents();
-
+        document.getElementById("totalViewers").innerText = count || 0;
+        document.getElementById("totalUsers").innerText = uniqueUsers;
+    } catch (err) {
+        console.error("Error loading visit stats (has the site_visits table been created yet?):", err);
+        document.getElementById("totalViewers").innerText = "—";
+        document.getElementById("totalUsers").innerText = "—";
+    }
 }
+
+// ============================================
+// START
+// ============================================
+loadEvents();
+loadVisitStats();
+
+// Keep stats fresh without needing a manual refresh
+setInterval(loadVisitStats, 30000);

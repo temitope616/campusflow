@@ -363,8 +363,13 @@
         // AUTH GUARD - block access unless logged in
         // ============================================
         (async function requireLogin() {
-            const { data: { session } } = await sb.auth.getSession();
-            if (!session) {
+            try {
+                const { data: { session }, error } = await sb.auth.getSession();
+                if (error || !session) {
+                    window.location.href = '/admin/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                }
+            } catch (err) {
+                console.error('Auth check failed, redirecting to login:', err);
                 window.location.href = '/admin/login.html?redirect=' + encodeURIComponent(window.location.pathname);
             }
         })();

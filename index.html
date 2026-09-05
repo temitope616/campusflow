@@ -389,6 +389,46 @@
             flex-wrap: wrap;
         }
 
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .view-btn {
+            padding: 10px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #c4b5d4;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .view-btn:hover {
+            border-color: #ec4899;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2, #ec4899);
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        #eventsContainer {
+            transition: opacity 0.25s ease;
+        }
+
+        #eventsContainer.switching {
+            opacity: 0;
+        }
+
         .category-btn {
             padding: 8px 18px;
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -470,7 +510,8 @@
             position: relative;
             z-index: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+            justify-content: center;
             gap: 24px;
             max-width: 1200px;
             margin: 0 auto;
@@ -679,6 +720,12 @@
             font-weight: 400;
             color: #9ca3af;
             -webkit-text-fill-color: #9ca3af;
+        }
+
+        .event-card .info .price.free-price {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .event-card .info .fee-badge {
@@ -895,8 +942,7 @@
 
         @media (min-width: 481px) and (max-width: 768px) {
             .events-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
             }
             .header h1 {
                 font-size: 34px;
@@ -905,8 +951,7 @@
 
         @media (min-width: 769px) and (max-width: 1024px) {
             .events-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
             }
         }
 
@@ -1008,6 +1053,10 @@
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="🔍 Search events by title, venue, or organizer..." />
         </div>
+        <div class="view-toggle" id="viewToggle">
+            <button class="view-btn active" data-view="upcoming">🔥 Upcoming</button>
+            <button class="view-btn" data-view="past">📅 Past Events</button>
+        </div>
         <div class="category-filters" id="categoryFilters">
             <button class="category-btn active" data-category="all">🎯 All</button>
             <button class="category-btn" data-category="music">🎵 Music</button>
@@ -1058,6 +1107,7 @@
         let allEvents = [];
         let currentCategory = 'all';
         let searchQuery = '';
+        let currentView = 'upcoming';
 
         // ============================================
         // LOAD EVENTS (ONLY APPROVED)
@@ -1140,32 +1190,48 @@
 
             let html = '';
 
-            // UPCOMING EVENTS
-            if (upcoming.length > 0) {
-                html += `
-                    <div class="section-title">
-                        <span class="emoji">🔥</span> Upcoming Events
-                        <span class="line"></span>
-                        <span class="count-badge">${upcoming.length}</span>
-                    </div>
-                    <div class="events-grid">
-                        ${upcoming.map(event => createEventCard(event, 'upcoming')).join('')}
-                    </div>
-                `;
-            }
-
-            // PAST EVENTS
-            if (past.length > 0) {
-                html += `
-                    <div class="section-title past">
-                        <span class="emoji">📅</span> Past Events
-                        <span class="line"></span>
-                        <span class="count-badge">${past.length}</span>
-                    </div>
-                    <div class="events-grid">
-                        ${past.map(event => createEventCard(event, 'past')).join('')}
-                    </div>
-                `;
+            if (currentView === 'upcoming') {
+                if (upcoming.length > 0) {
+                    html += `
+                        <div class="section-title">
+                            <span class="emoji">🔥</span> Upcoming Events
+                            <span class="line"></span>
+                            <span class="count-badge">${upcoming.length}</span>
+                        </div>
+                        <div class="events-grid">
+                            ${upcoming.map(event => createEventCard(event, 'upcoming')).join('')}
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="empty-state">
+                            <div class="icon">🎉</div>
+                            <h3>No Upcoming Events Yet</h3>
+                            <p>Check back soon, or browse past events.</p>
+                        </div>
+                    `;
+                }
+            } else {
+                if (past.length > 0) {
+                    html += `
+                        <div class="section-title past">
+                            <span class="emoji">📅</span> Past Events
+                            <span class="line"></span>
+                            <span class="count-badge">${past.length}</span>
+                        </div>
+                        <div class="events-grid">
+                            ${past.map(event => createEventCard(event, 'past')).join('')}
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="empty-state">
+                            <div class="icon">📅</div>
+                            <h3>No Past Events</h3>
+                            <p>Nothing here yet.</p>
+                        </div>
+                    `;
+                }
             }
 
             if (filtered.length === 0) {
@@ -1226,7 +1292,20 @@
 
             const buttonDisabled = isPast ? 'disabled' : '';
             const buttonClass = isPast ? 'buy-btn past-event' : 'buy-btn';
-            const buttonText = isPast ? '📅 Event Passed' : '🎟️ Buy Ticket';
+            let buttonText = isPast ? '📅 Event Passed' : '🎟️ Buy Ticket';
+            if (!isPast && event.is_free) {
+                buttonText = '🎉 RSVP Free';
+            }
+
+            const priceRowHtml = event.is_free
+                ? `<div class="price-row">
+                       <span class="price free-price">🎉 FREE</span>
+                       <span class="fee-badge">No ticket needed</span>
+                   </div>`
+                : `<div class="price-row">
+                       <span class="price">₦${event.price} <small>(+ ₦100 fee)</small></span>
+                       <span class="fee-badge">🎫 incl. fee</span>
+                   </div>`;
 
             return `
                 <div class="event-card">
@@ -1243,10 +1322,7 @@
                         <div class="category-tag">🏷️ ${event.category || 'General'}</div>
                         <div class="meta"><span class="icon">📍</span> <strong>Venue:</strong> ${event.venue}</div>
                         <div class="meta"><span class="icon">📅</span> <strong>Date:</strong> ${eventDate.toLocaleString()}</div>
-                        <div class="price-row">
-                            <span class="price">₦${event.price} <small>(+ ₦100 fee)</small></span>
-                            <span class="fee-badge">🎫 incl. fee</span>
-                        </div>
+                        ${priceRowHtml}
                         <button class="${buttonClass}" onclick="openModal('${event.id}')" ${buttonDisabled}>
                             ${buttonText}
                         </button>
@@ -1256,7 +1332,7 @@
         }
 
         // ============================================
-        // OPEN MODAL - REDIRECT TO PAYMENT PAGE
+        // OPEN MODAL - REDIRECT TO PAYMENT OR RSVP PAGE
         // ============================================
         async function openModal(eventId) {
             try {
@@ -1278,8 +1354,13 @@
                     return;
                 }
 
-                console.log('✅ Redirecting to payment page');
-                window.location.href = `payment.html?eventId=${event.id}`;
+                if (event.is_free) {
+                    console.log('✅ Redirecting to RSVP page (free event)');
+                    window.location.href = `rsvp.html?eventId=${event.id}`;
+                } else {
+                    console.log('✅ Redirecting to payment page');
+                    window.location.href = `payment.html?eventId=${event.id}`;
+                }
 
             } catch (error) {
                 console.error('❌ Error:', error);
@@ -1301,6 +1382,26 @@
                 this.classList.add('active');
                 currentCategory = this.dataset.category;
                 renderEvents(allEvents);
+            });
+        });
+
+        // ============================================
+        // UPCOMING / PAST VIEW TOGGLE
+        // ============================================
+        const viewBtns = document.querySelectorAll('.view-btn');
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.dataset.view === currentView) return;
+
+                viewBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentView = this.dataset.view;
+
+                eventsContainer.classList.add('switching');
+                setTimeout(function() {
+                    renderEvents(allEvents);
+                    eventsContainer.classList.remove('switching');
+                }, 200);
             });
         });
 
@@ -1527,6 +1628,33 @@
         }
 
         // ============================================
+        // SITE VISIT TRACKING
+        // "Viewers" = every page load logged (counted every time)
+        // "Users"   = distinct device IDs (counted once per device, ever)
+        // ============================================
+        function initVisitTracking() {
+            try {
+                let deviceId = localStorage.getItem('cf_device_id');
+                if (!deviceId) {
+                    deviceId = (window.crypto && crypto.randomUUID)
+                        ? crypto.randomUUID()
+                        : 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+                    localStorage.setItem('cf_device_id', deviceId);
+                }
+
+                sb.from('site_visits')
+                  .insert([{ device_id: deviceId, page: 'index' }])
+                  .then(function(res) {
+                      if (res.error) {
+                          console.log('Visit log skipped:', res.error.message);
+                      }
+                  });
+            } catch (err) {
+                console.log('Visit tracking unavailable:', err);
+            }
+        }
+
+        // ============================================
         // START
         // ============================================
         initSmoothScroll();
@@ -1534,6 +1662,7 @@
         initOrbParallax();
         initMagneticButtons();
         initPartyAtmosphere();
+        initVisitTracking();
 
         loadEvents();
 

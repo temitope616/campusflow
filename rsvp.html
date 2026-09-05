@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSVP | CampusFlow</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 460px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-summary {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .event-summary img {
+            width: 100%;
+            max-height: 160px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-bottom: 14px;
+        }
+
+        .event-summary h1 {
+            font-size: 20px;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .event-summary .meta {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .free-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: #d1fae5;
+            color: #065f46;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #fafafa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #10b981;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .rsvp-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #34d399, #059669);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s;
+        }
+
+        .rsvp-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .rsvp-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .success-state {
+            text-align: center;
+            padding: 10px 0;
+            display: none;
+        }
+
+        .success-state .checkmark {
+            font-size: 64px;
+        }
+
+        .success-state h2 {
+            color: #065f46;
+            margin: 14px 0 8px;
+        }
+
+        .success-state p {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div id="loadingState" style="text-align:center; padding: 40px 0;">
+            <p>⏳ Loading event...</p>
+        </div>
+
+        <div id="rsvpWrapper" style="display:none;">
+            <div class="event-summary">
+                <img id="eventBanner" src="" alt="" />
+                <h1 id="eventTitle"></h1>
+                <div class="meta" id="eventVenue"></div>
+                <div class="meta" id="eventDate"></div>
+                <span class="free-badge">🎉 FREE EVENT</span>
+            </div>
+
+            <form id="rsvpForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required />
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number (optional)</label>
+                    <input type="tel" id="phone" />
+                </div>
+
+                <button type="submit" class="rsvp-btn" id="rsvpBtn">🎉 Confirm My Spot</button>
+                <div class="message" id="message"></div>
+            </form>
+        </div>
+
+        <div class="success-state" id="successState">
+            <div class="checkmark">✅</div>
+            <h2>You're In!</h2>
+            <p>Your free spot has been reserved. See you at the event!</p>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================
+        // SUPABASE CONFIG
+        // ============================================
+        const SUPABASE_URL = 'https://yfwxwqvksdsugxizaksj.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO';
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================
+        // ADMIN CONTACT (for RSVP notifications)
+        // ============================================
+        const ADMIN_PHONE = '2348146275644';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('eventId');
+
+        const loadingState = document.getElementById('loadingState');
+        const rsvpWrapper = document.getElementById('rsvpWrapper');
+        const successState = document.getElementById('successState');
+        const messageEl = document.getElementById('message');
+        const rsvpForm = document.getElementById('rsvpForm');
+        const rsvpBtn = document.getElementById('rsvpBtn');
+
+        let selectedEvent = null;
+
+        // ============================================
+        // LOAD EVENT
+        // ============================================
+        async function loadEvent() {
+            if (!eventId) {
+                loadingState.innerHTML = '<p>❌ No event specified.</p>';
+                return;
+            }
+
+            try {
+                const { data: event, error } = await sb
+                    .from('events')
+                    .select('*')
+                    .eq('id', eventId)
+                    .single();
+
+                if (error) throw error;
+
+                selectedEvent = event;
+
+                document.getElementById('eventBanner').src = event.banner_url || '';
+                document.getElementById('eventTitle').textContent = event.title;
+                document.getElementById('eventVenue').textContent = '📍 ' + event.venue;
+                document.getElementById('eventDate').textContent = '📅 ' + new Date(event.event_date).toLocaleString();
+
+                loadingState.style.display = 'none';
+                rsvpWrapper.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading event:', error);
+                loadingState.innerHTML = '<p>❌ Could not load this event.</p>';
+            }
+        }
+
+        // ============================================
+        // SEND WHATSAPP NOTIFICATION TO ADMIN
+        // ============================================
+        function sendRsvpNotification(name, email, phone, event, preOpenedWindow) {
+            let message = `🎉 *NEW FREE RSVP!*%0A%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `👤 *Name:* ${name}%0A`;
+            message += `📧 *Email:* ${email}%0A`;
+            message += `📱 *Phone:* ${phone || 'N/A'}%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `📋 *Event:* ${event.title}%0A`;
+            message += `📍 *Venue:* ${event.venue}%0A`;
+            message += `📅 *Date:* ${new Date(event.event_date).toLocaleString()}%0A`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
+            message += `✅ No payment needed \u2014 this is a free RSVP.`;
+
+            if (!ADMIN_PHONE) return;
+            const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
+
+            if (preOpenedWindow && !preOpenedWindow.closed) {
+                preOpenedWindow.location.href = waUrl;
+            } else {
+                window.open(waUrl, '_blank');
+            }
+        }
+
+        // ============================================
+        // FORM SUBMIT
+        // ============================================
+        rsvpForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!name || !email) {
+                messageEl.textContent = 'Please fill in your name and email.';
+                messageEl.className = 'message error';
+                return;
+            }
+
+            rsvpBtn.disabled = true;
+            rsvpBtn.textContent = 'Reserving your spot...';
+
+            // Reserve the WhatsApp tab synchronously, before any await,
+            // so the browser doesn't block it as a delayed popup.
+            const waWindow = ADMIN_PHONE ? window.open('', '_blank') : null;
+
+            try {
+                const reference = 'RSVP-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+
+                const { error: insertError } = await sb
+                    .from('orders')
+                    .insert([{
+                        event_id: selectedEvent.id,
+                        customer_name: name,
+                        customer_email: email,
+                        amount_paid: 0,
+                        service_fee: 0,
+                        paystack_ref: reference,
+                        status: 'success',
+                        confirmed_at: new Date().toISOString(),
+                        receipt_url: null
+                    }]);
+
+                if (insertError) throw insertError;
+
+                sendRsvpNotification(name, email, phone, selectedEvent, waWindow);
+
+                rsvpWrapper.style.display = 'none';
+                successState.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error submitting RSVP:', error);
+                messageEl.textContent = 'Something went wrong: ' + error.message;
+                messageEl.className = 'message error';
+                rsvpBtn.disabled = false;
+                rsvpBtn.textContent = '🎉 Confirm My Spot';
+                if (waWindow && !waWindow.closed) waWindow.close();
+            }
+        });
+
+        loadEvent();
+    </script>
+</body>
+</html>

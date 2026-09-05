@@ -303,6 +303,34 @@
             gap: 12px;
         }
 
+        .toggle-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fafafa;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            border-color: #a5b4fc;
+        }
+
+        .toggle-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
         small {
             color: #6b7280;
             font-size: 12px;
@@ -368,10 +396,23 @@
                     <input type="datetime-local" id="eventDate" required />
                 </div>
 
-                <!-- Price -->
+                <!-- Free or Ticketed -->
                 <div class="form-group">
+                    <label>Is this event free or does it have a ticket? <span class="required">*</span></label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" id="freeToggleBtn" data-value="free">
+                            🎉 Free Event
+                        </button>
+                        <button type="button" class="toggle-btn" id="ticketToggleBtn" data-value="ticket">
+                            🎟️ Has a Ticket
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Price (only shown for ticketed events) -->
+                <div class="form-group" id="priceGroup" style="display:none;">
                     <label for="price">Ticket Price (₦) <span class="required">*</span></label>
-                    <input type="number" id="price" placeholder="0" min="0" step="100" required />
+                    <input type="number" id="price" placeholder="0" min="0" step="100" />
                     <small>Our service fee (₦100) will be added at checkout</small>
                 </div>
 
@@ -394,14 +435,14 @@
                     <input type="text" id="organizer" placeholder="e.g., Student Affairs Office" required />
                 </div>
 
-                <!-- Bank Details -->
-                <div class="form-group">
+                <!-- Bank Details (only shown for ticketed events) -->
+                <div class="form-group" id="bankGroup" style="display:none;">
                     <label>Bank Details for Payouts <span class="required">*</span></label>
                     <div class="row-group">
-                        <input type="text" id="bankName" placeholder="Bank Name" required />
-                        <input type="text" id="accountName" placeholder="Account Name" required />
+                        <input type="text" id="bankName" placeholder="Bank Name" />
+                        <input type="text" id="accountName" placeholder="Account Name" />
                     </div>
-                    <input type="text" id="accountNumber" placeholder="Account Number" style="margin-top:8px;" required />
+                    <input type="text" id="accountNumber" placeholder="Account Number" style="margin-top:8px;" />
                 </div>
 
                 <!-- Flyer Upload -->
@@ -479,6 +520,13 @@
         const accountNameInput = document.getElementById('accountName');
         const accountNumberInput = document.getElementById('accountNumber');
 
+        // Free/Ticketed toggle
+        const freeToggleBtn = document.getElementById('freeToggleBtn');
+        const ticketToggleBtn = document.getElementById('ticketToggleBtn');
+        const priceGroup = document.getElementById('priceGroup');
+        const bankGroup = document.getElementById('bankGroup');
+        let isFree = true;
+
         // File upload elements
         const fileInput = document.getElementById('flyerInput');
         const uploadArea = document.getElementById('uploadArea');
@@ -489,6 +537,26 @@
         // STATE
         // ============================================
         let selectedFile = null;
+
+        // ============================================
+        // FREE / TICKETED TOGGLE
+        // ============================================
+        freeToggleBtn.addEventListener('click', function() {
+            isFree = true;
+            freeToggleBtn.classList.add('active');
+            ticketToggleBtn.classList.remove('active');
+            priceGroup.style.display = 'none';
+            bankGroup.style.display = 'none';
+            priceInput.value = '';
+        });
+
+        ticketToggleBtn.addEventListener('click', function() {
+            isFree = false;
+            ticketToggleBtn.classList.add('active');
+            freeToggleBtn.classList.remove('active');
+            priceGroup.style.display = 'block';
+            bankGroup.style.display = 'block';
+        });
 
         // ============================================
         // FILE UPLOAD HANDLING
@@ -606,19 +674,31 @@
                 description: descriptionInput.value.trim(),
                 venue: venueInput.value.trim(),
                 event_date: dateInput.value,
-                price: parseFloat(priceInput.value) || 0,
+                price: isFree ? 0 : (parseFloat(priceInput.value) || 0),
                 category: categoryInput.value,
                 organizer_name: organizerInput.value.trim(),
-                bank_name: bankNameInput.value.trim(),
-                account_name: accountNameInput.value.trim(),
-                account_number: accountNumberInput.value.trim(),
+                is_free: isFree,
+                bank_name: isFree ? '' : bankNameInput.value.trim(),
+                account_name: isFree ? '' : accountNameInput.value.trim(),
+                account_number: isFree ? '' : accountNumberInput.value.trim(),
             };
 
             // Validate required fields
-            if (!formData.title || !formData.venue || !formData.event_date ||
-                !formData.organizer_name || !formData.category ||
-                !formData.bank_name || !formData.account_name || !formData.account_number) {
+            const missingCommon = !formData.title || !formData.venue || !formData.event_date ||
+                !formData.organizer_name || !formData.category;
+
+            const missingTicketFields = !isFree && (
+                !priceInput.value || parseFloat(priceInput.value) <= 0 ||
+                !formData.bank_name || !formData.account_name || !formData.account_number
+            );
+
+            if (missingCommon) {
                 showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+
+            if (missingTicketFields) {
+                showMessage('Please enter a ticket price and your bank details for payouts.', 'error');
                 return;
             }
 
@@ -680,9 +760,10 @@
                     price: formData.price,
                     category: formData.category,
                     organizer_name: formData.organizer_name,
-                    bank_name: formData.bank_name,
-                    account_name: formData.account_name,
-                    account_number: formData.account_number,
+                    is_free: formData.is_free,
+                    bank_name: formData.bank_name || null,
+                    account_name: formData.account_name || null,
+                    account_number: formData.account_number || null,
                     banner_url: bannerUrl,
                     is_published: false,
                 };
