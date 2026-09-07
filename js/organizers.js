@@ -108,19 +108,32 @@ function renderOrganizers() {
             `
             : `<div class="organizer-bank empty">No bank details on file (only submitted free events so far)</div>`;
 
-        const eventsListHtml = group.events.map(e => `
+        const eventsListHtml = group.events.map(e => {
+            const editLink = e.edit_token
+                ? `${window.location.origin}/organizer-edit.html?token=${e.edit_token}`
+                : null;
+            return `
             <li>
-                ${e.is_free ? '🎉' : '🎟️'} ${e.title}
-                <span class="mini-status ${e.is_published ? 'approved' : 'pending'}">
-                    ${e.is_published ? 'Approved' : 'Pending'}
-                </span>
+                <div class="event-row-top">
+                    <span>${e.title}</span>
+                    <span class="mini-status ${e.is_published ? 'approved' : 'pending'}">
+                        ${e.is_published ? 'Approved' : 'Pending'}
+                    </span>
+                </div>
+                ${editLink ? `
+                    <div class="edit-link-row-admin">
+                        <input type="text" readonly value="${editLink}" class="edit-link-field" />
+                        <button type="button" class="copy-edit-link-btn" data-link="${editLink}">Copy Link</button>
+                    </div>
+                ` : `<p class="no-edit-link">No edit link on file for this event (submitted before this feature existed).</p>`}
             </li>
-        `).join('');
+        `;
+        }).join('');
 
         return `
             <div class="organizer-card">
                 <div class="organizer-header">
-                    <h3>👤 ${group.name}</h3>
+                    <h3>${group.name}</h3>
                     <div class="organizer-tags">
                         <span class="tag">${group.events.length} event${group.events.length === 1 ? '' : 's'}</span>
                         <span class="tag">${approvedCount} approved</span>
@@ -143,6 +156,23 @@ function renderOrganizers() {
 document.getElementById("searchInput").addEventListener("input", function() {
     searchQuery = this.value;
     renderOrganizers();
+});
+
+// ============================================
+// COPY EDIT LINK (event delegation, since rows are dynamic)
+// ============================================
+document.getElementById("organizersContainer").addEventListener("click", function(e) {
+    const btn = e.target.closest(".copy-edit-link-btn");
+    if (!btn) return;
+
+    const link = btn.dataset.link;
+    navigator.clipboard.writeText(link).then(function() {
+        const originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(function() { btn.textContent = originalText; }, 1500);
+    }).catch(function() {
+        alert("Could not copy automatically. Link:\n\n" + link);
+    });
 });
 
 // ============================================

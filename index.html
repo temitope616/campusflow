@@ -28,28 +28,13 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding: 16px;
-            background: #0a0615;
+            background: #0a0a0a;
             background-image:
-                /* Party vibe gradient overlays */
-                radial-gradient(ellipse at 10% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 40%),
-                radial-gradient(ellipse at 90% 80%, rgba(167, 139, 250, 0.3) 0%, transparent 40%),
-                radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
-                /* Animated party background */
-                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="800"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" stop-color="%23667eea" stop-opacity="0.1"/%3E%3Cstop offset="50%25" stop-color="%23ec4899" stop-opacity="0.08"/%3E%3Cstop offset="100%25" stop-color="%23fcd34d" stop-opacity="0.05"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="800" height="800" fill="url(%23g1)"/%3E%3Ccircle cx="200" cy="200" r="100" fill="%23667eea" opacity="0.05"/%3E%3Ccircle cx="600" cy="400" r="150" fill="%23ec4899" opacity="0.04"/%3E%3Ccircle cx="400" cy="600" r="120" fill="%23fcd34d" opacity="0.03"/%3E%3C/svg%3E') center/cover,
-                linear-gradient(180deg, #0a0615 0%, #150b2e 40%, #1a0f3a 70%, #0a0615 100%);
-            color: #ffffff;
+                radial-gradient(ellipse at 15% 0%, rgba(34, 197, 94, 0.12) 0%, transparent 45%),
+                radial-gradient(ellipse at 100% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 40%);
+            color: #f5f5f5;
             position: relative;
             overflow-x: hidden;
-            animation: partyBg 8s ease-in-out infinite alternate;
-        }
-
-        @keyframes partyBg {
-            0% {
-                background-position: 0% 0%;
-            }
-            100% {
-                background-position: 100% 100%;
-            }
         }
 
         /* Animated floating particles for party vibe */
@@ -74,7 +59,7 @@
         .party-particle:nth-child(1) {
             width: 8px;
             height: 8px;
-            background: #a78bfa;
+            background: #86efac;
             left: 10%;
             animation-duration: 12s;
             animation-delay: 0s;
@@ -82,7 +67,7 @@
         .party-particle:nth-child(2) {
             width: 12px;
             height: 12px;
-            background: #ec4899;
+            background: #ffffff;
             left: 25%;
             animation-duration: 15s;
             animation-delay: 2s;
@@ -91,7 +76,7 @@
         .party-particle:nth-child(3) {
             width: 6px;
             height: 6px;
-            background: #fcd34d;
+            background: #ffffff;
             left: 40%;
             animation-duration: 10s;
             animation-delay: 4s;
@@ -108,7 +93,7 @@
         .party-particle:nth-child(5) {
             width: 14px;
             height: 14px;
-            background: #667eea;
+            background: #22c55e;
             left: 70%;
             animation-duration: 14s;
             animation-delay: 3s;
@@ -117,7 +102,7 @@
         .party-particle:nth-child(6) {
             width: 8px;
             height: 8px;
-            background: #f59e0b;
+            background: #4ade80;
             left: 85%;
             animation-duration: 16s;
             animation-delay: 5s;
@@ -125,7 +110,7 @@
         .party-particle:nth-child(7) {
             width: 16px;
             height: 16px;
-            background: #a78bfa;
+            background: #86efac;
             left: 50%;
             animation-duration: 20s;
             animation-delay: 7s;
@@ -134,7 +119,7 @@
         .party-particle:nth-child(8) {
             width: 6px;
             height: 6px;
-            background: #ec4899;
+            background: #ffffff;
             left: 15%;
             animation-duration: 11s;
             animation-delay: 6s;
@@ -168,30 +153,24 @@
         }
 
         .glow-orb.purple {
-            width: 500px;
-            height: 500px;
-            background: rgba(118, 75, 162, 0.25);
+            width: 480px;
+            height: 480px;
+            background: rgba(34, 197, 94, 0.1);
             top: -150px;
             right: -150px;
         }
 
         .glow-orb.pink {
-            width: 400px;
-            height: 400px;
-            background: rgba(236, 72, 153, 0.2);
-            bottom: -100px;
-            left: -100px;
-            animation-delay: 2.5s;
+            display: none;
         }
 
         .glow-orb.gold {
-            width: 350px;
-            height: 350px;
-            background: rgba(251, 191, 36, 0.12);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: 4s;
+            width: 380px;
+            height: 380px;
+            background: rgba(255, 255, 255, 0.04);
+            bottom: -120px;
+            left: -120px;
+            animation-delay: 3s;
         }
 
         @keyframes pulseOrb {
@@ -223,7 +202,7 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             background:
-                linear-gradient(135deg, rgba(10, 6, 21, 0.5) 0%, rgba(21, 11, 46, 0.6) 50%, rgba(26, 15, 58, 0.7) 100%),
+                linear-gradient(135deg, rgba(4, 12, 8, 0.5) 0%, rgba(6, 18, 12, 0.6) 50%, rgba(8, 24, 16, 0.7) 100%),
                 url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=300&fit=crop&crop=center&q=80') center/cover;
             background-blend-mode: overlay;
             animation: headerPulse 8s ease-in-out infinite alternate;
@@ -266,37 +245,21 @@
 
         .header h1 {
             font-size: 44px;
-            font-weight: 900;
+            font-weight: 800;
             letter-spacing: -1px;
-            text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
-            background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 30%, #fcd34d 60%, #fbbf24 80%, #fcd34d 100%);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmerGold 4s ease-in-out infinite;
-        }
-
-        @keyframes shimmerGold {
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
+            color: #ffffff;
         }
 
         .header h1 span {
-            -webkit-text-fill-color: white;
-            background: none;
-            text-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+            color: #22c55e;
+            text-shadow: 0 0 40px rgba(22, 163, 74, 0.3);
         }
 
         .header p {
             font-size: 18px;
             opacity: 0.95;
             margin-top: 6px;
-            color: #e0d4f0;
+            color: #d9f7e3;
             text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
         }
 
@@ -315,22 +278,22 @@
             backdrop-filter: blur(10px);
             border-radius: 20px;
             font-size: 12px;
-            color: #e0d4f0;
+            color: #d9f7e3;
             border: 1px solid rgba(255, 255, 255, 0.06);
             animation: pulseBadge 3s ease-in-out infinite;
         }
 
         .header .badge.hot {
-            background: rgba(251, 191, 36, 0.15);
-            border-color: rgba(251, 191, 36, 0.2);
-            color: #fcd34d;
+            background: rgba(74, 222, 128, 0.18);
+            border-color: rgba(134, 239, 172, 0.2);
+            color: #ffffff;
             animation-delay: 0.5s;
         }
 
         .header .badge.party {
-            background: rgba(236, 72, 153, 0.15);
-            border-color: rgba(236, 72, 153, 0.2);
-            color: #ec4899;
+            background: rgba(52, 211, 153, 0.15);
+            border-color: rgba(52, 211, 153, 0.2);
+            color: #ffffff;
             animation-delay: 1s;
         }
 
@@ -379,8 +342,8 @@
 
         .search-bar input:focus {
             outline: none;
-            border-color: #a78bfa;
-            box-shadow: 0 0 30px rgba(167, 139, 250, 0.1);
+            border-color: #86efac;
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.1);
         }
 
         .category-filters {
@@ -400,7 +363,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             background: rgba(255, 255, 255, 0.04);
-            color: #c4b5d4;
+            color: #9cd8b3;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
@@ -409,16 +372,15 @@
         }
 
         .view-btn:hover {
-            border-color: #ec4899;
+            border-color: #ffffff;
             color: #ffffff;
             transform: translateY(-2px);
         }
 
         .view-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2, #ec4899);
+            background: #16a34a;
             border-color: transparent;
             color: #ffffff;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
         }
 
         #eventsContainer {
@@ -434,7 +396,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.05);
-            color: #c4b5d4;
+            color: #9cd8b3;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
@@ -443,13 +405,13 @@
         }
 
         .category-btn:hover {
-            border-color: #a78bfa;
+            border-color: #86efac;
             color: #ffffff;
         }
 
         .category-btn.active {
-            background: linear-gradient(135deg, #667eea, #ec4899);
-            color: white;
+            background: #22c55e;
+            color: #0a0a0a;
             border-color: transparent;
         }
 
@@ -486,7 +448,7 @@
         .section-title .line {
             flex: 1;
             height: 2px;
-            background: linear-gradient(90deg, #a78bfa, transparent);
+            background: linear-gradient(90deg, #86efac, transparent);
         }
 
         .section-title .count-badge {
@@ -562,8 +524,8 @@
 
         .event-card:hover {
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
-            border-color: rgba(167, 139, 250, 0.25);
+            box-shadow: 0 20px 60px rgba(22, 163, 74, 0.15);
+            border-color: rgba(74, 222, 128, 0.25);
         }
 
         .event-card .flyer-wrap {
@@ -576,7 +538,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            background: linear-gradient(135deg, #1a0f2e, #2d1b4e);
+            background: linear-gradient(135deg, #081810, #0d2818);
             transition: transform 0.6s ease;
         }
 
@@ -613,19 +575,19 @@
         }
 
         .event-card .flyer-overlay .status-tag.ongoing {
-            background: rgba(251, 191, 36, 0.25);
-            color: #fcd34d;
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            background: rgba(134, 239, 172, 0.25);
+            color: #ffffff;
+            border: 1px solid rgba(134, 239, 172, 0.2);
             animation: pulseOngoing 1.5s ease-in-out infinite;
         }
 
         @keyframes pulseOngoing {
             0%,
             100% {
-                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.2);
+                box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.2);
             }
             50% {
-                box-shadow: 0 0 30px 10px rgba(251, 191, 36, 0.08);
+                box-shadow: 0 0 30px 10px rgba(134, 239, 172, 0.08);
             }
         }
 
@@ -662,10 +624,10 @@
             align-items: center;
             gap: 4px;
             padding: 3px 14px;
-            background: rgba(167, 139, 250, 0.1);
+            background: rgba(74, 222, 128, 0.1);
             border-radius: 12px;
             font-size: 12px;
-            color: #a78bfa;
+            color: #86efac;
             margin-bottom: 8px;
         }
 
@@ -686,13 +648,144 @@
             color: #d1d5db;
         }
 
+        .event-card .info .venue-link {
+            color: #a7f3d0;
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(167, 243, 208, 0.5);
+        }
+
+        .event-card .info .venue-link:hover {
+            color: #ecfdf5;
+        }
+
+        .event-card .info .venue-link .map-arrow {
+            font-size: 11px;
+        }
+
+        .event-card .info .social-row {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .like-btn, .comment-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: #d1d5db;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .like-btn:hover, .comment-toggle-btn:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+            background: rgba(52, 211, 153, 0.08);
+        }
+
+        .like-btn.liked {
+            border-color: rgba(52, 211, 153, 0.5);
+            background: rgba(52, 211, 153, 0.12);
+        }
+
+        .like-btn .heart {
+            transition: transform 0.2s ease;
+        }
+
+        .like-btn.liked .heart {
+            transform: scale(1.15);
+        }
+
+        .comments-panel {
+            display: none;
+            margin: 4px 0 14px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+        }
+
+        .comments-panel.open {
+            display: block;
+        }
+
+        .comments-list {
+            max-height: 160px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .comment-item {
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-item strong {
+            color: #e8fbf0;
+            display: block;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+
+        .comment-item p {
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        .comments-status {
+            font-size: 13px;
+            color: #6b7280;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .comment-form input {
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            color: #f5f5f7;
+            font-size: 13px;
+        }
+
+        .comment-form input::placeholder {
+            color: #6b7280;
+        }
+
+        .comment-form button {
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         .event-card .info .category-tag {
             display: inline-block;
             padding: 2px 12px;
-            background: rgba(167, 139, 250, 0.15);
+            background: rgba(74, 222, 128, 0.15);
             border-radius: 12px;
             font-size: 11px;
-            color: #a78bfa;
+            color: #86efac;
             margin-bottom: 6px;
         }
 
@@ -708,11 +801,9 @@
         }
 
         .event-card .info .price {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, #fcd34d, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #4ade80;
         }
 
         .event-card .info .price small {
@@ -723,9 +814,7 @@
         }
 
         .event-card .info .price.free-price {
-            background: linear-gradient(135deg, #34d399, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #86efac;
         }
 
         .event-card .info .fee-badge {
@@ -739,54 +828,24 @@
         .buy-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 40%, #ec4899 100%);
-            background-size: 200% 200%;
+            background: #16a34a;
             color: white;
             border: none;
-            border-radius: 14px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
-            animation: shimmerBtn 3s ease-in-out infinite;
+            transition: transform 0.15s ease-out, background 0.2s ease;
             position: relative;
-            overflow: hidden;
         }
 
-        @keyframes shimmerBtn {
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .buy-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-            transform: rotate(45deg);
-            animation: shineBtn 4s ease-in-out infinite;
-        }
-
-        @keyframes shineBtn {
-            0% {
-                transform: translateX(-100%) rotate(45deg);
-            }
-            100% {
-                transform: translateX(100%) rotate(45deg);
-            }
+        .buy-btn:hover:not(:disabled) {
+            background: #15803d;
         }
 
         .buy-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 12px 40px rgba(22, 163, 74, 0.4);
         }
 
         .buy-btn:disabled {
@@ -824,14 +883,14 @@
             z-index: 1;
             text-align: center;
             padding: 80px 20px;
-            color: #c4b5d4;
+            color: #9cd8b3;
         }
 
         .loading-state .spinner {
             width: 60px;
             height: 60px;
-            border: 4px solid rgba(167, 139, 250, 0.15);
-            border-top-color: #a78bfa;
+            border: 4px solid rgba(74, 222, 128, 0.15);
+            border-top-color: #86efac;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 0 auto 20px;
@@ -962,14 +1021,14 @@
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0a0615;
+            background: #050b08;
         }
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #667eea, #764ba2);
+            background: linear-gradient(180deg, #22c55e, #15803d);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #764ba2, #ec4899);
+            background: linear-gradient(180deg, #15803d, #ffffff);
         }
 
         /* ============================================
@@ -1035,13 +1094,12 @@
     <header class="header">
         <canvas id="partyCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
         <div class="header-content">
-            <div class="party-emoji-rain">🎉🔥🎪🎶✨🎊</div>
             <h1>Campus<span>Flow</span></h1>
-            <p>🎓 Discover &amp; book the hottest campus events</p>
+            <p>Discover and book what's happening on campus</p>
             <div class="badge-container">
-                <span class="badge">🔥 Live Events</span>
-                <span class="badge hot">⭐ Trending Now</span>
-                <span class="badge party">🎟️ Instant Tickets</span>
+                <span class="badge">Live Events</span>
+                <span class="badge hot">Trending Now</span>
+                <span class="badge party">Instant Tickets</span>
             </div>
         </div>
     </header>
@@ -1051,19 +1109,19 @@
     ========================================== -->
     <div class="search-section">
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Search events by title, venue, or organizer..." />
+            <input type="text" id="searchInput" placeholder="Search events by title, venue, or organizer..." />
         </div>
         <div class="view-toggle" id="viewToggle">
-            <button class="view-btn active" data-view="upcoming">🔥 Upcoming</button>
-            <button class="view-btn" data-view="past">📅 Past Events</button>
+            <button class="view-btn active" data-view="upcoming">Upcoming</button>
+            <button class="view-btn" data-view="past">Past Events</button>
         </div>
         <div class="category-filters" id="categoryFilters">
-            <button class="category-btn active" data-category="all">🎯 All</button>
-            <button class="category-btn" data-category="music">🎵 Music</button>
-            <button class="category-btn" data-category="tech">💻 Tech</button>
-            <button class="category-btn" data-category="sports">⚽ Sports</button>
-            <button class="category-btn" data-category="social">🤝 Social</button>
-            <button class="category-btn" data-category="academic">📚 Academic</button>
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="music">Music</button>
+            <button class="category-btn" data-category="tech">Tech</button>
+            <button class="category-btn" data-category="sports">Sports</button>
+            <button class="category-btn" data-category="social">Social</button>
+            <button class="category-btn" data-category="academic">Academic</button>
         </div>
     </div>
 
@@ -1073,7 +1131,7 @@
     <div id="eventsContainer">
         <div class="loading-state" id="loadingState">
             <div class="spinner"></div>
-            <p>🎵 Getting the party ready...</p>
+            <p>Loading events...</p>
         </div>
     </div>
 
@@ -1108,6 +1166,11 @@
         let currentCategory = 'all';
         let searchQuery = '';
         let currentView = 'upcoming';
+        const ITEMS_PER_BATCH = 4;
+        let itemsShown = ITEMS_PER_BATCH;
+        let currentFilteredList = [];
+        let scrollObserver = null;
+        const loadedComments = {};
 
         // ============================================
         // LOAD EVENTS (ONLY APPROVED)
@@ -1151,7 +1214,6 @@
                 loadingState.style.display = 'none';
                 eventsContainer.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">❌</div>
                         <h3>Error Loading Events</h3>
                         <p>${error.message}</p>
                         <p style="font-size:12px;color:#6b7280;margin-top:8px;">
@@ -1188,76 +1250,131 @@
             const upcoming = filtered.filter(e => new Date(e.event_date) >= now);
             const past = filtered.filter(e => new Date(e.event_date) < now);
 
-            let html = '';
+            currentFilteredList = currentView === 'upcoming' ? upcoming : past;
+            itemsShown = ITEMS_PER_BATCH;
+
+            let headingHtml = '';
 
             if (currentView === 'upcoming') {
-                if (upcoming.length > 0) {
-                    html += `
-                        <div class="section-title">
-                            <span class="emoji">🔥</span> Upcoming Events
-                            <span class="line"></span>
-                            <span class="count-badge">${upcoming.length}</span>
-                        </div>
-                        <div class="events-grid">
-                            ${upcoming.map(event => createEventCard(event, 'upcoming')).join('')}
-                        </div>
-                    `;
-                } else {
-                    html = `
-                        <div class="empty-state">
-                            <div class="icon">🎉</div>
-                            <h3>No Upcoming Events Yet</h3>
-                            <p>Check back soon, or browse past events.</p>
-                        </div>
-                    `;
-                }
+                headingHtml = upcoming.length > 0
+                    ? `<div class="section-title">
+                           Upcoming Events
+                           <span class="line"></span>
+                           <span class="count-badge">${upcoming.length}</span>
+                       </div>`
+                    : '';
             } else {
-                if (past.length > 0) {
-                    html += `
-                        <div class="section-title past">
-                            <span class="emoji">📅</span> Past Events
-                            <span class="line"></span>
-                            <span class="count-badge">${past.length}</span>
-                        </div>
-                        <div class="events-grid">
-                            ${past.map(event => createEventCard(event, 'past')).join('')}
-                        </div>
-                    `;
-                } else {
-                    html = `
-                        <div class="empty-state">
-                            <div class="icon">📅</div>
-                            <h3>No Past Events</h3>
-                            <p>Nothing here yet.</p>
-                        </div>
-                    `;
-                }
+                headingHtml = past.length > 0
+                    ? `<div class="section-title past">
+                           Past Events
+                           <span class="line"></span>
+                           <span class="count-badge">${past.length}</span>
+                       </div>`
+                    : '';
             }
 
             if (filtered.length === 0) {
-                html = `
+                eventsContainer.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">🔍</div>
                         <h3>No Results Found</h3>
                         <p>Try adjusting your search or filters.</p>
                     </div>
                 `;
+                return;
             }
 
-            eventsContainer.innerHTML = html;
+            if (currentFilteredList.length === 0) {
+                eventsContainer.innerHTML = currentView === 'upcoming'
+                    ? `<div class="empty-state">
+                           <h3>No Upcoming Events Yet</h3>
+                           <p>Check back soon, or browse past events.</p>
+                       </div>`
+                    : `<div class="empty-state">
+                           <h3>No Past Events</h3>
+                           <p>Nothing here yet.</p>
+                       </div>`;
+                return;
+            }
+
+            eventsContainer.innerHTML = headingHtml +
+                `<div class="events-grid" id="eventsGrid"></div>` +
+                `<div id="scrollSentinel" style="height:1px;"></div>`;
+
+            appendEventCards(currentFilteredList.slice(0, itemsShown));
+            setupInfiniteScroll();
+        }
+
+        // ============================================
+        // APPEND A BATCH OF CARDS (used for both initial
+        // render and infinite scroll "load more")
+        // ============================================
+        async function appendEventCards(events) {
+            const grid = document.getElementById('eventsGrid');
+            if (!grid || events.length === 0) return;
+
+            const ids = events.map(e => e.id);
+            const socialData = {};
+            ids.forEach(id => { socialData[id] = { likeCount: 0, likedByMe: false, commentCount: 0 }; });
+
+            try {
+                const deviceId = getDeviceId();
+                const [likesRes, commentsRes] = await Promise.all([
+                    sb.from('event_likes').select('event_id, device_id').in('event_id', ids),
+                    sb.from('event_comments').select('event_id').in('event_id', ids)
+                ]);
+
+                (likesRes.data || []).forEach(function(row) {
+                    socialData[row.event_id].likeCount++;
+                    if (row.device_id === deviceId) socialData[row.event_id].likedByMe = true;
+                });
+
+                (commentsRes.data || []).forEach(function(row) {
+                    socialData[row.event_id].commentCount++;
+                });
+            } catch (err) {
+                console.log('Could not load likes/comments (tables may not exist yet):', err.message);
+            }
+
+            grid.insertAdjacentHTML('beforeend', events.map(function(event) {
+                return createEventCard(event, currentView, socialData[event.id]);
+            }).join(''));
+
             animateEventCards();
+        }
+
+        // ============================================
+        // INFINITE SCROLL
+        // ============================================
+        function setupInfiniteScroll() {
+            if (scrollObserver) scrollObserver.disconnect();
+
+            const sentinel = document.getElementById('scrollSentinel');
+            if (!sentinel) return;
+
+            scrollObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting && itemsShown < currentFilteredList.length) {
+                        const next = currentFilteredList.slice(itemsShown, itemsShown + ITEMS_PER_BATCH);
+                        itemsShown += ITEMS_PER_BATCH;
+                        appendEventCards(next);
+                    }
+                });
+            }, { rootMargin: '400px' });
+
+            scrollObserver.observe(sentinel);
         }
 
         // ============================================
         // CREATE EVENT CARD
         // ============================================
-        function createEventCard(event, status) {
+        function createEventCard(event, status, social) {
+            social = social || { likeCount: 0, likedByMe: false, commentCount: 0 };
             const eventDate = new Date(event.event_date);
             const now = new Date();
             const isPast = status === 'past';
 
             let statusClass = 'past';
-            let statusText = '📅 Past';
+            let statusText = 'Past';
 
             if (!isPast) {
                 const diffMs = eventDate - now;
@@ -1266,13 +1383,13 @@
 
                 if (diffDays <= 1 && diffDays >= 0) {
                     statusClass = 'ongoing';
-                    statusText = diffHours <= 24 ? `🔥 ${diffHours}h left` : '🔥 Tomorrow!';
+                    statusText = diffHours <= 24 ? `${diffHours}h left` : 'Tomorrow';
                 } else if (diffDays <= 3) {
                     statusClass = 'ongoing';
-                    statusText = `🔥 In ${diffDays} days`;
+                    statusText = `In ${diffDays} days`;
                 } else {
                     statusClass = 'upcoming';
-                    statusText = `📅 In ${diffDays} days`;
+                    statusText = `In ${diffDays} days`;
                 }
             }
 
@@ -1292,37 +1409,63 @@
 
             const buttonDisabled = isPast ? 'disabled' : '';
             const buttonClass = isPast ? 'buy-btn past-event' : 'buy-btn';
-            let buttonText = isPast ? '📅 Event Passed' : '🎟️ Buy Ticket';
+            let buttonText = isPast ? 'Event Passed' : 'Buy Ticket';
             if (!isPast && event.is_free) {
-                buttonText = '🎉 RSVP Free';
+                buttonText = 'RSVP Free';
             }
 
             const priceRowHtml = event.is_free
                 ? `<div class="price-row">
-                       <span class="price free-price">🎉 FREE</span>
+                       <span class="price free-price">FREE</span>
                        <span class="fee-badge">No ticket needed</span>
                    </div>`
                 : `<div class="price-row">
                        <span class="price">₦${event.price} <small>(+ ₦100 fee)</small></span>
-                       <span class="fee-badge">🎫 incl. fee</span>
+                       <span class="fee-badge">incl. fee</span>
                    </div>`;
 
             return `
                 <div class="event-card">
                     <div class="flyer-wrap">
-                        <img src="${event.banner_url || ''}" class="flyer" alt="${event.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%232d1b4e%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23a78bfa%22 font-size=%2220%22%3E🎉 Event%3C/text%3E%3C/svg%3E'" />
+                        <img src="${event.banner_url || ''}" class="flyer" alt="${event.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%230d2818%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%234ade80%22 font-size=%2220%22%3EEvent%3C/text%3E%3C/svg%3E'" />
                         <div class="flyer-overlay">
                             <span class="status-tag ${statusClass}">${statusText}</span>
-                            ${countdownText ? `<span class="countdown">⏱️ ${countdownText}</span>` : ''}
+                            ${countdownText ? `<span class="countdown">${countdownText}</span>` : ''}
                         </div>
                     </div>
                     <div class="info">
                         <h3>${event.title}</h3>
-                        <div class="organizer-tag">👤 ${event.organizer_name}</div>
-                        <div class="category-tag">🏷️ ${event.category || 'General'}</div>
-                        <div class="meta"><span class="icon">📍</span> <strong>Venue:</strong> ${event.venue}</div>
+                        <div class="organizer-tag">${event.organizer_name}</div>
+                        <div class="category-tag">${event.category || 'General'}</div>
+                        <div class="meta">
+                            <strong>Venue:</strong>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue)}"
+                               target="_blank" rel="noopener" class="venue-link" onclick="event.stopPropagation()">
+                                ${event.venue} <span class="map-arrow">↗</span>
+                            </a>
+                        </div>
                         <div class="meta"><span class="icon">📅</span> <strong>Date:</strong> ${eventDate.toLocaleString()}</div>
                         ${priceRowHtml}
+
+                        <div class="social-row">
+                            <button class="like-btn ${social.likedByMe ? 'liked' : ''}" onclick="toggleLike('${event.id}', this)">
+                                <span class="heart">${social.likedByMe ? '❤️' : '🤍'}</span>
+                                <span class="like-count">${social.likeCount}</span>
+                            </button>
+                            <button class="comment-toggle-btn" onclick="toggleComments('${event.id}', this)">
+                                💬 <span class="comment-count" id="commentCount-${event.id}">${social.commentCount}</span>
+                            </button>
+                        </div>
+
+                        <div class="comments-panel" id="commentsPanel-${event.id}">
+                            <div class="comments-list" id="commentsList-${event.id}"></div>
+                            <form class="comment-form" onsubmit="return submitComment(event, '${event.id}')">
+                                <input type="text" placeholder="Name" class="comment-name-input" maxlength="40" required />
+                                <input type="text" placeholder="Say something..." class="comment-text-input" maxlength="200" required />
+                                <button type="submit">Post</button>
+                            </form>
+                        </div>
+
                         <button class="${buttonClass}" onclick="openModal('${event.id}')" ${buttonDisabled}>
                             ${buttonText}
                         </button>
@@ -1411,15 +1554,14 @@
         function initHeroIntro() {
             if (!motionReady) return;
 
-            gsap.set(['.header .party-emoji-rain', '.header h1', '.header p', '.header .badge', '.search-section'], { opacity: 1 });
+            gsap.set(['.header h1', '.header p', '.header .badge', '.search-section'], { opacity: 1 });
 
             const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-            tl.from('.header .party-emoji-rain', { opacity: 0, y: -20, duration: 0.6 })
-              .from('.header h1', { opacity: 0, y: 40, scale: 0.92, filter: 'blur(16px)', duration: 1.1 }, '-=0.3')
+            tl.from('.header h1', { opacity: 0, y: 40, scale: 0.92, filter: 'blur(16px)', duration: 1.1 })
               .from('.header p', { opacity: 0, y: 20, duration: 0.7 }, '-=0.6')
               .from('.header .badge', { opacity: 0, y: 16, scale: 0.85, duration: 0.5, stagger: 0.12 }, '-=0.4')
               .from('.search-section', { opacity: 0, y: 24, duration: 0.7 }, '-=0.3')
-              .set(['.header .party-emoji-rain', '.header h1', '.header p', '.header .badge', '.search-section'], { clearProps: 'all' });
+              .set(['.header h1', '.header p', '.header .badge', '.search-section'], { clearProps: 'all' });
         }
 
         // ============================================
@@ -1486,8 +1628,10 @@
         // CINEMATIC EVENT CARD SCROLL-REVEAL
         // ============================================
         function animateEventCards() {
-            const cards = document.querySelectorAll('.event-card');
+            const cards = document.querySelectorAll('.event-card:not([data-revealed])');
             if (!cards.length) return;
+
+            cards.forEach(function(card) { card.setAttribute('data-revealed', '1'); });
 
             if (!motionReady) {
                 // Existing CSS fadeInUp keyframe (already in place) handles this
@@ -1523,6 +1667,124 @@
         }
 
         // ============================================
+        // LIKES
+        // ============================================
+        async function toggleLike(eventId, btnEl) {
+            const deviceId = getDeviceId();
+            const heartSpan = btnEl.querySelector('.heart');
+            const countSpan = btnEl.querySelector('.like-count');
+            const wasLiked = btnEl.classList.contains('liked');
+            const prevCount = parseInt(countSpan.textContent, 10) || 0;
+
+            // Optimistic UI update
+            btnEl.classList.toggle('liked');
+            heartSpan.textContent = wasLiked ? '🤍' : '❤️';
+            countSpan.textContent = wasLiked ? Math.max(0, prevCount - 1) : prevCount + 1;
+
+            try {
+                if (wasLiked) {
+                    const { error } = await sb.from('event_likes')
+                        .delete()
+                        .eq('event_id', eventId)
+                        .eq('device_id', deviceId);
+                    if (error) throw error;
+                } else {
+                    const { error } = await sb.from('event_likes')
+                        .insert([{ event_id: eventId, device_id: deviceId }]);
+                    if (error) throw error;
+                }
+            } catch (err) {
+                console.error('Like toggle failed, reverting:', err);
+                btnEl.classList.toggle('liked');
+                heartSpan.textContent = wasLiked ? '❤️' : '🤍';
+                countSpan.textContent = prevCount;
+            }
+        }
+
+        // ============================================
+        // COMMENTS
+        // ============================================
+        async function toggleComments(eventId, btnEl) {
+            const panel = document.getElementById('commentsPanel-' + eventId);
+            if (!panel) return;
+
+            const isOpen = panel.classList.contains('open');
+            panel.classList.toggle('open', !isOpen);
+
+            if (!isOpen && !loadedComments[eventId]) {
+                await loadComments(eventId);
+            }
+        }
+
+        async function loadComments(eventId) {
+            const list = document.getElementById('commentsList-' + eventId);
+            if (list) list.innerHTML = '<p class="comments-status">Loading comments…</p>';
+
+            try {
+                const { data, error } = await sb
+                    .from('event_comments')
+                    .select('*')
+                    .eq('event_id', eventId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                loadedComments[eventId] = data || [];
+                renderCommentsList(eventId);
+            } catch (err) {
+                console.error('Error loading comments:', err);
+                if (list) list.innerHTML = '<p class="comments-status">Could not load comments.</p>';
+            }
+        }
+
+        function renderCommentsList(eventId) {
+            const list = document.getElementById('commentsList-' + eventId);
+            const countEl = document.getElementById('commentCount-' + eventId);
+            const comments = loadedComments[eventId] || [];
+
+            if (countEl) countEl.textContent = comments.length;
+            if (!list) return;
+
+            if (comments.length === 0) {
+                list.innerHTML = '<p class="comments-status">No comments yet — be the first!</p>';
+                return;
+            }
+
+            list.innerHTML = comments.map(function(c) {
+                return `<div class="comment-item"><strong>${escapeHtml(c.name)}</strong><p>${escapeHtml(c.comment)}</p></div>`;
+            }).join('');
+        }
+
+        async function submitComment(domEvent, eventId) {
+            domEvent.preventDefault();
+            const form = domEvent.target;
+            const nameInput = form.querySelector('.comment-name-input');
+            const textInput = form.querySelector('.comment-text-input');
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+
+            if (!name || !text) return false;
+
+            try {
+                const { error } = await sb.from('event_comments').insert([{ event_id: eventId, name: name, comment: text }]);
+                if (error) throw error;
+                nameInput.value = '';
+                textInput.value = '';
+                await loadComments(eventId);
+            } catch (err) {
+                console.error('Error posting comment:', err);
+                alert('Could not post your comment: ' + err.message);
+            }
+            return false;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ============================================
         // ANIMATED PARTY ATMOSPHERE (canvas)
         // Floating light/bokeh particles ambient in the hero,
         // plus a one-time confetti burst on load.
@@ -1551,7 +1813,7 @@
             resize();
             window.addEventListener('resize', resize);
 
-            const bokehColors = ['255,255,255', '255,215,120', '236,72,153', '139,92,246'];
+            const bokehColors = ['255,255,255', '134,239,172', '74,222,128', '34,197,94'];
             const bokeh = Array.from({ length: 26 }, function() {
                 return {
                     x: Math.random() * w,
@@ -1564,7 +1826,7 @@
                 };
             });
 
-            const confettiColors = ['#f59e0b', '#ec4899', '#8b5cf6', '#22d3ee', '#facc15'];
+            const confettiColors = ['#4ade80', '#ffffff', '#16a34a', '#ffffff', '#86efac'];
             let confetti = Array.from({ length: 60 }, function() {
                 return {
                     x: Math.random() * w,
@@ -1628,19 +1890,27 @@
         }
 
         // ============================================
+        // SHARED DEVICE ID (used for visit tracking + likes)
+        // ============================================
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('cf_device_id');
+            if (!deviceId) {
+                deviceId = (window.crypto && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+                localStorage.setItem('cf_device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        // ============================================
         // SITE VISIT TRACKING
         // "Viewers" = every page load logged (counted every time)
         // "Users"   = distinct device IDs (counted once per device, ever)
         // ============================================
         function initVisitTracking() {
             try {
-                let deviceId = localStorage.getItem('cf_device_id');
-                if (!deviceId) {
-                    deviceId = (window.crypto && crypto.randomUUID)
-                        ? crypto.randomUUID()
-                        : 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-                    localStorage.setItem('cf_device_id', deviceId);
-                }
+                const deviceId = getDeviceId();
 
                 sb.from('site_visits')
                   .insert([{ device_id: deviceId, page: 'index' }])

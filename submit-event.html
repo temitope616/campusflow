@@ -8,9 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* ============================================
-                   STYLES - MATCHING CAMPUSFLOW THEME
-                   ============================================ */
         * {
             margin: 0;
             padding: 0;
@@ -19,68 +16,54 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #eef0f3;
             min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 32px 16px;
+            color: #26282c;
         }
 
         .container {
-            max-width: 520px;
+            max-width: 560px;
             width: 100%;
-            background: white;
-            border-radius: 24px;
-            padding: 32px 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.5s ease-out;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #dde1e6;
+            border-radius: 6px;
+            padding: 28px 28px 32px;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .page-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
         }
 
-        .logo {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 800;
-            color: #667eea;
-            margin-bottom: 4px;
+        .page-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2328;
         }
 
-        .logo span {
-            color: #764ba2;
-        }
-
-        .subtitle {
-            text-align: center;
+        .page-header p {
             color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 24px;
+            font-size: 13px;
+            margin-top: 4px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #374151;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         label .required {
-            color: #ef4444;
+            color: #c0392b;
             margin-left: 2px;
         }
 
@@ -88,61 +71,60 @@
         textarea,
         select {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.2s;
-            background: #fafafa;
+            padding: 9px 11px;
+            border: 1px solid #cbd2d9;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #fff;
             font-family: inherit;
+            color: #1f2328;
         }
 
         input:focus,
         textarea:focus,
         select:focus {
             outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #5b6b8c;
+            box-shadow: 0 0 0 3px rgba(91, 107, 140, 0.15);
         }
 
         textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 70px;
         }
 
         /* Upload Area */
         .upload-area {
-            border: 2px dashed #d1d5db;
-            border-radius: 12px;
-            padding: 32px 20px;
+            border: 1px dashed #b0b7c0;
+            border-radius: 4px;
+            padding: 22px 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            background: #fafafa;
-            position: relative;
+            background: #fafbfc;
         }
 
         .upload-area:hover {
-            border-color: #667eea;
-            background: #f3f4ff;
+            border-color: #5b6b8c;
+            background: #f4f6f8;
         }
 
         .upload-area .icon {
-            font-size: 48px;
+            font-size: 30px;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            opacity: 0.7;
         }
 
         .upload-area p {
             color: #6b7280;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .upload-area .filename {
-            color: #667eea;
+            color: #2d6a4f;
             font-weight: 600;
-            margin-top: 8px;
+            margin-top: 6px;
+            font-size: 13px;
         }
 
         #flyerInput {
@@ -151,43 +133,40 @@
 
         .preview-image {
             max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            margin-top: 12px;
-            display: none;
+            max-height: 180px;
+            border-radius: 4px;
+            margin-top: 10px;
         }
 
         /* Submit Button */
         .submit-btn {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px;
+            background: #33415c;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 700;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 8px;
+            margin-top: 6px;
             position: relative;
         }
 
         .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: #29334a;
         }
 
         .submit-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.65;
             cursor: not-allowed;
         }
 
         .submit-btn .spinner {
             display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.6s linear infinite;
@@ -210,87 +189,71 @@
 
         /* Messages */
         .message {
-            padding: 14px 16px;
-            border-radius: 12px;
-            margin-top: 16px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 10px 14px;
+            border-radius: 4px;
+            margin-top: 14px;
+            font-size: 13px;
             display: none;
         }
 
         .message.success {
             display: block;
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
+            background: #eaf6ee;
+            color: #1e5631;
+            border: 1px solid #bfe3cb;
         }
 
         .message.error {
             display: block;
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
+            background: #fbeaea;
+            color: #8a2c2c;
+            border: 1px solid #f0c2c2;
         }
 
         /* Success State */
         .success-state {
             text-align: center;
-            padding: 20px 0;
+            padding: 12px 0;
             display: none;
         }
 
         .success-state .checkmark {
-            font-size: 72px;
-            animation: bounceIn 0.6s ease-out;
-        }
-
-        @keyframes bounceIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                transform: scale(1);
-            }
+            font-size: 40px;
         }
 
         .success-state h2 {
-            color: #065f46;
-            margin: 16px 0 8px;
+            color: #1e5631;
+            margin: 12px 0 6px;
+            font-size: 18px;
         }
 
         .success-state p {
             color: #6b7280;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.5;
         }
 
         .success-state .event-id {
             background: #f3f4f6;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
             color: #4b5563;
-            margin-top: 12px;
+            margin-top: 10px;
             display: inline-block;
             font-family: monospace;
         }
 
         .reset-btn {
-            margin-top: 20px;
-            padding: 12px 32px;
+            margin-top: 16px;
+            padding: 10px 24px;
             background: #e5e7eb;
             border: none;
-            border-radius: 10px;
+            border-radius: 4px;
             font-weight: 600;
+            font-size: 13px;
             color: #374151;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .reset-btn:hover {
@@ -300,59 +263,107 @@
         .row-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .toggle-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .toggle-btn {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            background: #fafafa;
-            color: #6b7280;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 9px;
+            border: 1px solid #cbd2d9;
+            border-radius: 4px;
+            background: #fafbfc;
+            color: #4b5563;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .toggle-btn:hover {
-            border-color: #a5b4fc;
+            border-color: #9aa5b1;
         }
 
         .toggle-btn.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #33415c;
+            background: #33415c;
             color: white;
         }
 
         small {
-            color: #6b7280;
+            color: #7d8794;
             font-size: 12px;
             display: block;
             margin-top: 4px;
         }
 
+        .form-footnote {
+            border-top: 1px solid #eceef1;
+            margin-top: 22px;
+            padding-top: 14px;
+            font-size: 12px;
+            color: #8a919b;
+            line-height: 1.5;
+        }
+
+        .edit-link-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 14px;
+            margin: 18px 0;
+            text-align: left;
+        }
+
+        .edit-link-box label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #33415c;
+            margin-bottom: 6px;
+        }
+
+        .edit-link-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .edit-link-row input {
+            flex: 1;
+            font-size: 12px;
+            font-family: monospace;
+            background: white;
+        }
+
+        .edit-link-row button {
+            padding: 0 16px;
+            background: #33415c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .edit-link-row button:hover {
+            background: #29334a;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .container {
-                padding: 24px 16px;
+                padding: 20px 16px;
             }
             .row-group {
                 grid-template-columns: 1fr;
             }
-            .logo {
-                font-size: 24px;
-            }
             input,
             textarea {
                 font-size: 15px;
-                padding: 11px 14px;
             }
         }
     </style>
@@ -361,9 +372,10 @@
 
     <div class="container">
 
-        <!-- LOGO -->
-        <div class="logo">Campus<span>Flow</span></div>
-        <p class="subtitle">🎪 Submit your campus event</p>
+        <div class="page-header">
+            <h1>Submit an Event</h1>
+            <p>We'll review it and get it listed within a day or two.</p>
+        </div>
 
         <!-- ========================= -->
         <!-- FORM WRAPPER -->
@@ -375,19 +387,19 @@
                 <!-- Event Title -->
                 <div class="form-group">
                     <label for="title">Event Title <span class="required">*</span></label>
-                    <input type="text" id="title" placeholder="e.g., Tech Career Fair 2026" required />
+                    <input type="text" id="title" placeholder="What's it called?" required />
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea id="description" placeholder="Describe your event..."></textarea>
+                    <textarea id="description" placeholder="What should people know before they show up?"></textarea>
                 </div>
 
                 <!-- Venue -->
                 <div class="form-group">
                     <label for="venue">Venue <span class="required">*</span></label>
-                    <input type="text" id="venue" placeholder="e.g., University Auditorium" required />
+                    <input type="text" id="venue" placeholder="Building, hall, or address" required />
                 </div>
 
                 <!-- Date & Time -->
@@ -398,13 +410,13 @@
 
                 <!-- Free or Ticketed -->
                 <div class="form-group">
-                    <label>Is this event free or does it have a ticket? <span class="required">*</span></label>
+                    <label>Is it free, or does it need a ticket? <span class="required">*</span></label>
                     <div class="toggle-group">
                         <button type="button" class="toggle-btn active" id="freeToggleBtn" data-value="free">
-                            🎉 Free Event
+                            Free
                         </button>
                         <button type="button" class="toggle-btn" id="ticketToggleBtn" data-value="ticket">
-                            🎟️ Has a Ticket
+                            Ticketed
                         </button>
                     </div>
                 </div>
@@ -413,45 +425,46 @@
                 <div class="form-group" id="priceGroup" style="display:none;">
                     <label for="price">Ticket Price (₦) <span class="required">*</span></label>
                     <input type="number" id="price" placeholder="0" min="0" step="100" />
-                    <small>Our service fee (₦100) will be added at checkout</small>
+                    <small>A ₦100 service fee gets added on top at checkout.</small>
                 </div>
 
                 <!-- Category -->
                 <div class="form-group">
-                    <label for="category">Event Category <span class="required">*</span></label>
+                    <label for="category">Category <span class="required">*</span></label>
                     <select id="category" required>
-                        <option value="">Select a category...</option>
-                        <option value="music">🎵 Music</option>
-                        <option value="tech">💻 Tech</option>
-                        <option value="sports">⚽ Sports</option>
-                        <option value="social">🤝 Social</option>
-                        <option value="academic">📚 Academic</option>
+                        <option value="">Pick one...</option>
+                        <option value="music">Music</option>
+                        <option value="tech">Tech</option>
+                        <option value="sports">Sports</option>
+                        <option value="social">Social</option>
+                        <option value="academic">Academic</option>
                     </select>
                 </div>
 
                 <!-- Organizer Name -->
                 <div class="form-group">
                     <label for="organizer">Organizer Name <span class="required">*</span></label>
-                    <input type="text" id="organizer" placeholder="e.g., Student Affairs Office" required />
+                    <input type="text" id="organizer" placeholder="Your name or your group's name" required />
                 </div>
 
                 <!-- Bank Details (only shown for ticketed events) -->
                 <div class="form-group" id="bankGroup" style="display:none;">
-                    <label>Bank Details for Payouts <span class="required">*</span></label>
+                    <label>Payout Details <span class="required">*</span></label>
                     <div class="row-group">
                         <input type="text" id="bankName" placeholder="Bank Name" />
                         <input type="text" id="accountName" placeholder="Account Name" />
                     </div>
                     <input type="text" id="accountNumber" placeholder="Account Number" style="margin-top:8px;" />
+                    <small>This is only used to send you the money after the event.</small>
                 </div>
 
                 <!-- Flyer Upload -->
                 <div class="form-group">
-                    <label>Event Flyer <span class="required">*</span></label>
+                    <label>Flyer or Banner Image <span class="required">*</span></label>
                     <div class="upload-area" id="uploadArea">
-                        <span class="icon">🖼️</span>
-                        <p><strong>Click to upload</strong> or drag &amp; drop</p>
-                        <p style="font-size:12px; color:#9ca3af;">PNG, JPG, JPEG up to 5MB</p>
+                        <span class="icon">＋</span>
+                        <p><strong>Click to upload</strong> or drag a file here</p>
+                        <p style="font-size:12px; color:#9ca3af;">PNG or JPG, under 5MB</p>
                         <div class="filename" id="fileNameDisplay">No file selected</div>
                         <img id="previewImage" class="preview-image" alt="Flyer preview" />
                     </div>
@@ -460,7 +473,7 @@
 
                 <!-- Submit Button -->
                 <button type="submit" class="submit-btn" id="submitBtn">
-                    <span class="btn-text">🚀 Submit Event for Review</span>
+                    <span class="btn-text">Submit for Review</span>
                     <div class="spinner"></div>
                 </button>
 
@@ -471,17 +484,31 @@
 
         </div>
 
+        <div class="form-footnote">
+            Submissions are checked manually, usually within a day. If your event has a ticket, make sure your bank details are correct — that's where the payout goes after the event.
+        </div>
+
         <!-- ========================= -->
         <!-- SUCCESS STATE -->
         <!-- ========================= -->
         <div class="success-state" id="successState">
-            <div class="checkmark">✅</div>
-            <h2>Event Submitted!</h2>
+            <div class="checkmark">✓</div>
+            <h2>Submitted</h2>
             <p>
-                Your event is now pending review.<br />
-                You'll be notified once it's approved.
+                It's in the queue for review.<br />
+                You'll hear from us once it's live.
             </p>
             <div class="event-id" id="submittedEventId"></div>
+
+            <div class="edit-link-box">
+                <label for="editLinkInput">Your private edit link — save this</label>
+                <div class="edit-link-row">
+                    <input type="text" id="editLinkInput" readonly />
+                    <button type="button" id="copyLinkBtn">Copy</button>
+                </div>
+                <small>This is the only way to come back and change the price, photo, or address later. If you lose it, there's no way to recover it.</small>
+            </div>
+
             <button class="reset-btn" id="resetBtn">Submit Another Event</button>
         </div>
 
@@ -574,7 +601,7 @@
 
             // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('❌ File too large! Maximum size is 5MB.');
+                alert('That file is too big — keep it under 5MB.');
                 this.value = '';
                 return;
             }
@@ -582,7 +609,7 @@
             // Validate file type
             const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
             if (!validTypes.includes(file.type)) {
-                alert('❌ Please upload a PNG or JPG image.');
+                alert('Please use a PNG or JPG image.');
                 this.value = '';
                 return;
             }
@@ -627,14 +654,14 @@
 
                 // Validate file size
                 if (file.size > 5 * 1024 * 1024) {
-                    alert('❌ File too large! Maximum size is 5MB.');
+                    alert('That file is too big — keep it under 5MB.');
                     return;
                 }
 
                 // Validate file type
                 const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
                 if (!validTypes.includes(file.type)) {
-                    alert('❌ Please upload a PNG or JPG image.');
+                    alert('Please use a PNG or JPG image.');
                     return;
                 }
 
@@ -752,6 +779,10 @@
                 // STEP 3: Save event to database
                 // ============================================
                 console.log('💾 Saving event to database...');
+                const editToken = (window.crypto && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : 'tok-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+
                 const eventData = {
                     title: formData.title,
                     description: formData.description || null,
@@ -766,6 +797,7 @@
                     account_number: formData.account_number || null,
                     banner_url: bannerUrl,
                     is_published: false,
+                    edit_token: editToken,
                 };
 
                 const { data: insertedEvent, error: insertError } = await supabaseClient
@@ -783,10 +815,12 @@
                 // ============================================
                 // STEP 4: Show success
                 // ============================================
-                submittedEventId.textContent = '📋 Event ID: ' + insertedEvent.id;
+                const editLink = `${window.location.origin}/organizer-edit.html?token=${editToken}`;
+                submittedEventId.textContent = 'Event ID: ' + insertedEvent.id;
+                document.getElementById('editLinkInput').value = editLink;
                 form.style.display = 'none';
                 successState.style.display = 'block';
-                console.log('🎉 Success! Event submitted!');
+                console.log('Success! Event submitted.');
 
             } catch (error) {
                 console.error('❌ Error:', error);
@@ -799,6 +833,19 @@
         // ============================================
         // RESET FORM
         // ============================================
+        document.getElementById('copyLinkBtn').addEventListener('click', function() {
+            const input = document.getElementById('editLinkInput');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(function() {
+                const btn = document.getElementById('copyLinkBtn');
+                const original = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(function() { btn.textContent = original; }, 1500);
+            }).catch(function() {
+                alert('Could not copy automatically. The link is selected — press Ctrl+C (or Cmd+C) to copy it.');
+            });
+        });
+
         resetBtn.addEventListener('click', function() {
             console.log('🔄 Reset form');
 
