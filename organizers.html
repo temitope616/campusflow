@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Organizers | CampusFlow Admin</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+</head>
+<body>
+
+    <!-- ========================= -->
+    <!-- SIDEBAR -->
+    <!-- ========================= -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-mark">CF</span>
+            <span class="brand-name">CampusFlow</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a href="../payment-confirm.html" class="nav-item">
+                <span class="nav-icon">💳</span> Payments
+            </a>
+            <a href="organizers.html" class="nav-item active">
+                <span class="nav-icon">👤</span> Organizers
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-item ghost" target="_blank">
+                <span class="nav-icon">🌐</span> View Live Site
+            </a>
+        </div>
+    </aside>
+
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Organizers</h1>
+                <p>Everyone who has submitted an event, and payout details for ticketed ones</p>
+            </div>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </header>
+
+        <section class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search by organizer name..." />
+            </div>
+        </section>
+
+        <section class="events-section">
+            <div class="section-heading">
+                <h2>Organizers</h2>
+                <span id="resultsCount" class="results-count"></span>
+            </div>
+
+            <div id="organizersContainer" class="organizers-list"></div>
+        </section>
+
+    </main>
+
+    <script src="../js/organizers.js"></script>
+</body>
+</html>

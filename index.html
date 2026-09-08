@@ -692,7 +692,8 @@
             margin: 10px 0;
         }
 
-        .like-btn, .comment-toggle-btn {
+        .like-btn,
+        .comment-toggle-btn {
             display: flex;
             align-items: center;
             gap: 6px;
@@ -707,7 +708,8 @@
             transition: all 0.2s ease;
         }
 
-        .like-btn:hover, .comment-toggle-btn:hover {
+        .like-btn:hover,
+        .comment-toggle-btn:hover {
             border-color: rgba(52, 211, 153, 0.4);
             background: rgba(52, 211, 153, 0.08);
         }
@@ -1216,7 +1218,9 @@
                    REDUCED MOTION - ACCESSIBILITY
                    ============================================ */
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
+            *,
+            *::before,
+            *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
@@ -1997,7 +2001,8 @@
             const ctx = canvas.getContext('2d');
             const header = canvas.closest('.header');
             let dpr = Math.min(window.devicePixelRatio || 1, 2);
-            let w = 0, h = 0;
+            let w = 0,
+                h = 0;
 
             function resize() {
                 w = header.clientWidth;
@@ -2052,7 +2057,8 @@
                 bokeh.forEach(function(p) {
                     p.y -= p.speed;
                     p.x += p.drift;
-                    if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+                    if (p.y < -10) { p.y = h + 10;
+                        p.x = Math.random() * w; }
                     if (p.x < -10) p.x = w + 10;
                     if (p.x > w + 10) p.x = -10;
                     ctx.beginPath();
@@ -2112,6 +2118,7 @@
             return null;
         }
 
+        // 🔥 FIX: Added null-check so the error doesn't stop events from loading
         function initCustomerService() {
             const toggleBtn = document.getElementById('csToggle');
             const panel = document.getElementById('csPanel');
@@ -2119,6 +2126,12 @@
             const messagesEl = document.getElementById('csMessages');
             const form = document.getElementById('csForm');
             const input = document.getElementById('csInput');
+
+            // Exit early if any element is missing, so the rest of the page works
+            if (!toggleBtn || !panel || !closeBtn || !messagesEl || !form || !input) {
+                console.warn('💬 Customer service elements missing – skipping.');
+                return;
+            }
 
             function addMessage(text, from) {
                 const div = document.createElement('div');
@@ -2182,12 +2195,12 @@
                 const deviceId = getDeviceId();
 
                 sb.from('site_visits')
-                  .insert([{ device_id: deviceId, page: 'index' }])
-                  .then(function(res) {
-                      if (res.error) {
-                          console.log('Visit log skipped:', res.error.message);
-                      }
-                  });
+                    .insert([{ device_id: deviceId, page: 'index' }])
+                    .then(function(res) {
+                        if (res.error) {
+                            console.log('Visit log skipped:', res.error.message);
+                        }
+                    });
             } catch (err) {
                 console.log('Visit tracking unavailable:', err);
             }
@@ -2221,6 +2234,7 @@
         console.log('  ✅ Mobile responsive');
         console.log('  ✅ Cinematic scroll motion:', motionReady ? 'ON (GSAP + Lenis)' : 'reduced/fallback');
     </script>
+
     <!-- ==========================================
     CUSTOMER SERVICE WIDGET
     ========================================== -->
