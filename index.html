@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>CampusFlow | Student Events</title>
+    <title>EventFlow | Student Events</title>
 
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -18,6 +18,38 @@
         /* ============================================
                    RESET & BASE - PARTY VIBE EDITION
                    ============================================ */
+        :root {
+            --bg: #0a0a0a;
+            --bg-glow-1: rgba(34, 197, 94, 0.12);
+            --bg-glow-2: rgba(255, 255, 255, 0.04);
+            --text: #f5f5f5;
+            --text-muted: #9ca3af;
+            --text-dim: #d9f7e3;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-border: rgba(34, 197, 94, 0.4);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --header-tag-bg: rgba(255, 255, 255, 0.06);
+            --decor-display: block;
+        }
+
+        [data-theme="light"] {
+            --bg: #f7f8f6;
+            --bg-glow-1: rgba(34, 197, 94, 0.06);
+            --bg-glow-2: rgba(0, 0, 0, 0.02);
+            --text: #16181c;
+            --text-muted: #5b6169;
+            --text-dim: #14532d;
+            --card-bg: #ffffff;
+            --card-border: #e3e6e2;
+            --card-hover-border: #16a34a;
+            --input-bg: #ffffff;
+            --input-border: #d7dbd6;
+            --header-tag-bg: #eef2ec;
+            --decor-display: none;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -28,13 +60,14 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding: 16px;
-            background: #0a0a0a;
+            background: var(--bg);
             background-image:
-                radial-gradient(ellipse at 15% 0%, rgba(34, 197, 94, 0.12) 0%, transparent 45%),
-                radial-gradient(ellipse at 100% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 40%);
-            color: #f5f5f5;
+                radial-gradient(ellipse at 15% 0%, var(--bg-glow-1) 0%, transparent 45%),
+                radial-gradient(ellipse at 100% 100%, var(--bg-glow-2) 0%, transparent 40%);
+            color: var(--text);
             position: relative;
             overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* Animated floating particles for party vibe */
@@ -184,6 +217,29 @@
             }
         }
 
+        .theme-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 3;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08);
+        }
+
         /* ============================================
                    HEADER - PARTY VIBE
                    ============================================ */
@@ -198,23 +254,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            background:
-                linear-gradient(135deg, rgba(4, 12, 8, 0.5) 0%, rgba(6, 18, 12, 0.6) 50%, rgba(8, 24, 16, 0.7) 100%),
-                url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=300&fit=crop&crop=center&q=80') center/cover;
-            background-blend-mode: overlay;
-            animation: headerPulse 8s ease-in-out infinite alternate;
-        }
-
-        @keyframes headerPulse {
-            0% {
-                transform: scale(1);
-            }
-            100% {
-                transform: scale(1.01);
-            }
+            color: var(--text);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            background: var(--card-bg);
         }
 
         .header-content {
@@ -224,30 +267,11 @@
             width: 100%;
         }
 
-        .header .party-emoji-rain {
-            font-size: 28px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            animation: bounceEmojis 2.5s ease-in-out infinite;
-        }
-
-        @keyframes bounceEmojis {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
         .header h1 {
             font-size: 44px;
             font-weight: 800;
             letter-spacing: -1px;
-            color: #ffffff;
+            color: var(--text);
         }
 
         .header h1 span {
@@ -259,8 +283,8 @@
             font-size: 18px;
             opacity: 0.95;
             margin-top: 6px;
-            color: #d9f7e3;
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+            color: var(--text-dim);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
         }
 
         .header .badge-container {
@@ -274,12 +298,12 @@
         .header .badge {
             display: inline-block;
             padding: 6px 18px;
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--header-tag-bg);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             font-size: 12px;
-            color: #d9f7e3;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-dim);
+            border: 1px solid var(--card-border);
             animation: pulseBadge 3s ease-in-out infinite;
         }
 
@@ -472,21 +496,21 @@
             position: relative;
             z-index: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+            grid-template-columns: repeat(2, 1fr);
             justify-content: center;
-            gap: 24px;
-            max-width: 1200px;
+            gap: 20px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         .event-card {
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: fadeInUp 0.6s ease-out forwards;
             opacity: 0;
@@ -1000,9 +1024,6 @@
         }
 
         @media (min-width: 481px) and (max-width: 768px) {
-            .events-grid {
-                grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
-            }
             .header h1 {
                 font-size: 34px;
             }
@@ -1010,7 +1031,7 @@
 
         @media (min-width: 769px) and (max-width: 1024px) {
             .events-grid {
-                grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
+                gap: 24px;
             }
         }
 
@@ -1042,6 +1063,153 @@
             opacity: 0.035;
             mix-blend-mode: overlay;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Decorative party elements only make sense on the dark theme */
+        .grain-overlay,
+        .party-particles,
+        .glow-orb,
+        #partyCanvas {
+            display: var(--decor-display);
+        }
+
+        /* ============================================
+                   CUSTOMER SERVICE WIDGET
+                   ============================================ */
+        .cs-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background: #16a34a;
+            color: white;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+        }
+
+        .cs-toggle:hover {
+            background: #15803d;
+        }
+
+        .cs-panel {
+            position: fixed;
+            bottom: 84px;
+            right: 20px;
+            z-index: 1000;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            max-height: 440px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .cs-panel.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .cs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--card-border);
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .cs-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .cs-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 280px;
+        }
+
+        .cs-message {
+            font-size: 13px;
+            line-height: 1.4;
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 85%;
+        }
+
+        .cs-message.bot {
+            background: var(--input-bg);
+            color: var(--text);
+            align-self: flex-start;
+        }
+
+        .cs-message.user {
+            background: #16a34a;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .cs-whatsapp-link {
+            display: block;
+            text-align: center;
+            background: #16a34a;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 4px;
+        }
+
+        .cs-form {
+            display: flex;
+            gap: 6px;
+            padding: 12px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .cs-form input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .cs-form button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            background: #16a34a;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         /* ============================================
@@ -1093,9 +1261,10 @@
     ========================================== -->
     <header class="header">
         <canvas id="partyCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark or light mode">🌙</button>
         <div class="header-content">
-            <h1>Campus<span>Flow</span></h1>
-            <p>Discover and book what's happening on campus</p>
+            <h1>Event<span>Flow</span></h1>
+            <p>Discover and book what's happening</p>
             <div class="badge-container">
                 <span class="badge">Live Events</span>
                 <span class="badge hot">Trending Now</span>
@@ -1146,7 +1315,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        console.log('🎉🔥 CampusFlow - PARTY VIBE EDITION Loaded!');
+        console.log('EventFlow loaded!');
 
         // ============================================
         // DOM ELEMENTS
@@ -1157,6 +1326,33 @@
         const categoryBtns = document.querySelectorAll('.category-btn');
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // ============================================
+        // DARK / LIGHT MODE
+        // ============================================
+        function initThemeToggle() {
+            const toggleBtn = document.getElementById('themeToggle');
+            const saved = localStorage.getItem('cf_theme') || 'dark';
+
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    toggleBtn.textContent = '☀️';
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    toggleBtn.textContent = '🌙';
+                }
+            }
+
+            applyTheme(saved);
+
+            toggleBtn.addEventListener('click', function() {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const next = isLight ? 'dark' : 'light';
+                applyTheme(next);
+                localStorage.setItem('cf_theme', next);
+            });
+        }
         const motionReady = !prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
         if (motionReady) {
             gsap.registerPlugin(ScrollTrigger);
@@ -1200,7 +1396,7 @@
                         <div class="empty-state">
                             <div class="icon">🎪</div>
                             <h3>No Events Yet!</h3>
-                            <p>Be the first to create an event on CampusFlow.</p>
+                            <p>Be the first to create an event on EventFlow.</p>
                         </div>
                     `;
                     return;
@@ -1892,6 +2088,79 @@
         // ============================================
         // SHARED DEVICE ID (used for visit tracking + likes)
         // ============================================
+        // ============================================
+        // CUSTOMER SERVICE WIDGET
+        // ============================================
+        const CS_ADMIN_PHONE = '2348146275644';
+        const CS_FAQ = [
+            { keywords: ['refund', 'money back', 'cancel'], answer: "Refunds are handled case-by-case. Message the event organizer through their event page, or contact admin below if it's urgent." },
+            { keywords: ['ticket', 'buy', 'pay', 'payment'], answer: 'Tap an event, fill in your details, upload your payment receipt, then wait for admin to confirm — you\'ll see it update automatically on that same page.' },
+            { keywords: ['free', 'rsvp'], answer: "Free events just need your name and email — no payment, no waiting for confirmation." },
+            { keywords: ['qr', 'scan', 'entry', 'door'], answer: 'If your event has an "Online Ticket" QR code, it\'s shown right on your confirmation page once payment is confirmed. Show that at the door.' },
+            { keywords: ['submit', 'organizer', 'host', 'create event'], answer: 'Use the "Submit Event" page. You\'ll get a private edit link afterward — save it, since it\'s the only way to update your event later.' },
+            { keywords: ['edit', 'change', 'update event'], answer: "Use the private edit link you got when you submitted your event. If you lost it, contact admin below and they can look it up." },
+            { keywords: ['pending', 'waiting', 'confirm'], answer: 'Pending means admin hasn\'t verified your payment receipt yet. This is usually quick — the page updates on its own once it\'s confirmed.' },
+        ];
+
+        function csFindAnswer(question) {
+            const q = question.toLowerCase();
+            for (const entry of CS_FAQ) {
+                if (entry.keywords.some(k => q.includes(k))) {
+                    return entry.answer;
+                }
+            }
+            return null;
+        }
+
+        function initCustomerService() {
+            const toggleBtn = document.getElementById('csToggle');
+            const panel = document.getElementById('csPanel');
+            const closeBtn = document.getElementById('csClose');
+            const messagesEl = document.getElementById('csMessages');
+            const form = document.getElementById('csForm');
+            const input = document.getElementById('csInput');
+
+            function addMessage(text, from) {
+                const div = document.createElement('div');
+                div.className = 'cs-message ' + from;
+                div.textContent = text;
+                messagesEl.appendChild(div);
+                messagesEl.scrollTop = messagesEl.scrollHeight;
+            }
+
+            toggleBtn.addEventListener('click', function() {
+                panel.classList.toggle('open');
+            });
+            closeBtn.addEventListener('click', function() {
+                panel.classList.remove('open');
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const question = input.value.trim();
+                if (!question) return;
+
+                addMessage(question, 'user');
+                input.value = '';
+
+                const answer = csFindAnswer(question);
+                setTimeout(function() {
+                    if (answer) {
+                        addMessage(answer, 'bot');
+                    } else {
+                        addMessage("I'm not sure about that one. Tap below to ask the admin directly on WhatsApp.", 'bot');
+                        const waLink = document.createElement('a');
+                        waLink.href = `https://wa.me/${CS_ADMIN_PHONE}?text=${encodeURIComponent('Hi, I have a question about EventFlow: ' + question)}`;
+                        waLink.target = '_blank';
+                        waLink.className = 'cs-whatsapp-link';
+                        waLink.textContent = 'Ask Admin on WhatsApp';
+                        messagesEl.appendChild(waLink);
+                        messagesEl.scrollTop = messagesEl.scrollHeight;
+                    }
+                }, 400);
+            });
+        }
+
         function getDeviceId() {
             let deviceId = localStorage.getItem('cf_device_id');
             if (!deviceId) {
@@ -1927,6 +2196,8 @@
         // ============================================
         // START
         // ============================================
+        initThemeToggle();
+        initCustomerService();
         initSmoothScroll();
         initHeroIntro();
         initOrbParallax();
@@ -1939,7 +2210,7 @@
         // Auto-refresh every 60 seconds
         setInterval(loadEvents, 60000);
 
-        console.log('🔥 CampusFlow - PARTY VIBE EDITION Live!');
+        console.log('EventFlow Live!');
         console.log('📌 Features:');
         console.log('  ✅ Party Vibe Background with Animation');
         console.log('  ✅ Header with Event Image');
@@ -1950,5 +2221,23 @@
         console.log('  ✅ Mobile responsive');
         console.log('  ✅ Cinematic scroll motion:', motionReady ? 'ON (GSAP + Lenis)' : 'reduced/fallback');
     </script>
+    <!-- ==========================================
+    CUSTOMER SERVICE WIDGET
+    ========================================== -->
+    <button id="csToggle" class="cs-toggle" aria-label="Customer service">?</button>
+    <div id="csPanel" class="cs-panel">
+        <div class="cs-header">
+            <span>Need Help?</span>
+            <button id="csClose" class="cs-close">×</button>
+        </div>
+        <div id="csMessages" class="cs-messages">
+            <div class="cs-message bot">Hi! Ask me anything about buying tickets, submitting events, or QR check-in. If I can't help, I'll point you to admin on WhatsApp.</div>
+        </div>
+        <form id="csForm" class="cs-form">
+            <input type="text" id="csInput" placeholder="Type your question..." />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
 </body>
 </html>

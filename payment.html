@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Checkout | CampusFlow</title>
+    <title>Checkout | EventFlow</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         * {
@@ -398,6 +399,12 @@
                 </div>
             </div>
 
+            <div class="qr-ticket-box" id="qrTicketBox" style="display:none; text-align:center; margin-top:16px; padding:20px; background:white; border-radius:16px;">
+                <p style="font-weight:700; color:#1a1a2e; margin-bottom:10px;">Your Entry Ticket</p>
+                <div id="qrCodeContainer" style="display:flex; justify-content:center;"></div>
+                <p style="font-size:12px; color:#6b7280; margin-top:10px;">Show this at the door. It only scans once.</p>
+            </div>
+
             <a href="index.html" class="btn-done secondary" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">
                 ← Back to Events
             </a>
@@ -444,6 +451,28 @@
         let orderData = null;
         let orderId = null;
         let isNotifying = false;
+
+        // ============================================
+        // RENDER TICKET QR (regenerated from the order ID
+        // every time this runs, so a reload never loses it)
+        // ============================================
+        function renderTicketQr() {
+            const box = document.getElementById('qrTicketBox');
+            const container = document.getElementById('qrCodeContainer');
+
+            if (!selectedEvent || !selectedEvent.is_online_ticket || !orderId) {
+                box.style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: orderId,
+                width: 200,
+                height: 200
+            });
+            box.style.display = 'block';
+        }
 
         // ============================================
         // ✅ NEW: DIRECT DATABASE FETCH - ALWAYS FRESH
@@ -554,6 +583,7 @@
                 const doneBtn = document.querySelector('.btn-done.secondary');
                 if (doneBtn) doneBtn.style.display = 'block';
                 console.log('✅ Status updated to CONFIRMED/SUCCESS');
+                renderTicketQr();
             } else if (status === 'rejected' || status === 'failed') {
                 statusBox.className = 'status-box rejected';
                 statusBox.querySelector('.icon').textContent = '❌';
@@ -674,17 +704,17 @@
             }
         }
 
-       // ============================================
-        // SEND WHATSAPP NOTIFICATION - FIXED FOR MOBILE
         // ============================================
-        function sendWhatsAppNotification(name, email, phone, event, reference, receiptUrl) {
-         if (isNotifying) {
-        console.log('⚠️ Already notifying, skipping duplicate');
-        return;
-          }
-        isNotifying = true;
+        // WHATSAPP NOTIFICATION - WORKING, DO NOT MODIFY
+        // ============================================
+        function sendWhatsAppNotification(name, email, phone, event, reference, receiptUrl, preOpenedWindow) {
+            if (isNotifying) {
+                console.log('⚠️ Already notifying, skipping duplicate');
+                return;
+            }
+            isNotifying = true;
 
-        const confirmLink = `${window.location.origin}/payment-confirm.html?ref=${reference}`;
+            const confirmLink = `${window.location.origin}/payment-confirm.html?ref=${reference}`;
 
             let message = `🎉 *NEW TICKET PURCHASE!*%0A%0A`;
             message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
@@ -695,7 +725,7 @@
             message += `📋 *Event:* ${event.title}%0A`;
             message += `📍 *Venue:* ${event.venue}%0A`;
             message += `📅 *Date:* ${new Date(event.event_date).toLocaleString()}%0A`;
-            message += `💰 *Amount:* ₦${event.price + 100}%0A`;
+            message += `💰 *Amount:* ₦${Number(event.price) + 100}%0A`;
             message += `🎫 *Reference:* ${reference}%0A`;
             message += `📌 *Status:* ⏳ PENDING%0A`;
             message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
@@ -706,28 +736,28 @@
             message += `✅ Please confirm this payment on the dashboard.`;
 
             if (ADMIN_PHONE) {
-        const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
-        console.log('📱 Opening WhatsApp:', waUrl);
-        
-        // ✅ FIX: Use location.href for mobile compatibility
-        if (window.innerWidth <= 768) {
-            // Mobile: Use location.href (more reliable)
-            window.location.href = waUrl;
-        } else {
-            // Desktop: Try new window first, fallback to location.href
-            const newWindow = window.open(waUrl, '_blank');
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                window.location.href = waUrl;
+                const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
+                console.log('📱 Opening WhatsApp:', waUrl);
+
+                if (preOpenedWindow && !preOpenedWindow.closed) {
+                    // Reuse the tab we opened synchronously at click-time so the
+                    // browser doesn't silently block it as a "late" popup.
+                    preOpenedWindow.location.href = waUrl;
+                } else {
+                    const newWindow = window.open(waUrl, '_blank');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        console.log('⚠️ Popup blocked, showing manual instructions');
+                        alert('📱 Please open WhatsApp and send this message to Admin:\n\n' + message.replace(/%0A/g, '\n'));
+                    }
+                }
             }
+
+            setTimeout(() => {
+                isNotifying = false;
+            }, 5000);
+
+            console.log('📱 WhatsApp notification sent to Admin!');
         }
-             }
-
-                setTimeout(() => {
-                    isNotifying = false;
-                }, 5000);
-
-                console.log('📱 WhatsApp notification sent to Admin!');
-            }
 
         // ============================================
         // SEND EMAIL NOTIFICATION
@@ -804,6 +834,12 @@
             confirmPaymentBtn.disabled = true;
             confirmPaymentBtn.classList.add('loading');
 
+            // Reserve a tab RIGHT NOW, while this is still a direct response
+            // to the user's click. We'll point it at the real WhatsApp link
+            // once the upload + order creation finish below. Doing window.open()
+            // after the awaits below gets silently blocked by most browsers.
+            const waWindow = ADMIN_PHONE ? window.open('', '_blank') : null;
+
             try {
                 const reference = 'MANUAL-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
 
@@ -830,7 +866,7 @@
                 orderData = order;
                 orderRef = reference;
 
-                sendWhatsAppNotification(name, mail, phoneNum, selectedEvent, reference, receiptUrl);
+                sendWhatsAppNotification(name, mail, phoneNum, selectedEvent, reference, receiptUrl, waWindow);
                 sendEmailNotification(name, mail, phoneNum, selectedEvent, reference);
 
                 document.getElementById('paymentForm').style.display = 'none';
@@ -859,6 +895,9 @@
                 alert('Error: ' + error.message);
                 confirmPaymentBtn.disabled = false;
                 confirmPaymentBtn.classList.remove('loading');
+                if (waWindow && !waWindow.closed) {
+                    waWindow.close();
+                }
             }
         });
 

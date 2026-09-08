@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Your Event | CampusFlow</title>
+    <title>Edit Your Event | EventFlow</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
         * {
@@ -226,6 +227,13 @@
                 <p>Changes go live right away — no re-approval needed for edits.</p>
             </div>
 
+            <div id="scannerSection" style="display:none; background:#1c1c1c; border:1px solid #333; border-radius:8px; padding:16px; margin-bottom:20px;">
+                <p style="font-weight:700; margin-bottom:10px;">Scan Tickets at the Door</p>
+                <button type="button" id="startScanBtn" class="save-btn" style="margin-top:0;">Start Camera</button>
+                <div id="qrReader" style="width:100%; margin-top:12px;"></div>
+                <div id="scanResult" style="margin-top:10px; padding:10px 14px; border-radius:6px; font-size:14px; display:none;"></div>
+            </div>
+
             <img id="currentImage" class="current-image" style="display:none;" />
 
             <form id="editForm">
@@ -401,6 +409,10 @@
                     img.style.display = 'block';
                 }
 
+                if (data.is_online_ticket) {
+                    document.getElementById('scannerSection').style.display = 'block';
+                }
+
                 loadingState.style.display = 'none';
                 editWrapper.style.display = 'block';
 
@@ -470,6 +482,104 @@
                 saveBtn.textContent = 'Save Changes';
             }
         });
+
+        // ============================================
+        // TICKET SCANNER (camera-based, verifies once only)
+        // ============================================
+        let html5QrCode = null;
+        let scannerRunning = false;
+
+        document.getElementById('startScanBtn').addEventListener('click', function() {
+            if (scannerRunning) {
+                stopScanner();
+                return;
+            }
+            startScanner();
+        });
+
+        function startScanner() {
+            html5QrCode = new Html5Qrcode('qrReader');
+            scannerRunning = true;
+            document.getElementById('startScanBtn').textContent = 'Stop Camera';
+
+            html5QrCode.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 220, height: 220 } },
+                onScanSuccess,
+                function() { /* ignore per-frame no-QR-found noise */ }
+            ).catch(function(err) {
+                showScanResult('Could not start camera: ' + err, 'error');
+                scannerRunning = false;
+                document.getElementById('startScanBtn').textContent = 'Start Camera';
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(function() {
+                    html5QrCode.clear();
+                });
+            }
+            scannerRunning = false;
+            document.getElementById('startScanBtn').textContent = 'Start Camera';
+        }
+
+        let lastScannedId = null;
+        let scanCooldown = false;
+
+        async function onScanSuccess(decodedText) {
+            if (scanCooldown || decodedText === lastScannedId) return;
+            scanCooldown = true;
+            lastScannedId = decodedText;
+            setTimeout(function() { scanCooldown = false; }, 2000);
+
+            try {
+                const { data: order, error } = await sb
+                    .from('orders')
+                    .select('*')
+                    .eq('id', decodedText)
+                    .eq('event_id', currentEvent.id)
+                    .single();
+
+                if (error || !order) {
+                    showScanResult('This code does not match a ticket for this event.', 'error');
+                    return;
+                }
+
+                if (order.status !== 'success') {
+                    showScanResult('This ticket was never confirmed as paid.', 'error');
+                    return;
+                }
+
+                if (order.qr_verified) {
+                    showScanResult(`Already scanned — ${order.customer_name} was checked in earlier.`, 'error');
+                    return;
+                }
+
+                const { error: updateError } = await sb
+                    .from('orders')
+                    .update({ qr_verified: true, qr_verified_at: new Date().toISOString() })
+                    .eq('id', decodedText);
+
+                if (updateError) {
+                    showScanResult('Error saving check-in: ' + updateError.message, 'error');
+                    return;
+                }
+
+                showScanResult(`Valid — ${order.customer_name} checked in!`, 'success');
+
+            } catch (err) {
+                showScanResult('Scan error: ' + err.message, 'error');
+            }
+        }
+
+        function showScanResult(text, type) {
+            const el = document.getElementById('scanResult');
+            el.textContent = text;
+            el.style.display = 'block';
+            el.style.background = type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.12)';
+            el.style.color = type === 'success' ? '#86efac' : '#fca5a5';
+        }
 
         loadEvent();
     </script>

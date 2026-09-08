@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Confirm Payments | CampusFlow</title>
+    <title>Confirm Payments | EventFlow</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         * {
@@ -559,6 +560,7 @@
 
             const receiptUrl = order.receipt_url || null;
             const confirmedAt = order.confirmed_at ? new Date(order.confirmed_at).toLocaleString() : null;
+            const isOnlineTicket = order.events && order.events.is_online_ticket;
 
             return `
                 <div class="payment-row ${rowClass}">
@@ -577,6 +579,10 @@
                         <span class="amount">₦${Number(order.amount_paid) + Number(order.service_fee)}</span>
                         <span class="status-badge ${statusClass}">${statusText}</span>
                         ${isConfirmedStatus && confirmedAt ? `<span class="confirmed-at">✅ ${confirmedAt}</span>` : ''}
+                        ${isConfirmedStatus && isOnlineTicket ? `
+                            <button class="btn-confirm" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);" onclick="viewQr('${order.id}')">View QR</button>
+                            ${order.qr_verified ? `<span class="status-badge rejected">Already Scanned</span>` : `<span class="status-badge pending">Not Scanned Yet</span>`}
+                        ` : ''}
                         <div class="action-btns">
                             ${isPending ? `
                                 <button class="btn-confirm" onclick="confirmPayment('${order.id}')">✅ Confirm</button>
@@ -586,8 +592,35 @@
                             `}
                         </div>
                     </div>
+                    <div class="qr-recovery-box" id="qrRecovery-${order.id}" style="display:none; width:100%; text-align:center; padding:14px; background:#f9fafb; border-radius:10px; margin-top:8px;">
+                        <div id="qrRecoveryCode-${order.id}" style="display:flex; justify-content:center;"></div>
+                        <p style="font-size:11px; color:#6b7280; margin-top:6px;">Screenshot this and send it to the customer if they lost their original.</p>
+                    </div>
                 </div>
             `;
+        }
+
+        // ============================================
+        // VIEW / RECOVER QR CODE (admin-side)
+        // ============================================
+        function viewQr(orderId) {
+            const box = document.getElementById('qrRecovery-' + orderId);
+            const container = document.getElementById('qrRecoveryCode-' + orderId);
+            if (!box || !container) return;
+
+            const isOpen = box.style.display === 'block';
+            if (isOpen) {
+                box.style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: orderId,
+                width: 180,
+                height: 180
+            });
+            box.style.display = 'block';
         }
 
         // ============================================

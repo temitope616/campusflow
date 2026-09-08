@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Event | CampusFlow</title>
+    <title>Submit Event | EventFlow</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -408,9 +408,9 @@
                     <input type="datetime-local" id="eventDate" required />
                 </div>
 
-                <!-- Free or Ticketed -->
+                <!-- Free, Ticketed, or Online Ticket -->
                 <div class="form-group">
-                    <label>Is it free, or does it need a ticket? <span class="required">*</span></label>
+                    <label>What kind of event is this? <span class="required">*</span></label>
                     <div class="toggle-group">
                         <button type="button" class="toggle-btn active" id="freeToggleBtn" data-value="free">
                             Free
@@ -418,7 +418,13 @@
                         <button type="button" class="toggle-btn" id="ticketToggleBtn" data-value="ticket">
                             Ticketed
                         </button>
+                        <button type="button" class="toggle-btn" id="onlineToggleBtn" data-value="online">
+                            Online Ticket
+                        </button>
                     </div>
+                    <small id="onlineTicketNote" style="display:none;">
+                        Attendees get a QR code once their payment is confirmed. You'll get a camera scanner on your edit page to check people in at the door — each code only works once.
+                    </small>
                 </div>
 
                 <!-- Price (only shown for ticketed events) -->
@@ -523,7 +529,7 @@
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        console.log('✅ CampusFlow Submission page ready!');
+        console.log('✅ EventFlow Submission page ready!');
 
         // ============================================
         // DOM REFERENCES
@@ -550,9 +556,12 @@
         // Free/Ticketed toggle
         const freeToggleBtn = document.getElementById('freeToggleBtn');
         const ticketToggleBtn = document.getElementById('ticketToggleBtn');
+        const onlineToggleBtn = document.getElementById('onlineToggleBtn');
         const priceGroup = document.getElementById('priceGroup');
         const bankGroup = document.getElementById('bankGroup');
+        const onlineTicketNote = document.getElementById('onlineTicketNote');
         let isFree = true;
+        let isOnlineTicket = false;
 
         // File upload elements
         const fileInput = document.getElementById('flyerInput');
@@ -570,19 +579,36 @@
         // ============================================
         freeToggleBtn.addEventListener('click', function() {
             isFree = true;
+            isOnlineTicket = false;
             freeToggleBtn.classList.add('active');
             ticketToggleBtn.classList.remove('active');
+            onlineToggleBtn.classList.remove('active');
             priceGroup.style.display = 'none';
             bankGroup.style.display = 'none';
+            onlineTicketNote.style.display = 'none';
             priceInput.value = '';
         });
 
         ticketToggleBtn.addEventListener('click', function() {
             isFree = false;
+            isOnlineTicket = false;
             ticketToggleBtn.classList.add('active');
             freeToggleBtn.classList.remove('active');
+            onlineToggleBtn.classList.remove('active');
             priceGroup.style.display = 'block';
             bankGroup.style.display = 'block';
+            onlineTicketNote.style.display = 'none';
+        });
+
+        onlineToggleBtn.addEventListener('click', function() {
+            isFree = false;
+            isOnlineTicket = true;
+            onlineToggleBtn.classList.add('active');
+            freeToggleBtn.classList.remove('active');
+            ticketToggleBtn.classList.remove('active');
+            priceGroup.style.display = 'block';
+            bankGroup.style.display = 'block';
+            onlineTicketNote.style.display = 'block';
         });
 
         // ============================================
@@ -705,6 +731,7 @@
                 category: categoryInput.value,
                 organizer_name: organizerInput.value.trim(),
                 is_free: isFree,
+                is_online_ticket: isOnlineTicket,
                 bank_name: isFree ? '' : bankNameInput.value.trim(),
                 account_name: isFree ? '' : accountNameInput.value.trim(),
                 account_number: isFree ? '' : accountNumberInput.value.trim(),
@@ -792,6 +819,7 @@
                     category: formData.category,
                     organizer_name: formData.organizer_name,
                     is_free: formData.is_free,
+                    is_online_ticket: formData.is_online_ticket,
                     bank_name: formData.bank_name || null,
                     account_name: formData.account_name || null,
                     account_number: formData.account_number || null,
@@ -909,7 +937,7 @@
         // ============================================
         // CONSOLE LOGS FOR DEBUGGING
         // ============================================
-        console.log('✅ CampusFlow Submission page ready!');
+        console.log('✅ EventFlow Submission page ready!');
         console.log('📌 Click the upload area to select an image');
         console.log('📌 Form will NOT refresh on submit');
     </script>
