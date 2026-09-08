@@ -8,54 +8,36 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Motion: smooth scroll + scroll-triggered animation -->
-    <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.26/dist/lenis.css">
-    <script src="https://unpkg.com/lenis@1.3.26/dist/lenis.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-
     <style>
         /* ============================================
-                   RESET & BASE - PARTY VIBE EDITION
+                   RESET & BASE – PARTY VIBE
                    ============================================ */
         :root {
             --bg: #0a0a0a;
-            --bg-glow-1: rgba(34, 197, 94, 0.12);
-            --bg-glow-2: rgba(255, 255, 255, 0.04);
             --text: #f5f5f5;
-            --text-muted: #9ca3af;
+            --text-muted: #b0b8c0;
             --text-dim: #d9f7e3;
-            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-bg: rgba(255, 255, 255, 0.04);
             --card-border: rgba(255, 255, 255, 0.08);
-            --card-hover-border: rgba(34, 197, 94, 0.4);
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --input-border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --input-border: rgba(255, 255, 255, 0.12);
             --header-tag-bg: rgba(255, 255, 255, 0.06);
-            --decor-display: block;
-            --text-on-bg: #ffffff;
-            --overlay-bg: rgba(0, 0, 0, 0.85);
-            --modal-bg: #0a0a0a;
-            --cs-bg: rgba(255,255,255,0.04);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glow-color: rgba(74, 222, 128, 0.15);
         }
 
         [data-theme="light"] {
-            --bg: #f7f8f6;
-            --bg-glow-1: rgba(34, 197, 94, 0.06);
-            --bg-glow-2: rgba(0, 0, 0, 0.02);
+            --bg: #f0f2ee;
             --text: #16181c;
             --text-muted: #4b4f55;
             --text-dim: #14532d;
             --card-bg: #ffffff;
             --card-border: #d7dbd6;
-            --card-hover-border: #16a34a;
             --input-bg: #ffffff;
             --input-border: #d7dbd6;
             --header-tag-bg: #eef2ec;
-            --decor-display: none;
-            --text-on-bg: #0a0a0a;
-            --overlay-bg: rgba(255,255,255,0.92);
-            --modal-bg: #f7f8f6;
-            --cs-bg: rgba(0,0,0,0.04);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            --glow-color: rgba(22, 163, 74, 0.08);
         }
 
         * {
@@ -69,156 +51,230 @@
             min-height: 100vh;
             padding: 16px;
             background: var(--bg);
-            background-image:
-                radial-gradient(ellipse at 15% 0%, var(--bg-glow-1) 0%, transparent 45%),
-                radial-gradient(ellipse at 100% 100%, var(--bg-glow-2) 0%, transparent 40%);
             color: var(--text);
+            transition: background 0.4s ease, color 0.4s ease;
             position: relative;
             overflow-x: hidden;
-            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* Animated floating particles for party vibe */
-        .party-particles {
+        /* ============================================
+                   ANIMATED BACKGROUND – PARTY VIBE
+                   ============================================ */
+        .bg-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
+            inset: 0;
             z-index: 0;
+            pointer-events: none;
             overflow: hidden;
         }
 
-        .party-particle {
+        .bg-canvas .orb {
             position: absolute;
             border-radius: 50%;
-            animation: floatParticle linear infinite;
-            opacity: 0.4;
+            filter: blur(100px);
+            opacity: 0.5;
+            animation: orbFloat 12s ease-in-out infinite alternate;
         }
 
-        .party-particle:nth-child(1) {
-            width: 8px;
-            height: 8px;
-            background: #86efac;
-            left: 10%;
-            animation-duration: 12s;
-            animation-delay: 0s;
-        }
-        .party-particle:nth-child(2) {
-            width: 12px;
-            height: 12px;
-            background: #ffffff;
-            left: 25%;
-            animation-duration: 15s;
-            animation-delay: 2s;
-            opacity: 0.3;
-        }
-        .party-particle:nth-child(3) {
-            width: 6px;
-            height: 6px;
-            background: #ffffff;
-            left: 40%;
-            animation-duration: 10s;
-            animation-delay: 4s;
-        }
-        .party-particle:nth-child(4) {
-            width: 10px;
-            height: 10px;
-            background: #34d399;
-            left: 55%;
-            animation-duration: 18s;
-            animation-delay: 1s;
-            opacity: 0.3;
-        }
-        .party-particle:nth-child(5) {
-            width: 14px;
-            height: 14px;
-            background: #22c55e;
-            left: 70%;
+        .bg-canvas .orb:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            background: rgba(34, 197, 94, 0.15);
+            top: -150px;
+            left: -100px;
             animation-duration: 14s;
-            animation-delay: 3s;
-            opacity: 0.2;
         }
-        .party-particle:nth-child(6) {
-            width: 8px;
-            height: 8px;
-            background: #4ade80;
-            left: 85%;
-            animation-duration: 16s;
+
+        .bg-canvas .orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: rgba(74, 222, 128, 0.10);
+            bottom: -100px;
+            right: -100px;
+            animation-duration: 18s;
+            animation-delay: 3s;
+        }
+
+        .bg-canvas .orb:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: rgba(167, 139, 250, 0.08);
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-duration: 20s;
             animation-delay: 5s;
         }
-        .party-particle:nth-child(7) {
-            width: 16px;
-            height: 16px;
-            background: #86efac;
-            left: 50%;
-            animation-duration: 20s;
-            animation-delay: 7s;
-            opacity: 0.15;
-        }
-        .party-particle:nth-child(8) {
-            width: 6px;
-            height: 6px;
-            background: #ffffff;
-            left: 15%;
-            animation-duration: 11s;
-            animation-delay: 6s;
+
+        .bg-canvas .orb:nth-child(4) {
+            width: 300px;
+            height: 300px;
+            background: rgba(251, 191, 36, 0.06);
+            top: 10%;
+            right: 10%;
+            animation-duration: 16s;
+            animation-delay: 2s;
         }
 
-        @keyframes floatParticle {
+        @keyframes orbFloat {
             0% {
-                transform: translateY(100vh) scale(0) rotate(0deg);
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(60px, -40px) scale(1.1);
+            }
+            66% {
+                transform: translate(-30px, 50px) scale(0.9);
+            }
+            100% {
+                transform: translate(40px, 20px) scale(1.05);
+            }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.3);
+            animation: particleFloat linear infinite;
+        }
+
+        .particle:nth-child(1) {
+            left: 10%;
+            animation-duration: 18s;
+            animation-delay: 0s;
+            width: 6px;
+            height: 6px;
+        }
+        .particle:nth-child(2) {
+            left: 25%;
+            animation-duration: 22s;
+            animation-delay: 2s;
+            background: rgba(167, 139, 250, 0.25);
+        }
+        .particle:nth-child(3) {
+            left: 40%;
+            animation-duration: 16s;
+            animation-delay: 4s;
+            width: 8px;
+            height: 8px;
+        }
+        .particle:nth-child(4) {
+            left: 55%;
+            animation-duration: 24s;
+            animation-delay: 1s;
+            background: rgba(251, 191, 36, 0.2);
+        }
+        .particle:nth-child(5) {
+            left: 70%;
+            animation-duration: 20s;
+            animation-delay: 3s;
+        }
+        .particle:nth-child(6) {
+            left: 85%;
+            animation-duration: 26s;
+            animation-delay: 5s;
+            background: rgba(167, 139, 250, 0.2);
+        }
+        .particle:nth-child(7) {
+            left: 15%;
+            animation-duration: 30s;
+            animation-delay: 7s;
+            width: 3px;
+            height: 3px;
+        }
+        .particle:nth-child(8) {
+            left: 50%;
+            animation-duration: 28s;
+            animation-delay: 6s;
+            width: 7px;
+            height: 7px;
+            background: rgba(74, 222, 128, 0.25);
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) scale(0);
                 opacity: 0;
             }
             10% {
-                opacity: 0.6;
+                opacity: 1;
             }
             90% {
-                opacity: 0.6;
+                opacity: 1;
             }
             100% {
-                transform: translateY(-10vh) scale(1) rotate(720deg);
+                transform: translateY(-10vh) scale(1);
                 opacity: 0;
             }
         }
 
-        /* Glowing orbs */
-        .glow-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
-            animation: pulseOrb 5s ease-in-out infinite alternate;
+        /* ============================================
+                   HEADER
+                   ============================================ */
+        .header {
+            position: relative;
+            z-index: 1;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
         }
 
-        .glow-orb.purple {
-            width: 480px;
-            height: 480px;
-            background: rgba(34, 197, 94, 0.1);
-            top: -150px;
-            right: -150px;
+        .header h1 {
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--text);
         }
-
-        .glow-orb.gold {
-            width: 380px;
-            height: 380px;
-            background: rgba(255, 255, 255, 0.04);
-            bottom: -120px;
-            left: -120px;
-            animation-delay: 3s;
+        .header h1 span {
+            color: #22c55e;
+            text-shadow: 0 0 40px rgba(22, 163, 74, 0.2);
         }
-
-        @keyframes pulseOrb {
-            0% {
-                opacity: 0.35;
-                filter: blur(100px);
-            }
-            100% {
-                opacity: 0.75;
-                filter: blur(130px);
-            }
+        .header p {
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-size: 16px;
+        }
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: var(--header-tag-bg);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+        }
+        .badge.hot {
+            background: rgba(74, 222, 128, 0.18);
+            border-color: rgba(134, 239, 172, 0.2);
+            color: var(--text);
+        }
+        .badge.party {
+            background: rgba(167, 139, 250, 0.12);
+            border-color: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
         }
 
         .theme-toggle {
@@ -234,104 +290,10 @@
             color: var(--text);
             font-size: 18px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease, background 0.3s ease;
+            transition: transform 0.2s;
         }
-
         .theme-toggle:hover {
             transform: scale(1.08);
-        }
-
-        /* ============================================
-                   HEADER
-                   ============================================ */
-        .header {
-            position: relative;
-            z-index: 1;
-            border-radius: 24px;
-            margin-bottom: 24px;
-            overflow: hidden;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--text);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            background: var(--card-bg);
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 2;
-            padding: 40px 30px;
-            width: 100%;
-        }
-
-        .header h1 {
-            font-size: 44px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            color: var(--text);
-        }
-
-        .header h1 span {
-            color: #22c55e;
-            text-shadow: 0 0 40px rgba(22, 163, 74, 0.3);
-        }
-
-        .header p {
-            font-size: 18px;
-            opacity: 0.95;
-            margin-top: 6px;
-            color: var(--text-dim);
-        }
-
-        .header .badge-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 14px;
-        }
-
-        .header .badge {
-            display: inline-block;
-            padding: 6px 18px;
-            background: var(--header-tag-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            font-size: 12px;
-            color: var(--text-dim);
-            border: 1px solid var(--card-border);
-            animation: pulseBadge 3s ease-in-out infinite;
-        }
-
-        .header .badge.hot {
-            background: rgba(74, 222, 128, 0.18);
-            border-color: rgba(134, 239, 172, 0.2);
-            color: var(--text);
-            animation-delay: 0.5s;
-        }
-
-        .header .badge.party {
-            background: rgba(52, 211, 153, 0.15);
-            border-color: rgba(52, 211, 153, 0.2);
-            color: var(--text);
-            animation-delay: 1s;
-        }
-
-        @keyframes pulseBadge {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
         }
 
         /* ============================================
@@ -342,82 +304,69 @@
             z-index: 1;
             margin-bottom: 20px;
         }
-
         .search-bar input {
             width: 100%;
             padding: 14px 18px;
             border: 1px solid var(--card-border);
             border-radius: 14px;
-            font-size: 15px;
             background: var(--input-bg);
             color: var(--text);
-            transition: all 0.3s;
+            font-size: 15px;
+            transition: border 0.3s;
         }
-
         .search-bar input::placeholder {
             color: var(--text-muted);
         }
-
         .search-bar input:focus {
             outline: none;
-            border-color: #86efac;
-            box-shadow: 0 0 30px rgba(74, 222, 128, 0.1);
-        }
-
-        .category-filters {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.06);
         }
 
         .view-toggle {
             display: flex;
             gap: 8px;
-            margin-bottom: 14px;
+            margin: 14px 0 12px;
         }
-
         .view-btn {
             padding: 10px 22px;
             border: 1px solid var(--card-border);
             border-radius: 24px;
             background: var(--card-bg);
             color: var(--text-muted);
-            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
-
         .view-btn:hover {
             border-color: var(--text);
             color: var(--text);
-            transform: translateY(-2px);
         }
-
         .view-btn.active {
             background: #16a34a;
+            color: #fff;
             border-color: transparent;
-            color: #ffffff;
         }
 
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
         .category-btn {
             padding: 8px 18px;
             border: 1px solid var(--card-border);
             border-radius: 20px;
             background: var(--card-bg);
             color: var(--text-muted);
-            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .category-btn:hover {
             border-color: #86efac;
             color: var(--text);
         }
-
         .category-btn.active {
             background: #22c55e;
             color: #0a0a0a;
@@ -425,41 +374,24 @@
         }
 
         /* ============================================
-                   SECTION TITLES
+                   SECTION TITLE
                    ============================================ */
         .section-title {
             position: relative;
             z-index: 1;
-            color: var(--text);
             font-size: 24px;
             font-weight: 800;
             margin: 28px 0 16px 0;
             display: flex;
             align-items: center;
             gap: 14px;
+            color: var(--text);
         }
-
-        .section-title .emoji {
-            font-size: 30px;
-            animation: bounceEmoji 2s ease-in-out infinite;
-        }
-
-        @keyframes bounceEmoji {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-        }
-
         .section-title .line {
             flex: 1;
             height: 2px;
             background: linear-gradient(90deg, #86efac, transparent);
         }
-
         .section-title .count-badge {
             font-size: 14px;
             font-weight: 600;
@@ -470,58 +402,47 @@
             border: 1px solid var(--card-border);
         }
 
-        .section-title.past {
-            opacity: 0.5;
-        }
-
         /* ============================================
-                   EVENTS GRID - COLLAGE 2x2
+                   EVENTS GRID – 2×2 COLLAGE
                    ============================================ */
         .events-grid {
             position: relative;
             z-index: 1;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 14px;
             max-width: 800px;
             margin: 0 auto;
         }
 
         .event-card {
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
             border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--card-border);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: fadeInUp 0.6s ease-out forwards;
-            opacity: 0;
             cursor: pointer;
             position: relative;
         }
-
         .event-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(22, 163, 74, 0.12);
+            transform: translateY(-4px) scale(1.01);
             border-color: rgba(74, 222, 128, 0.25);
+            box-shadow: 0 12px 40px rgba(22, 163, 74, 0.08);
         }
 
         .event-card .flyer-wrap {
-            position: relative;
-            overflow: hidden;
             aspect-ratio: 1/1;
-            background: var(--card-bg);
+            overflow: hidden;
+            position: relative;
         }
-
         .event-card .flyer {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.5s;
         }
-
         .event-card:hover .flyer {
             transform: scale(1.05);
         }
@@ -531,36 +452,28 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 14px;
+            padding: 12px 14px;
             background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
         .event-card .flyer-overlay .status-tag {
-            display: inline-block;
             padding: 3px 12px;
             border-radius: 10px;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .event-card .flyer-overlay .status-tag.upcoming {
             background: rgba(52, 211, 153, 0.2);
             color: #34d399;
             border: 1px solid rgba(52, 211, 153, 0.15);
         }
-
         .event-card .flyer-overlay .status-tag.ongoing {
             background: rgba(134, 239, 172, 0.25);
-            color: #ffffff;
-            border: 1px solid rgba(134, 239, 172, 0.2);
-            animation: pulseOngoing 1.5s ease-in-out infinite;
+            color: #fff;
+            border-color: rgba(134, 239, 172, 0.2);
+            animation: pulseOngoing 1.5s infinite;
         }
-
         @keyframes pulseOngoing {
             0%,
             100% {
@@ -570,27 +483,35 @@
                 box-shadow: 0 0 20px 6px rgba(134, 239, 172, 0.08);
             }
         }
-
         .event-card .flyer-overlay .status-tag.past {
             background: rgba(107, 114, 128, 0.25);
             color: #9ca3af;
-            border: 1px solid rgba(107, 114, 128, 0.15);
+            border-color: rgba(107, 114, 128, 0.15);
         }
-
         .event-card .flyer-overlay .countdown {
-            color: white;
-            font-size: 12px;
+            color: #fff;
+            font-size: 11px;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.5);
             padding: 3px 12px;
             border-radius: 10px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
         }
 
         .event-card .info {
-            padding: 12px 14px 14px 14px;
+            padding: 12px 14px 14px;
         }
-
+        .event-card .info .category-tag {
+            display: inline-block;
+            padding: 1px 10px;
+            background: rgba(74, 222, 128, 0.12);
+            border-radius: 10px;
+            font-size: 9px;
+            color: #86efac;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
         .event-card .info h3 {
             font-size: 14px;
             font-weight: 700;
@@ -602,71 +523,43 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-
         .event-card .info .organizer-tag {
             display: inline-flex;
             align-items: center;
             gap: 4px;
             padding: 2px 10px;
-            background: rgba(74, 222, 128, 0.08);
+            background: rgba(74, 222, 128, 0.06);
             border-radius: 10px;
             font-size: 10px;
             color: #86efac;
             margin-bottom: 4px;
         }
-
         .event-card .info .meta {
             font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 2px;
             display: flex;
             align-items: center;
             gap: 4px;
+            margin: 2px 0;
         }
-
-        .event-card .info .meta .icon {
-            font-size: 12px;
-        }
-
-        .event-card .info .meta strong {
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        .event-card .info .venue-link {
-            color: #a7f3d0;
-            text-decoration: none;
-            border-bottom: 1px dotted rgba(167, 243, 208, 0.3);
-            font-size: 11px;
-        }
-
         .event-card .info .price-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 6px 0 8px 0;
-            padding: 6px 10px;
+            margin: 6px 0 8px;
+            padding: 5px 10px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
             border: 1px solid var(--card-border);
         }
-
         .event-card .info .price {
             font-size: 16px;
             font-weight: 800;
             color: #4ade80;
         }
-
-        .event-card .info .price small {
-            font-size: 10px;
-            font-weight: 400;
-            color: var(--text-muted);
-        }
-
         .event-card .info .price.free-price {
             color: #86efac;
         }
-
         .event-card .info .fee-badge {
             font-size: 9px;
             color: var(--text-muted);
@@ -675,121 +568,194 @@
             border-radius: 6px;
         }
 
-        .event-card .info .category-tag {
-            display: inline-block;
-            padding: 1px 10px;
-            background: rgba(74, 222, 128, 0.12);
-            border-radius: 10px;
-            font-size: 9px;
-            color: #86efac;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        /* ============================================
+                   LIKES & COMMENTS
+                   ============================================ */
+        .social-row {
+            display: flex;
+            gap: 10px;
+            margin: 6px 0 8px;
+            flex-wrap: wrap;
+        }
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .social-btn:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+        .social-btn .icon {
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        .social-btn.liked {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.08);
+            color: #ec4899;
+        }
+        .social-btn.liked .icon {
+            transform: scale(1.1);
+        }
+        .comment-count {
+            font-size: 11px;
+        }
+
+        .comments-panel {
+            display: none;
+            margin: 6px 0 10px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+        .comments-panel.open {
+            display: block;
+        }
+        .comments-list {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+        }
+        .comment-item {
+            font-size: 12px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+        }
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+        .comment-item strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .comment-item .time {
+            font-size: 10px;
+            color: var(--text-muted);
+            opacity: 0.6;
+            margin-left: 6px;
+        }
+        .comments-status {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 6px 0;
+        }
+        .comment-form {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .comment-form input {
+            flex: 1;
+            min-width: 80px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 12px;
+        }
+        .comment-form input::placeholder {
+            color: var(--text-muted);
+        }
+        .comment-form button {
+            padding: 7px 14px;
+            border: none;
+            border-radius: 8px;
+            background: #16a34a;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .comment-form button:hover {
+            background: #15803d;
         }
 
         /* ============================================
-                   EVENT DETAIL MODAL (Tap to expand)
+                   EVENT DETAIL MODAL
                    ============================================ */
         .event-detail-overlay {
             position: fixed;
             inset: 0;
             z-index: 2000;
-            background: var(--overlay-bg);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
             display: none;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            animation: fadeInModal 0.3s ease;
         }
-
         .event-detail-overlay.open {
             display: flex;
         }
-
-        @keyframes fadeInModal {
-            from {
-                opacity: 0;
-                transform: scale(0.96);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
         .event-detail-box {
             max-width: 480px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            background: var(--modal-bg);
+            background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 0;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
             position: relative;
         }
-
         .event-detail-box .detail-flyer {
             width: 100%;
             aspect-ratio: 16/9;
             object-fit: cover;
             border-radius: 24px 24px 0 0;
-            background: var(--card-bg);
         }
-
         .event-detail-box .detail-body {
             padding: 24px;
         }
-
         .event-detail-box .detail-body h2 {
             font-size: 24px;
             font-weight: 800;
             color: var(--text);
-            margin-bottom: 4px;
         }
-
         .event-detail-box .detail-body .detail-organizer {
             color: #86efac;
             font-size: 14px;
-            margin-bottom: 12px;
+            margin: 4px 0 12px;
         }
-
         .event-detail-box .detail-body .detail-meta {
             font-size: 14px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin: 4px 0;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
         .event-detail-box .detail-body .detail-meta strong {
             color: var(--text);
         }
-
         .event-detail-box .detail-body .detail-price {
             font-size: 28px;
             font-weight: 800;
             color: #4ade80;
             margin: 16px 0;
         }
-
-        .event-detail-box .detail-body .detail-price small {
-            font-size: 14px;
-            font-weight: 400;
-            color: var(--text-muted);
-        }
-
         .event-detail-box .detail-body .detail-description {
             color: var(--text-muted);
             font-size: 14px;
             line-height: 1.6;
-            margin: 12px 0 20px 0;
+            margin: 12px 0 20px;
         }
-
         .event-detail-box .detail-close {
             position: sticky;
             top: 12px;
@@ -802,47 +768,37 @@
             border: none;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
-            color: white;
+            color: #fff;
             font-size: 24px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             margin: 12px 12px 0 0;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
-
         .event-detail-box .detail-close:hover {
             background: rgba(0, 0, 0, 0.7);
-            transform: scale(1.08);
         }
-
         .event-detail-box .detail-buy-btn {
             width: 100%;
             padding: 16px;
             background: #16a34a;
-            color: white;
+            color: #fff;
             border: none;
             border-radius: 12px;
             font-size: 17px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.3s;
         }
-
         .event-detail-box .detail-buy-btn:hover {
             background: #15803d;
-            transform: scale(1.01);
         }
-
         .event-detail-box .detail-buy-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
-            transform: none;
         }
 
         /* ============================================
-                   LOADING & EMPTY STATES
+                   LOADING & EMPTY
                    ============================================ */
         .loading-state {
             text-align: center;
@@ -850,7 +806,6 @@
             color: var(--text-muted);
             grid-column: 1 / -1;
         }
-
         .loading-state .spinner {
             width: 48px;
             height: 48px;
@@ -860,7 +815,6 @@
             animation: spin 0.8s linear infinite;
             margin: 0 auto 16px;
         }
-
         @keyframes spin {
             to {
                 transform: rotate(360deg);
@@ -875,23 +829,20 @@
             border: 1px solid var(--card-border);
             grid-column: 1 / -1;
         }
-
         .empty-state .icon {
             font-size: 72px;
             margin-bottom: 16px;
         }
-
         .empty-state h3 {
             color: var(--text);
             margin-bottom: 8px;
         }
-
         .empty-state p {
             color: var(--text-muted);
         }
 
         /* ============================================
-                   CUSTOMER SERVICE - ENHANCED
+                   CUSTOMER SERVICE
                    ============================================ */
         .cs-toggle {
             position: fixed;
@@ -903,22 +854,19 @@
             border-radius: 50%;
             border: none;
             background: linear-gradient(135deg, #16a34a, #22c55e);
-            color: white;
+            color: #fff;
             font-size: 24px;
             font-weight: 800;
             cursor: pointer;
             box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
-            animation: csPulse 2s ease-in-out infinite;
-            transition: all 0.2s;
+            animation: csPulse 2s infinite;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
         .cs-toggle:hover {
-            transform: scale(1.08);
+            transform: scale(1.05);
         }
-
         @keyframes csPulse {
             0% {
                 box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
@@ -931,23 +879,6 @@
             }
         }
 
-        .cs-toggle .cs-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            width: 18px;
-            height: 18px;
-            background: #ef4444;
-            border-radius: 50%;
-            font-size: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            border: 2px solid var(--bg);
-        }
-
         .cs-panel {
             position: fixed;
             bottom: 92px;
@@ -955,26 +886,18 @@
             z-index: 1000;
             width: 340px;
             max-width: calc(100vw - 48px);
-            max-height: 460px;
+            max-height: 440px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             backdrop-filter: blur(24px);
-            display: flex;
+            display: none;
             flex-direction: column;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(12px) scale(0.96);
-            transition: opacity 0.25s ease, transform 0.25s ease;
             box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
         }
-
         .cs-panel.open {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0) scale(1);
+            display: flex;
         }
-
         .cs-header {
             display: flex;
             justify-content: space-between;
@@ -984,21 +907,13 @@
             font-weight: 700;
             color: var(--text);
         }
-
-        .cs-header .cs-header-icon {
-            font-size: 20px;
-            margin-right: 8px;
-        }
-
         .cs-close {
             background: none;
             border: none;
             color: var(--text-muted);
             font-size: 22px;
             cursor: pointer;
-            padding: 0 4px;
         }
-
         .cs-messages {
             flex: 1;
             overflow-y: auto;
@@ -1006,18 +921,16 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 280px;
+            max-height: 260px;
         }
-
         .cs-message {
             font-size: 13px;
             line-height: 1.4;
             padding: 10px 14px;
             border-radius: 12px;
             max-width: 88%;
-            animation: csSlideIn 0.3s ease;
+            animation: csSlideIn 0.25s ease;
         }
-
         @keyframes csSlideIn {
             from {
                 opacity: 0;
@@ -1028,47 +941,39 @@
                 transform: translateY(0);
             }
         }
-
         .cs-message.bot {
-            background: var(--cs-bg);
+            background: var(--input-bg);
             color: var(--text);
             align-self: flex-start;
             border: 1px solid var(--card-border);
         }
-
         .cs-message.user {
             background: #16a34a;
-            color: white;
+            color: #fff;
             align-self: flex-end;
         }
-
         .cs-whatsapp-link {
             display: inline-block;
             text-align: center;
             background: #25D366;
-            color: white;
+            color: #fff;
             padding: 10px 16px;
             border-radius: 10px;
             font-size: 13px;
             font-weight: 700;
             text-decoration: none;
             margin-top: 6px;
-            transition: all 0.2s;
             align-self: center;
         }
-
         .cs-whatsapp-link:hover {
             transform: scale(1.02);
-            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
         }
-
         .cs-form {
             display: flex;
             gap: 6px;
-            padding: 12px 16px 16px 16px;
+            padding: 12px 16px 16px;
             border-top: 1px solid var(--card-border);
         }
-
         .cs-form input {
             flex: 1;
             padding: 10px 14px;
@@ -1078,23 +983,19 @@
             color: var(--text);
             font-size: 13px;
         }
-
         .cs-form input::placeholder {
             color: var(--text-muted);
         }
-
         .cs-form button {
             padding: 10px 18px;
             border: none;
             border-radius: 10px;
             background: #16a34a;
-            color: white;
+            color: #fff;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
         }
-
         .cs-form button:hover {
             background: #15803d;
         }
@@ -1106,14 +1007,6 @@
             body {
                 padding: 12px;
             }
-
-            .header {
-                min-height: 160px;
-                border-radius: 18px;
-            }
-            .header-content {
-                padding: 24px 16px;
-            }
             .header h1 {
                 font-size: 28px;
             }
@@ -1124,62 +1017,41 @@
                 font-size: 10px;
                 padding: 4px 12px;
             }
-
             .events-grid {
                 gap: 10px;
             }
-
-            .event-card .flyer-wrap {
-                aspect-ratio: 1/1;
-            }
-
             .event-card .info h3 {
                 font-size: 13px;
             }
-
             .event-card .info .meta {
                 font-size: 10px;
             }
-
             .event-card .info .price {
                 font-size: 14px;
             }
-
             .event-card .info .price-row {
                 padding: 4px 8px;
-                margin: 4px 0 6px 0;
+                margin: 4px 0 6px;
             }
-
             .section-title {
                 font-size: 18px;
-                margin: 20px 0 12px 0;
+                margin: 20px 0 12px;
             }
-            .section-title .emoji {
-                font-size: 22px;
-            }
-
             .search-bar input {
                 font-size: 14px;
                 padding: 12px 16px;
             }
-
-            .category-btn {
+            .category-btn,
+            .view-btn {
                 font-size: 11px;
                 padding: 6px 14px;
             }
-
-            .view-btn {
-                font-size: 12px;
-                padding: 8px 16px;
-            }
-
             .cs-panel {
                 right: 12px;
                 bottom: 80px;
                 width: calc(100vw - 24px);
                 max-height: 70vh;
             }
-
             .cs-toggle {
                 width: 50px;
                 height: 50px;
@@ -1187,7 +1059,6 @@
                 bottom: 16px;
                 right: 16px;
             }
-
             .event-detail-box .detail-body h2 {
                 font-size: 20px;
             }
@@ -1201,20 +1072,7 @@
                 font-size: 34px;
             }
             .events-grid {
-                gap: 14px;
-            }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .events-grid {
-                gap: 16px;
-            }
-        }
-
-        @media (min-width: 1025px) {
-            .events-grid {
-                gap: 20px;
-                max-width: 900px;
+                gap: 12px;
             }
         }
 
@@ -1222,7 +1080,7 @@
                    SCROLLBAR
                    ============================================ */
         ::-webkit-scrollbar {
-            width: 5px;
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
             background: var(--bg);
@@ -1231,77 +1089,36 @@
             background: linear-gradient(180deg, #22c55e, #15803d);
             border-radius: 10px;
         }
-
-        /* ============================================
-                   GRAIN OVERLAY
-                   ============================================ */
-        .grain-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0.035;
-            mix-blend-mode: overlay;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            display: var(--decor-display);
-        }
-
-        .grain-overlay,
-        .party-particles,
-        .glow-orb,
-        #partyCanvas {
-            display: var(--decor-display);
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-            .grain-overlay {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
 
     <!-- ==========================================
-    FILM GRAIN TEXTURE
+    ANIMATED BACKGROUND
     ========================================== -->
-    <div class="grain-overlay"></div>
-
-    <!-- ==========================================
-    PARTY PARTICLES
-    ========================================== -->
-    <div class="party-particles">
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
-        <div class="party-particle"></div>
+    <div class="bg-canvas">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
     </div>
-
-    <!-- ==========================================
-    GLOWING ORBS
-    ========================================== -->
-    <div class="glow-orb purple"></div>
-    <div class="glow-orb gold"></div>
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
 
     <!-- ==========================================
     HEADER
     ========================================== -->
     <header class="header">
-        <canvas id="partyCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
-        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark or light mode">🌙</button>
-        <div class="header-content">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+        <div>
             <h1>Event<span>Flow</span></h1>
             <p>Discover and book what's happening</p>
             <div class="badge-container">
@@ -1347,8 +1164,8 @@
     EVENT DETAIL MODAL
     ========================================== -->
     <div class="event-detail-overlay" id="eventDetailOverlay">
-        <div class="event-detail-box" id="eventDetailBox">
-            <button class="detail-close" id="detailCloseBtn" aria-label="Close">✕</button>
+        <div class="event-detail-box">
+            <button class="detail-close" id="detailCloseBtn">✕</button>
             <img class="detail-flyer" id="detailFlyer" src="" alt="Event flyer" />
             <div class="detail-body">
                 <h2 id="detailTitle">Event Title</h2>
@@ -1357,35 +1174,32 @@
                 <div class="detail-meta"><span>📅</span> <strong>Date:</strong> <span id="detailDate">Date</span></div>
                 <div class="detail-meta"><span>🏷️</span> <strong>Category:</strong> <span id="detailCategory">Category</span></div>
                 <div class="detail-price" id="detailPrice">₦0 <small>(+ ₦100 fee)</small></div>
-                <div class="detail-description" id="detailDescription">Event description goes here.</div>
+                <div class="detail-description" id="detailDescription">Description</div>
                 <button class="detail-buy-btn" id="detailBuyBtn">🎟️ Buy Ticket</button>
             </div>
         </div>
     </div>
 
     <!-- ==========================================
-    CUSTOMER SERVICE WIDGET
+    CUSTOMER SERVICE
     ========================================== -->
-    <button id="csToggle" class="cs-toggle" aria-label="Customer service">
-        ?
-        <span class="cs-badge">!</span>
-    </button>
-    <div id="csPanel" class="cs-panel">
+    <button class="cs-toggle" id="csToggle" aria-label="Help">?</button>
+    <div class="cs-panel" id="csPanel">
         <div class="cs-header">
-            <span><span class="cs-header-icon">💬</span> Help Center</span>
-            <button id="csClose" class="cs-close">✕</button>
+            <span>💬 Help Center</span>
+            <button class="cs-close" id="csClose">✕</button>
         </div>
-        <div id="csMessages" class="cs-messages">
-            <div class="cs-message bot">👋 Hi there! Ask me anything about events, tickets, or the platform. If I can't help, I'll connect you to admin on WhatsApp.</div>
+        <div class="cs-messages" id="csMessages">
+            <div class="cs-message bot">👋 Hi! Ask me anything about events, tickets, or the platform.</div>
         </div>
-        <form id="csForm" class="cs-form">
-            <input type="text" id="csInput" placeholder="Type your question..." autocomplete="off" />
+        <form class="cs-form" id="csForm">
+            <input type="text" id="csInput" placeholder="Type your question..." />
             <button type="submit">Send</button>
         </form>
     </div>
 
     <!-- ==========================================
-    JAVASCRIPT
+    JAVASCRIPT – FULLY WORKING
     ========================================== -->
     <script>
         // ============================================
@@ -1395,7 +1209,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        console.log('EventFlow loaded!');
+        console.log('🎉 EventFlow – Party Edition');
 
         // ============================================
         // DOM ELEMENTS
@@ -1406,7 +1220,6 @@
         const categoryBtns = document.querySelectorAll('.category-btn');
         const viewBtns = document.querySelectorAll('.view-btn');
 
-        // Detail modal
         const detailOverlay = document.getElementById('eventDetailOverlay');
         const detailCloseBtn = document.getElementById('detailCloseBtn');
         const detailFlyer = document.getElementById('detailFlyer');
@@ -1419,44 +1232,38 @@
         const detailDescription = document.getElementById('detailDescription');
         const detailBuyBtn = document.getElementById('detailBuyBtn');
 
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
         let allEvents = [];
         let currentCategory = 'all';
         let searchQuery = '';
         let currentView = 'upcoming';
-        const ITEMS_PER_BATCH = 8;
-        let itemsShown = ITEMS_PER_BATCH;
-        let currentFilteredList = [];
-        let scrollObserver = null;
-        const loadedComments = {};
-        let selectedEventId = null;
+        const deviceId = getDeviceId();
 
         // ============================================
-        // DARK / LIGHT MODE
+        // THEME TOGGLE
         // ============================================
-        function initThemeToggle() {
-            const toggleBtn = document.getElementById('themeToggle');
-            const saved = localStorage.getItem('cf_theme') || 'dark';
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('cf_theme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+        themeToggle.textContent = savedTheme === 'light' ? '☀️' : '🌙';
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            const next = isLight ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next === 'light' ? 'light' : '');
+            themeToggle.textContent = next === 'light' ? '☀️' : '🌙';
+            localStorage.setItem('cf_theme', next);
+        });
 
-            function applyTheme(theme) {
-                if (theme === 'light') {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    toggleBtn.textContent = '☀️';
-                } else {
-                    document.documentElement.removeAttribute('data-theme');
-                    toggleBtn.textContent = '🌙';
-                }
+        // ============================================
+        // DEVICE ID
+        // ============================================
+        function getDeviceId() {
+            let id = localStorage.getItem('cf_device_id');
+            if (!id) {
+                id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'dev-' + Date.now() + '-' + Math
+                    .random().toString(36).slice(2);
+                localStorage.setItem('cf_device_id', id);
             }
-
-            applyTheme(saved);
-
-            toggleBtn.addEventListener('click', function() {
-                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                const next = isLight ? 'dark' : 'light';
-                applyTheme(next);
-                localStorage.setItem('cf_theme', next);
-            });
+            return id;
         }
 
         // ============================================
@@ -1464,6 +1271,7 @@
         // ============================================
         async function loadEvents() {
             try {
+                console.log('📡 Fetching events...');
                 const { data: events, error } = await sb
                     .from('events')
                     .select('*')
@@ -1472,6 +1280,7 @@
 
                 if (error) throw error;
 
+                console.log(`✅ Fetched ${events ? events.length : 0} events`);
                 loadingState.style.display = 'none';
 
                 if (!events || events.length === 0) {
@@ -1479,7 +1288,7 @@
                         <div class="empty-state">
                             <div class="icon">🎪</div>
                             <h3>No Events Yet!</h3>
-                            <p>Be the first to create an event on EventFlow.</p>
+                            <p>Be the first to create an event.</p>
                         </div>
                     `;
                     return;
@@ -1489,20 +1298,19 @@
                 renderEvents(events);
 
             } catch (error) {
-                console.error('❌ Error loading events:', error);
+                console.error('❌ Error:', error);
                 loadingState.style.display = 'none';
                 eventsContainer.innerHTML = `
                     <div class="empty-state">
                         <h3>Error Loading Events</h3>
                         <p>${error.message}</p>
-                        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Check console for details</p>
                     </div>
                 `;
             }
         }
 
         // ============================================
-        // RENDER EVENTS - COLLAGE 2x2
+        // RENDER EVENTS
         // ============================================
         function renderEvents(events) {
             const now = new Date();
@@ -1511,119 +1319,80 @@
             if (currentCategory !== 'all') {
                 filtered = filtered.filter(e => e.category === currentCategory);
             }
-
             if (searchQuery.trim()) {
-                const query = searchQuery.toLowerCase().trim();
+                const q = searchQuery.toLowerCase().trim();
                 filtered = filtered.filter(e =>
-                    e.title.toLowerCase().includes(query) ||
-                    e.venue.toLowerCase().includes(query) ||
-                    e.organizer_name.toLowerCase().includes(query)
+                    e.title.toLowerCase().includes(q) ||
+                    e.venue.toLowerCase().includes(q) ||
+                    e.organizer_name.toLowerCase().includes(q)
                 );
             }
 
             const upcoming = filtered.filter(e => new Date(e.event_date) >= now);
             const past = filtered.filter(e => new Date(e.event_date) < now);
 
-            currentFilteredList = currentView === 'upcoming' ? upcoming : past;
-            itemsShown = ITEMS_PER_BATCH;
+            const listToShow = currentView === 'upcoming' ? upcoming : past;
 
-            if (filtered.length === 0) {
+            if (listToShow.length === 0) {
                 eventsContainer.innerHTML = `
                     <div class="empty-state">
-                        <h3>No Results Found</h3>
-                        <p>Try adjusting your search or filters.</p>
+                        <h3>${currentView === 'upcoming' ? 'No Upcoming Events' : 'No Past Events'}</h3>
+                        <p>${currentView === 'upcoming' ? 'Check back later.' : 'Nothing here yet.'}</p>
                     </div>
                 `;
                 return;
             }
 
-            if (currentFilteredList.length === 0) {
-                eventsContainer.innerHTML = currentView === 'upcoming'
-                    ? `<div class="empty-state"><h3>No Upcoming Events</h3><p>Check back soon!</p></div>`
-                    : `<div class="empty-state"><h3>No Past Events</h3><p>Nothing here yet.</p></div>`;
-                return;
-            }
+            const heading = currentView === 'upcoming' ?
+                `<div class="section-title">🔥 Upcoming Events <span class="line"></span><span class="count-badge">${upcoming.length}</span></div>` :
+                `<div class="section-title past">📅 Past Events <span class="line"></span><span class="count-badge">${past.length}</span></div>`;
 
-            const headingHtml = currentView === 'upcoming'
-                ? `<div class="section-title">🔥 Upcoming Events <span class="line"></span><span class="count-badge">${upcoming.length}</span></div>`
-                : `<div class="section-title past">📅 Past Events <span class="line"></span><span class="count-badge">${past.length}</span></div>`;
+            let html = heading + `<div class="events-grid" id="eventsGrid">`;
 
-            eventsContainer.innerHTML = headingHtml +
-                `<div class="events-grid" id="eventsGrid"></div>` +
-                `<div id="scrollSentinel" style="height:1px;"></div>`;
+            listToShow.forEach(event => {
+                html += createEventCard(event);
+            });
 
-            appendEventCards(currentFilteredList.slice(0, itemsShown));
-            setupInfiniteScroll();
-        }
+            html += `</div>`;
+            eventsContainer.innerHTML = html;
 
-        // ============================================
-        // APPEND EVENT CARDS
-        // ============================================
-        async function appendEventCards(events) {
-            const grid = document.getElementById('eventsGrid');
-            if (!grid || events.length === 0) return;
-
-            const ids = events.map(e => e.id);
-            const socialData = {};
-            ids.forEach(id => { socialData[id] = { likeCount: 0, likedByMe: false, commentCount: 0 }; });
-
-            try {
-                const deviceId = getDeviceId();
-                const [likesRes, commentsRes] = await Promise.all([
-                    sb.from('event_likes').select('event_id, device_id').in('event_id', ids),
-                    sb.from('event_comments').select('event_id').in('event_id', ids)
-                ]);
-
-                (likesRes.data || []).forEach(row => {
-                    socialData[row.event_id].likeCount++;
-                    if (row.device_id === deviceId) socialData[row.event_id].likedByMe = true;
-                });
-
-                (commentsRes.data || []).forEach(row => {
-                    socialData[row.event_id].commentCount++;
-                });
-            } catch (err) {
-                // Tables may not exist yet — silent fail
-            }
-
-            grid.insertAdjacentHTML('beforeend', events.map(event => {
-                return createEventCard(event, currentView, socialData[event.id]);
-            }).join(''));
-
-            // Attach click listeners for detail view
-            grid.querySelectorAll('.event-card').forEach(card => {
-                card.addEventListener('click', function() {
+            // Attach click listeners to cards
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Ignore clicks on buttons inside
+                    if (e.target.closest('.social-btn') || e.target.closest('.comment-form') || e.target
+                        .closest('.comments-panel')) return;
                     const id = this.dataset.eventId;
                     if (id) openEventDetail(id);
                 });
             });
+
+            // Load social data for each event
+            loadSocialData(listToShow.map(e => e.id));
         }
 
         // ============================================
-        // CREATE EVENT CARD - COLLAGE STYLE
+        // CREATE EVENT CARD
         // ============================================
-        function createEventCard(event, status, social) {
-            social = social || { likeCount: 0, likedByMe: false, commentCount: 0 };
+        function createEventCard(event) {
             const eventDate = new Date(event.event_date);
             const now = new Date();
-            const isPast = status === 'past';
+            const isPast = eventDate < now;
 
-            let statusClass = 'past';
-            let statusText = 'Past';
-
-            if (!isPast) {
-                const diffMs = eventDate - now;
-                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
-
-                if (diffDays <= 1 && diffDays >= 0) {
+            let statusClass = 'upcoming',
+                statusText = 'Upcoming';
+            if (isPast) {
+                statusClass = 'past';
+                statusText = 'Past';
+            } else {
+                const diffDays = Math.ceil((eventDate - now) / (1000 * 60 * 60 * 24));
+                if (diffDays <= 0) {
                     statusClass = 'ongoing';
-                    statusText = diffHours <= 24 ? `${diffHours}h left` : 'Tomorrow';
+                    statusText = '🔥 Now!';
                 } else if (diffDays <= 3) {
                     statusClass = 'ongoing';
                     statusText = `In ${diffDays}d`;
                 } else {
-                    statusClass = 'upcoming';
                     statusText = `In ${diffDays}d`;
                 }
             }
@@ -1631,27 +1400,22 @@
             let countdownText = '';
             if (!isPast) {
                 const diffMs = eventDate - now;
-                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
-                if (diffHours <= 48 && diffHours > 0) {
-                    const h = Math.floor(diffMs / (1000 * 60 * 60));
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                if (hours < 48 && hours > 0) {
                     const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                    countdownText = `${h}h ${m}m`;
-                } else if (diffHours > 0) {
-                    const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                    countdownText = `${d}d`;
+                    countdownText = `${hours}h ${m}m`;
                 }
             }
 
-            const priceHtml = event.is_free
-                ? `<span class="price free-price">FREE</span>`
-                : `<span class="price">₦${event.price}</span>`;
-
-            const feeHtml = event.is_free
-                ? `<span class="fee-badge">No fee</span>`
-                : `<span class="fee-badge">+ ₦100 fee</span>`;
+            const priceHtml = event.is_free ?
+                `<span class="price free-price">FREE</span>` :
+                `<span class="price">₦${event.price}</span>`;
+            const feeHtml = event.is_free ?
+                `<span class="fee-badge">No fee</span>` :
+                `<span class="fee-badge">+ ₦100 fee</span>`;
 
             return `
-                <div class="event-card" data-event-id="${event.id}">
+                <div class="event-card" data-event-id="${event.id}" id="card-${event.id}">
                     <div class="flyer-wrap">
                         <img src="${event.banner_url || ''}" class="flyer" alt="${event.title}" 
                              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect width=%22400%22 height=%22400%22 fill=%22%230d2818%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%234ade80%22 font-size=%2240%22%3E🎉%3C/text%3E%3C/svg%3E'" />
@@ -1666,9 +1430,28 @@
                         <div class="organizer-tag">👤 ${event.organizer_name}</div>
                         <div class="meta"><span class="icon">📍</span> ${event.venue}</div>
                         <div class="meta"><span class="icon">📅</span> ${eventDate.toLocaleDateString()}</div>
-                        <div class="price-row">
-                            ${priceHtml}
-                            ${feeHtml}
+                        <div class="price-row">${priceHtml}${feeHtml}</div>
+
+                        <!-- Social: Likes & Comments -->
+                        <div class="social-row">
+                            <button class="social-btn" id="like-btn-${event.id}" onclick="toggleLike('${event.id}')">
+                                <span class="icon">🤍</span>
+                                <span id="like-count-${event.id}">0</span>
+                            </button>
+                            <button class="social-btn" onclick="toggleComments('${event.id}')">
+                                💬 <span class="comment-count" id="comment-count-${event.id}">0</span>
+                            </button>
+                        </div>
+
+                        <div class="comments-panel" id="comments-panel-${event.id}">
+                            <div class="comments-list" id="comments-list-${event.id}">
+                                <div class="comments-status">Loading comments...</div>
+                            </div>
+                            <form class="comment-form" onsubmit="return postComment(event, '${event.id}')">
+                                <input type="text" placeholder="Your name" class="comment-name" maxlength="40" required />
+                                <input type="text" placeholder="Say something..." class="comment-text" maxlength="200" required />
+                                <button type="submit">Post</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -1676,38 +1459,193 @@
         }
 
         // ============================================
-        // INFINITE SCROLL
+        // SOCIAL DATA – LIKES & COMMENTS (FIXED)
         // ============================================
-        function setupInfiniteScroll() {
-            if (scrollObserver) scrollObserver.disconnect();
+        async function loadSocialData(eventIds) {
+            if (!eventIds.length) return;
 
-            const sentinel = document.getElementById('scrollSentinel');
-            if (!sentinel) return;
+            try {
+                // ✅ Include device_id to check if current user liked
+                const [likesRes, commentsRes] = await Promise.all([
+                    sb.from('event_likes').select('event_id, device_id').in('event_id', eventIds),
+                    sb.from('event_comments').select('event_id').in('event_id', eventIds)
+                ]);
 
-            scrollObserver = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting && itemsShown < currentFilteredList.length) {
-                        const next = currentFilteredList.slice(itemsShown, itemsShown + ITEMS_PER_BATCH);
-                        itemsShown += ITEMS_PER_BATCH;
-                        appendEventCards(next);
+                const likes = likesRes.data || [];
+                const comments = commentsRes.data || [];
+
+                eventIds.forEach(id => {
+                    const likeCount = likes.filter(l => l.event_id === id).length;
+                    const commentCount = comments.filter(c => c.event_id === id).length;
+
+                    const countEl = document.getElementById(`like-count-${id}`);
+                    if (countEl) countEl.textContent = likeCount;
+
+                    const commentCountEl = document.getElementById(`comment-count-${id}`);
+                    if (commentCountEl) commentCountEl.textContent = commentCount;
+
+                    // ✅ Check if this device already liked
+                    const userLiked = likes.some(l => l.event_id === id && l.device_id === deviceId);
+                    const btn = document.getElementById(`like-btn-${id}`);
+                    if (btn) {
+                        if (userLiked) {
+                            btn.classList.add('liked');
+                            btn.querySelector('.icon').textContent = '❤️';
+                        } else {
+                            btn.classList.remove('liked');
+                            btn.querySelector('.icon').textContent = '🤍';
+                        }
                     }
-                });
-            }, { rootMargin: '400px' });
 
-            scrollObserver.observe(sentinel);
+                    // Load comments for this event
+                    loadCommentsForEvent(id);
+                });
+
+            } catch (err) {
+                console.log('Social data load skipped:', err.message);
+            }
         }
 
         // ============================================
-        // EVENT DETAIL MODAL - TAP TO EXPAND
+        // LIKES
+        // ============================================
+        async function toggleLike(eventId) {
+            const btn = document.getElementById(`like-btn-${eventId}`);
+            const countEl = document.getElementById(`like-count-${eventId}`);
+            const wasLiked = btn.classList.contains('liked');
+            const currentCount = parseInt(countEl.textContent) || 0;
+
+            // Optimistic UI
+            btn.classList.toggle('liked');
+            const icon = btn.querySelector('.icon');
+            icon.textContent = wasLiked ? '🤍' : '❤️';
+            countEl.textContent = wasLiked ? Math.max(0, currentCount - 1) : currentCount + 1;
+
+            try {
+                if (wasLiked) {
+                    await sb.from('event_likes')
+                        .delete()
+                        .eq('event_id', eventId)
+                        .eq('device_id', deviceId);
+                } else {
+                    await sb.from('event_likes')
+                        .insert([{ event_id: eventId, device_id: deviceId }]);
+                }
+            } catch (err) {
+                // Revert on error
+                console.error('Like error:', err);
+                btn.classList.toggle('liked');
+                icon.textContent = wasLiked ? '❤️' : '🤍';
+                countEl.textContent = currentCount;
+            }
+        }
+
+        // ============================================
+        // COMMENTS
+        // ============================================
+        function toggleComments(eventId) {
+            const panel = document.getElementById(`comments-panel-${eventId}`);
+            if (!panel) return;
+            const isOpen = panel.classList.contains('open');
+            panel.classList.toggle('open', !isOpen);
+            if (!isOpen) {
+                loadCommentsForEvent(eventId);
+            }
+        }
+
+        async function loadCommentsForEvent(eventId) {
+            const list = document.getElementById(`comments-list-${eventId}`);
+            if (!list) return;
+
+            try {
+                const { data, error } = await sb
+                    .from('event_comments')
+                    .select('*')
+                    .eq('event_id', eventId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const countEl = document.getElementById(`comment-count-${eventId}`);
+                if (countEl) countEl.textContent = data ? data.length : 0;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = `<div class="comments-status">No comments yet — be the first!</div>`;
+                    return;
+                }
+
+                list.innerHTML = data.map(c => `
+                    <div class="comment-item">
+                        <strong>${escapeHtml(c.name)}</strong>
+                        <span class="time">${timeAgo(c.created_at)}</span>
+                        <p>${escapeHtml(c.comment)}</p>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error('Error loading comments:', err);
+                list.innerHTML = `<div class="comments-status">Could not load comments.</div>`;
+            }
+        }
+
+        async function postComment(e, eventId) {
+            e.preventDefault();
+            const form = e.target;
+            const nameInput = form.querySelector('.comment-name');
+            const textInput = form.querySelector('.comment-text');
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+
+            if (!name || !text) return false;
+
+            try {
+                await sb.from('event_comments')
+                    .insert([{ event_id: eventId, name: name, comment: text }]);
+
+                nameInput.value = '';
+                textInput.value = '';
+                await loadCommentsForEvent(eventId);
+
+                // Update comment count
+                const countEl = document.getElementById(`comment-count-${eventId}`);
+                if (countEl) {
+                    const current = parseInt(countEl.textContent) || 0;
+                    countEl.textContent = current + 1;
+                }
+
+            } catch (err) {
+                console.error('Error posting comment:', err);
+                alert('Could not post comment: ' + err.message);
+            }
+            return false;
+        }
+
+        function escapeHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        function timeAgo(date) {
+            if (!date) return '';
+            const diff = Date.now() - new Date(date).getTime();
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'just now';
+            if (mins < 60) return mins + 'm ago';
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return hrs + 'h ago';
+            const days = Math.floor(hrs / 24);
+            return days + 'd ago';
+        }
+
+        // ============================================
+        // EVENT DETAIL MODAL
         // ============================================
         function openEventDetail(eventId) {
             const event = allEvents.find(e => e.id === eventId);
             if (!event) return;
 
-            selectedEventId = eventId;
-
             detailFlyer.src = event.banner_url || '';
-            detailFlyer.alt = event.title;
             detailTitle.textContent = event.title;
             detailOrganizer.textContent = '👤 ' + event.organizer_name;
             detailVenue.textContent = event.venue;
@@ -1723,7 +1661,6 @@
                 detailBuyBtn.textContent = '🎟️ Buy Ticket';
             }
 
-            // Check if event is past
             if (new Date(event.event_date) < new Date()) {
                 detailBuyBtn.disabled = true;
                 detailBuyBtn.textContent = '📅 Event Passed';
@@ -1731,9 +1668,7 @@
                 detailBuyBtn.disabled = false;
             }
 
-            // Store event id on the button
             detailBuyBtn.dataset.eventId = event.id;
-
             detailOverlay.classList.add('open');
             document.body.style.overflow = 'hidden';
         }
@@ -1741,53 +1676,25 @@
         function closeEventDetail() {
             detailOverlay.classList.remove('open');
             document.body.style.overflow = '';
-            selectedEventId = null;
         }
 
-        // Close detail with button or outside click
         detailCloseBtn.addEventListener('click', closeEventDetail);
-        detailOverlay.addEventListener('click', function(e) {
-            if (e.target === this) closeEventDetail();
+        detailOverlay.addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeEventDetail();
         });
 
-        // Buy button in detail modal
         detailBuyBtn.addEventListener('click', function() {
             const id = this.dataset.eventId;
-            if (id) openModal(id);
-        });
-
-        // ============================================
-        // OPEN MODAL - REDIRECT TO PAYMENT / RSVP
-        // ============================================
-        async function openModal(eventId) {
-            try {
-                const { data: event, error } = await sb
-                    .from('events')
-                    .select('*')
-                    .eq('id', eventId)
-                    .single();
-
-                if (error) throw error;
-
-                if (new Date(event.event_date) < new Date()) {
-                    alert('📅 This event has already passed.');
-                    closeEventDetail();
-                    return;
-                }
-
+            const event = allEvents.find(e => e.id === id);
+            if (event) {
                 closeEventDetail();
-
                 if (event.is_free) {
-                    window.location.href = `rsvp.html?eventId=${event.id}`;
+                    window.location.href = `rsvp.html?eventId=${id}`;
                 } else {
-                    window.location.href = `payment.html?eventId=${event.id}`;
+                    window.location.href = `payment.html?eventId=${id}`;
                 }
-
-            } catch (error) {
-                console.error('❌ Error:', error);
-                alert('Error loading event details: ' + error.message);
             }
-        }
+        });
 
         // ============================================
         // SEARCH & FILTERS
@@ -1809,220 +1716,79 @@
         viewBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 if (this.dataset.view === currentView) return;
-
                 viewBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentView = this.dataset.view;
-
-                eventsContainer.classList.add('switching');
-                setTimeout(function() {
-                    renderEvents(allEvents);
-                    eventsContainer.classList.remove('switching');
-                }, 200);
+                renderEvents(allEvents);
             });
         });
 
         // ============================================
-        // CUSTOMER SERVICE - ENHANCED
+        // CUSTOMER SERVICE
         // ============================================
-        const CS_ADMIN_PHONE = '2348146275644';
+        const CS_ADMIN = '2348146275644';
         const CS_FAQ = [
-            { keywords: ['refund', 'money back', 'cancel'], answer: "Refunds are handled case-by-case. Message the event organizer directly, or contact admin on WhatsApp for urgent issues." },
-            { keywords: ['ticket', 'buy', 'pay', 'payment'], answer: 'Tap an event, fill in your details, upload your payment receipt, then wait for admin to confirm. Your page updates automatically when confirmed.' },
-            { keywords: ['free', 'rsvp'], answer: "Free events just need your name and email — no payment, no waiting for confirmation." },
-            { keywords: ['qr', 'scan', 'entry', 'door'], answer: 'If your event has an "Online Ticket" QR code, it\'s shown right on your confirmation page once payment is confirmed. Show that at the door.' },
-            { keywords: ['submit', 'organizer', 'host', 'create event'], answer: 'Use the "Submit Event" page. You\'ll get a private edit link afterward — save it, it\'s the only way to update your event later.' },
-            { keywords: ['edit', 'change', 'update event'], answer: "Use the private edit link you got when you submitted your event. If you lost it, contact admin on WhatsApp and they can help." },
-            { keywords: ['pending', 'waiting', 'confirm'], answer: 'Pending means admin hasn\'t verified your payment receipt yet. This is usually quick — the page updates on its own once confirmed.' },
-            { keywords: ['how to', 'help', 'support'], answer: "I'm here to help! You can ask about tickets, events, submissions, or anything else. If I can't answer, I'll connect you to admin on WhatsApp." },
-            { keywords: ['eventflow', 'platform', 'about'], answer: "EventFlow is a campus events platform where students can discover events, buy tickets, and organizers can submit their events for approval." },
+            { keywords: ['ticket', 'buy', 'pay'], answer: 'Tap an event, fill in details, upload receipt, wait for admin confirmation.' },
+            { keywords: ['free', 'rsvp'], answer: 'Free events only need your name and email — no payment.' },
+            { keywords: ['submit', 'organizer', 'create'], answer: 'Use the "Submit Event" page. Save the private edit link you get.' },
+            { keywords: ['edit', 'update'], answer: 'Use the private edit link. If lost, contact admin on WhatsApp.' },
+            { keywords: ['pending', 'confirm'], answer: 'Pending means admin hasn\'t verified your payment yet. It auto-updates.' },
+            { keywords: ['qr', 'scan', 'entry'], answer: 'Once payment is confirmed, a QR code appears on your confirmation page.' },
         ];
 
-        function csFindAnswer(question) {
-            const q = question.toLowerCase();
+        function getCSAnswer(q) {
+            const lower = q.toLowerCase();
             for (const entry of CS_FAQ) {
-                if (entry.keywords.some(k => q.includes(k))) {
-                    return entry.answer;
-                }
+                if (entry.keywords.some(k => lower.includes(k))) return entry.answer;
             }
             return null;
         }
 
-        function initCustomerService() {
-            const toggleBtn = document.getElementById('csToggle');
-            const panel = document.getElementById('csPanel');
-            const closeBtn = document.getElementById('csClose');
-            const messagesEl = document.getElementById('csMessages');
-            const form = document.getElementById('csForm');
-            const input = document.getElementById('csInput');
+        const csToggle = document.getElementById('csToggle');
+        const csPanel = document.getElementById('csPanel');
+        const csClose = document.getElementById('csClose');
+        const csMessages = document.getElementById('csMessages');
+        const csForm = document.getElementById('csForm');
+        const csInput = document.getElementById('csInput');
 
-            if (!toggleBtn || !panel || !closeBtn || !messagesEl || !form || !input) {
-                console.warn('💬 Customer service elements missing – skipping.');
-                return;
-            }
+        csToggle.addEventListener('click', () => csPanel.classList.toggle('open'));
+        csClose.addEventListener('click', () => csPanel.classList.remove('open'));
 
-            function addMessage(text, from) {
-                const div = document.createElement('div');
-                div.className = 'cs-message ' + from;
-                div.textContent = text;
-                messagesEl.appendChild(div);
-                messagesEl.scrollTop = messagesEl.scrollHeight;
-            }
+        csForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msg = csInput.value.trim();
+            if (!msg) return;
 
-            toggleBtn.addEventListener('click', function() {
-                panel.classList.toggle('open');
-            });
+            const userDiv = document.createElement('div');
+            userDiv.className = 'cs-message user';
+            userDiv.textContent = msg;
+            csMessages.appendChild(userDiv);
+            csInput.value = '';
+            csMessages.scrollTop = csMessages.scrollHeight;
 
-            closeBtn.addEventListener('click', function() {
-                panel.classList.remove('open');
-            });
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const question = input.value.trim();
-                if (!question) return;
-
-                addMessage(question, 'user');
-                input.value = '';
-
-                const answer = csFindAnswer(question);
-                setTimeout(function() {
-                    if (answer) {
-                        addMessage(answer, 'bot');
-                    } else {
-                        addMessage("I'm not sure about that one. Let me connect you to the admin directly on WhatsApp.", 'bot');
-                        const waLink = document.createElement('a');
-                        waLink.href = `https://wa.me/${CS_ADMIN_PHONE}?text=${encodeURIComponent('Hi, I have a question about EventFlow: ' + question)}`;
-                        waLink.target = '_blank';
-                        waLink.className = 'cs-whatsapp-link';
-                        waLink.textContent = '📱 Ask Admin on WhatsApp';
-                        messagesEl.appendChild(waLink);
-                        messagesEl.scrollTop = messagesEl.scrollHeight;
-                    }
-                }, 500);
-            });
-
-            // Auto-open on first visit after 3 seconds
-            if (!sessionStorage.getItem('cs_visited')) {
-                setTimeout(function() {
-                    panel.classList.add('open');
-                    sessionStorage.setItem('cs_visited', '1');
-                }, 3000);
-            }
-        }
-
-        // ============================================
-        // DEVICE ID & VISIT TRACKING
-        // ============================================
-        function getDeviceId() {
-            let deviceId = localStorage.getItem('cf_device_id');
-            if (!deviceId) {
-                deviceId = (window.crypto && crypto.randomUUID)
-                    ? crypto.randomUUID()
-                    : 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-                localStorage.setItem('cf_device_id', deviceId);
-            }
-            return deviceId;
-        }
-
-        function initVisitTracking() {
-            try {
-                const deviceId = getDeviceId();
-                sb.from('site_visits')
-                    .insert([{ device_id: deviceId, page: 'index' }])
-                    .then(function(res) {
-                        if (res.error) console.log('Visit log skipped:', res.error.message);
-                    });
-            } catch (err) {
-                // Silent fail
-            }
-        }
-
-        // ============================================
-        // PARTY ATMOSPHERE CANVAS
-        // ============================================
-        function initPartyAtmosphere() {
-            const canvas = document.getElementById('partyCanvas');
-            if (!canvas || prefersReducedMotion) {
-                if (canvas) canvas.style.display = 'none';
-                return;
-            }
-
-            const ctx = canvas.getContext('2d');
-            const header = canvas.closest('.header');
-            let dpr = Math.min(window.devicePixelRatio || 1, 2);
-            let w = 0,
-                h = 0;
-
-            function resize() {
-                w = header.clientWidth;
-                h = header.clientHeight;
-                canvas.width = w * dpr;
-                canvas.height = h * dpr;
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            const bokehColors = ['255,255,255', '134,239,172', '74,222,128', '34,197,94'];
-            const bokeh = Array.from({ length: 22 }, function() {
-                return {
-                    x: Math.random() * w,
-                    y: Math.random() * h,
-                    r: 2 + Math.random() * 4,
-                    speed: 0.15 + Math.random() * 0.35,
-                    drift: (Math.random() - 0.5) * 0.3,
-                    alpha: 0.15 + Math.random() * 0.35,
-                    color: bokehColors[Math.floor(Math.random() * bokehColors.length)]
-                };
-            });
-
-            let hidden = false;
-            document.addEventListener('visibilitychange', function() {
-                hidden = document.hidden;
-            });
-
-            function frame() {
-                requestAnimationFrame(frame);
-                if (hidden) return;
-                ctx.clearRect(0, 0, w, h);
-
-                bokeh.forEach(function(p) {
-                    p.y -= p.speed;
-                    p.x += p.drift;
-                    if (p.y < -10) { p.y = h + 10;
-                        p.x = Math.random() * w; }
-                    if (p.x < -10) p.x = w + 10;
-                    if (p.x > w + 10) p.x = -10;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(' + p.color + ',' + p.alpha + ')';
-                    ctx.fill();
-                });
-            }
-            frame();
-        }
+            const answer = getCSAnswer(msg);
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'cs-message bot';
+                if (answer) {
+                    botDiv.textContent = answer;
+                } else {
+                    botDiv.innerHTML =
+                        `I'm not sure. Contact admin on WhatsApp: <a href="https://wa.me/${CS_ADMIN}?text=${encodeURIComponent('Hi, I have a question: ' + msg)}" target="_blank" style="color:#22c55e; font-weight:700;">📱 Ask Admin</a>`;
+                }
+                csMessages.appendChild(botDiv);
+                csMessages.scrollTop = csMessages.scrollHeight;
+            }, 400);
+        });
 
         // ============================================
         // START
         // ============================================
-        initThemeToggle();
-        initCustomerService();
-        initPartyAtmosphere();
-        initVisitTracking();
-
-        // Load events
         loadEvents();
-
-        // Auto-refresh every 60 seconds
         setInterval(loadEvents, 60000);
 
-        console.log('✅ EventFlow Live!');
-        console.log('📌 Features:');
-        console.log('  ✅ 2x2 Collage grid on all screens');
-        console.log('  ✅ Tap any event → full detail view');
-        console.log('  ✅ Light mode text visibility fixed');
-        console.log('  ✅ Enhanced customer service with auto-reply');
+        console.log('✅ EventFlow – Lively + Likes + Comments');
+        console.log('❤️ Like events, 💬 comment, enjoy the party vibe!');
     </script>
 
 </body>
