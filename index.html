@@ -32,6 +32,10 @@
             --input-border: rgba(255, 255, 255, 0.1);
             --header-tag-bg: rgba(255, 255, 255, 0.06);
             --decor-display: block;
+            --text-on-bg: #ffffff;
+            --overlay-bg: rgba(0, 0, 0, 0.85);
+            --modal-bg: #0a0a0a;
+            --cs-bg: rgba(255,255,255,0.04);
         }
 
         [data-theme="light"] {
@@ -39,15 +43,19 @@
             --bg-glow-1: rgba(34, 197, 94, 0.06);
             --bg-glow-2: rgba(0, 0, 0, 0.02);
             --text: #16181c;
-            --text-muted: #5b6169;
+            --text-muted: #4b4f55;
             --text-dim: #14532d;
             --card-bg: #ffffff;
-            --card-border: #e3e6e2;
+            --card-border: #d7dbd6;
             --card-hover-border: #16a34a;
             --input-bg: #ffffff;
             --input-border: #d7dbd6;
             --header-tag-bg: #eef2ec;
             --decor-display: none;
+            --text-on-bg: #0a0a0a;
+            --overlay-bg: rgba(255,255,255,0.92);
+            --modal-bg: #f7f8f6;
+            --cs-bg: rgba(0,0,0,0.04);
         }
 
         * {
@@ -193,10 +201,6 @@
             right: -150px;
         }
 
-        .glow-orb.pink {
-            display: none;
-        }
-
         .glow-orb.gold {
             width: 380px;
             height: 380px;
@@ -241,7 +245,7 @@
         }
 
         /* ============================================
-                   HEADER - PARTY VIBE
+                   HEADER
                    ============================================ */
         .header {
             position: relative;
@@ -249,7 +253,7 @@
             border-radius: 24px;
             margin-bottom: 24px;
             overflow: hidden;
-            min-height: 220px;
+            min-height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -284,7 +288,6 @@
             opacity: 0.95;
             margin-top: 6px;
             color: var(--text-dim);
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
         }
 
         .header .badge-container {
@@ -310,14 +313,14 @@
         .header .badge.hot {
             background: rgba(74, 222, 128, 0.18);
             border-color: rgba(134, 239, 172, 0.2);
-            color: #ffffff;
+            color: var(--text);
             animation-delay: 0.5s;
         }
 
         .header .badge.party {
             background: rgba(52, 211, 153, 0.15);
             border-color: rgba(52, 211, 153, 0.2);
-            color: #ffffff;
+            color: var(--text);
             animation-delay: 1s;
         }
 
@@ -340,28 +343,19 @@
             margin-bottom: 20px;
         }
 
-        .search-bar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-
         .search-bar input {
-            flex: 1;
-            min-width: 200px;
+            width: 100%;
             padding: 14px 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--card-border);
             border-radius: 14px;
             font-size: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            color: #ffffff;
+            background: var(--input-bg);
+            color: var(--text);
             transition: all 0.3s;
         }
 
         .search-bar input::placeholder {
-            color: #9ca3af;
+            color: var(--text-muted);
         }
 
         .search-bar input:focus {
@@ -374,6 +368,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            margin-top: 12px;
         }
 
         .view-toggle {
@@ -384,20 +379,19 @@
 
         .view-btn {
             padding: 10px 22px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
             border-radius: 24px;
-            background: rgba(255, 255, 255, 0.04);
-            color: #9cd8b3;
+            background: var(--card-bg);
+            color: var(--text-muted);
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
 
         .view-btn:hover {
-            border-color: #ffffff;
-            color: #ffffff;
+            border-color: var(--text);
+            color: var(--text);
             transform: translateY(-2px);
         }
 
@@ -407,30 +401,21 @@
             color: #ffffff;
         }
 
-        #eventsContainer {
-            transition: opacity 0.25s ease;
-        }
-
-        #eventsContainer.switching {
-            opacity: 0;
-        }
-
         .category-btn {
             padding: 8px 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #9cd8b3;
+            background: var(--card-bg);
+            color: var(--text-muted);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            backdrop-filter: blur(10px);
         }
 
         .category-btn:hover {
             border-color: #86efac;
-            color: #ffffff;
+            color: var(--text);
         }
 
         .category-btn.active {
@@ -445,7 +430,7 @@
         .section-title {
             position: relative;
             z-index: 1;
-            color: #ffffff;
+            color: var(--text);
             font-size: 24px;
             font-weight: 800;
             margin: 28px 0 16px 0;
@@ -478,11 +463,11 @@
         .section-title .count-badge {
             font-size: 14px;
             font-weight: 600;
-            color: #9ca3af;
-            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            background: var(--card-bg);
             padding: 2px 14px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--card-border);
         }
 
         .section-title.past {
@@ -490,15 +475,14 @@
         }
 
         /* ============================================
-                   EVENTS GRID
+                   EVENTS GRID - COLLAGE 2x2
                    ============================================ */
         .events-grid {
             position: relative;
             z-index: 1;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            justify-content: center;
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             max-width: 800px;
             margin: 0 auto;
         }
@@ -507,67 +491,39 @@
             background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: fadeInUp 0.6s ease-out forwards;
             opacity: 0;
-        }
-
-        .event-card:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        .event-card:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        .event-card:nth-child(3) {
-            animation-delay: 0.15s;
-        }
-        .event-card:nth-child(4) {
-            animation-delay: 0.2s;
-        }
-        .event-card:nth-child(5) {
-            animation-delay: 0.25s;
-        }
-        .event-card:nth-child(6) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            cursor: pointer;
+            position: relative;
         }
 
         .event-card:hover {
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 60px rgba(22, 163, 74, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(22, 163, 74, 0.12);
             border-color: rgba(74, 222, 128, 0.25);
         }
 
         .event-card .flyer-wrap {
             position: relative;
             overflow: hidden;
-            height: 200px;
+            aspect-ratio: 1/1;
+            background: var(--card-bg);
         }
 
         .event-card .flyer {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            background: linear-gradient(135deg, #081810, #0d2818);
-            transition: transform 0.6s ease;
+            transition: transform 0.5s ease;
         }
 
         .event-card:hover .flyer {
-            transform: scale(1.08);
+            transform: scale(1.05);
         }
 
         .event-card .flyer-overlay {
@@ -575,7 +531,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 20px;
+            padding: 14px;
             background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
             display: flex;
             justify-content: space-between;
@@ -584,12 +540,12 @@
 
         .event-card .flyer-overlay .status-tag {
             display: inline-block;
-            padding: 4px 14px;
-            border-radius: 12px;
-            font-size: 11px;
+            padding: 3px 12px;
+            border-radius: 10px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .event-card .flyer-overlay .status-tag.upcoming {
@@ -611,7 +567,7 @@
                 box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.2);
             }
             50% {
-                box-shadow: 0 0 30px 10px rgba(134, 239, 172, 0.08);
+                box-shadow: 0 0 20px 6px rgba(134, 239, 172, 0.08);
             }
         }
 
@@ -623,220 +579,88 @@
 
         .event-card .flyer-overlay .countdown {
             color: white;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.5);
-            padding: 4px 14px;
-            border-radius: 12px;
+            padding: 3px 12px;
+            border-radius: 10px;
             backdrop-filter: blur(10px);
         }
 
         .event-card .info {
-            padding: 20px 20px 22px;
+            padding: 12px 14px 14px 14px;
         }
 
         .event-card .info h3 {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--text);
             line-height: 1.2;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .event-card .info .organizer-tag {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 3px 14px;
-            background: rgba(74, 222, 128, 0.1);
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 2px 10px;
+            background: rgba(74, 222, 128, 0.08);
+            border-radius: 10px;
+            font-size: 10px;
             color: #86efac;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .event-card .info .meta {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 3px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .event-card .info .meta .icon {
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .event-card .info .meta strong {
-            color: #d1d5db;
+            color: var(--text);
+            font-weight: 600;
         }
 
         .event-card .info .venue-link {
             color: #a7f3d0;
             text-decoration: none;
-            border-bottom: 1px dotted rgba(167, 243, 208, 0.5);
-        }
-
-        .event-card .info .venue-link:hover {
-            color: #ecfdf5;
-        }
-
-        .event-card .info .venue-link .map-arrow {
+            border-bottom: 1px dotted rgba(167, 243, 208, 0.3);
             font-size: 11px;
-        }
-
-        .event-card .info .social-row {
-            display: flex;
-            gap: 8px;
-            margin: 10px 0;
-        }
-
-        .like-btn,
-        .comment-toggle-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.04);
-            color: #d1d5db;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .like-btn:hover,
-        .comment-toggle-btn:hover {
-            border-color: rgba(52, 211, 153, 0.4);
-            background: rgba(52, 211, 153, 0.08);
-        }
-
-        .like-btn.liked {
-            border-color: rgba(52, 211, 153, 0.5);
-            background: rgba(52, 211, 153, 0.12);
-        }
-
-        .like-btn .heart {
-            transition: transform 0.2s ease;
-        }
-
-        .like-btn.liked .heart {
-            transform: scale(1.15);
-        }
-
-        .comments-panel {
-            display: none;
-            margin: 4px 0 14px;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-        }
-
-        .comments-panel.open {
-            display: block;
-        }
-
-        .comments-list {
-            max-height: 160px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-        }
-
-        .comment-item {
-            font-size: 13px;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .comment-item:last-child {
-            border-bottom: none;
-        }
-
-        .comment-item strong {
-            color: #e8fbf0;
-            display: block;
-            margin-bottom: 2px;
-            font-size: 12px;
-        }
-
-        .comment-item p {
-            color: #9ca3af;
-            line-height: 1.4;
-        }
-
-        .comments-status {
-            font-size: 13px;
-            color: #6b7280;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .comment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .comment-form input {
-            padding: 9px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.03);
-            color: #f5f5f7;
-            font-size: 13px;
-        }
-
-        .comment-form input::placeholder {
-            color: #6b7280;
-        }
-
-        .comment-form button {
-            padding: 8px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #22c55e, #15803d);
-            color: white;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .event-card .info .category-tag {
-            display: inline-block;
-            padding: 2px 12px;
-            background: rgba(74, 222, 128, 0.15);
-            border-radius: 12px;
-            font-size: 11px;
-            color: #86efac;
-            margin-bottom: 6px;
         }
 
         .event-card .info .price-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 12px 0 14px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin: 6px 0 8px 0;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
         }
 
         .event-card .info .price {
-            font-size: 24px;
+            font-size: 16px;
             font-weight: 800;
             color: #4ade80;
         }
 
         .event-card .info .price small {
-            font-size: 13px;
+            font-size: 10px;
             font-weight: 400;
-            color: #9ca3af;
-            -webkit-text-fill-color: #9ca3af;
+            color: var(--text-muted);
         }
 
         .event-card .info .price.free-price {
@@ -844,82 +668,197 @@
         }
 
         .event-card .info .fee-badge {
-            font-size: 12px;
-            color: #9ca3af;
+            font-size: 9px;
+            color: var(--text-muted);
             background: rgba(255, 255, 255, 0.05);
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
 
-        .buy-btn {
+        .event-card .info .category-tag {
+            display: inline-block;
+            padding: 1px 10px;
+            background: rgba(74, 222, 128, 0.12);
+            border-radius: 10px;
+            font-size: 9px;
+            color: #86efac;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================
+                   EVENT DETAIL MODAL (Tap to expand)
+                   ============================================ */
+        .event-detail-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        .event-detail-overlay.open {
+            display: flex;
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .event-detail-box {
+            max-width: 480px;
             width: 100%;
-            padding: 14px;
-            background: #16a34a;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.15s ease-out, background 0.2s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--modal-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 0;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
             position: relative;
         }
 
-        .buy-btn:hover:not(:disabled) {
+        .event-detail-box .detail-flyer {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 24px 24px 0 0;
+            background: var(--card-bg);
+        }
+
+        .event-detail-box .detail-body {
+            padding: 24px;
+        }
+
+        .event-detail-box .detail-body h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .event-detail-box .detail-body .detail-organizer {
+            color: #86efac;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .event-detail-box .detail-body .detail-meta {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-detail-box .detail-body .detail-meta strong {
+            color: var(--text);
+        }
+
+        .event-detail-box .detail-body .detail-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #4ade80;
+            margin: 16px 0;
+        }
+
+        .event-detail-box .detail-body .detail-price small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .event-detail-box .detail-body .detail-description {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 12px 0 20px 0;
+        }
+
+        .event-detail-box .detail-close {
+            position: sticky;
+            top: 12px;
+            right: 12px;
+            float: right;
+            z-index: 5;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 12px 0 0;
+            transition: all 0.2s;
+        }
+
+        .event-detail-box .detail-close:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.08);
+        }
+
+        .event-detail-box .detail-buy-btn {
+            width: 100%;
+            padding: 16px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .event-detail-box .detail-buy-btn:hover {
             background: #15803d;
+            transform: scale(1.01);
         }
 
-        .buy-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(22, 163, 74, 0.4);
-        }
-
-        .buy-btn:disabled {
+        .event-detail-box .detail-buy-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
-            animation: none;
-        }
-
-        .buy-btn:disabled::after {
-            display: none;
-        }
-
-        .buy-btn.past-event {
-            background: rgba(107, 114, 128, 0.2);
-            animation: none;
-            cursor: not-allowed;
-            color: #9ca3af;
-        }
-
-        .buy-btn.past-event:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        .buy-btn.past-event::after {
-            display: none;
         }
 
         /* ============================================
                    LOADING & EMPTY STATES
                    ============================================ */
         .loading-state {
-            position: relative;
-            z-index: 1;
             text-align: center;
-            padding: 80px 20px;
-            color: #9cd8b3;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
         }
 
         .loading-state .spinner {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             border: 4px solid rgba(74, 222, 128, 0.15);
             border-top-color: #86efac;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 16px;
         }
 
         @keyframes spin {
@@ -929,14 +868,12 @@
         }
 
         .empty-state {
-            position: relative;
-            z-index: 1;
             text-align: center;
-            padding: 80px 20px;
-            background: rgba(255, 255, 255, 0.03);
+            padding: 60px 20px;
+            background: var(--card-bg);
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            grid-column: 1 / -1;
         }
 
         .empty-state .icon {
@@ -945,12 +882,221 @@
         }
 
         .empty-state h3 {
-            color: white;
+            color: var(--text);
             margin-bottom: 8px;
         }
 
         .empty-state p {
-            color: #9ca3af;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+                   CUSTOMER SERVICE - ENHANCED
+                   ============================================ */
+        .cs-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+            animation: csPulse 2s ease-in-out infinite;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cs-toggle:hover {
+            transform: scale(1.08);
+        }
+
+        @keyframes csPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 16px rgba(22, 163, 74, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+            }
+        }
+
+        .cs-toggle .cs-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: #ef4444;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 2px solid var(--bg);
+        }
+
+        .cs-panel {
+            position: fixed;
+            bottom: 92px;
+            right: 24px;
+            z-index: 1000;
+            width: 340px;
+            max-width: calc(100vw - 48px);
+            max-height: 460px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px) scale(0.96);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .cs-panel.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        .cs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--card-border);
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .cs-header .cs-header-icon {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .cs-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        .cs-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 280px;
+        }
+
+        .cs-message {
+            font-size: 13px;
+            line-height: 1.4;
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 88%;
+            animation: csSlideIn 0.3s ease;
+        }
+
+        @keyframes csSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cs-message.bot {
+            background: var(--cs-bg);
+            color: var(--text);
+            align-self: flex-start;
+            border: 1px solid var(--card-border);
+        }
+
+        .cs-message.user {
+            background: #16a34a;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .cs-whatsapp-link {
+            display: inline-block;
+            text-align: center;
+            background: #25D366;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 6px;
+            transition: all 0.2s;
+            align-self: center;
+        }
+
+        .cs-whatsapp-link:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+        }
+
+        .cs-form {
+            display: flex;
+            gap: 6px;
+            padding: 12px 16px 16px 16px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .cs-form input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .cs-form input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .cs-form button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #16a34a;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cs-form button:hover {
+            background: #15803d;
         }
 
         /* ============================================
@@ -962,11 +1108,11 @@
             }
 
             .header {
-                min-height: 180px;
+                min-height: 160px;
                 border-radius: 18px;
             }
             .header-content {
-                padding: 28px 16px;
+                padding: 24px 16px;
             }
             .header h1 {
                 font-size: 28px;
@@ -974,44 +1120,42 @@
             .header p {
                 font-size: 14px;
             }
-            .header .party-emoji-rain {
-                font-size: 20px;
-                gap: 6px;
-            }
             .header .badge {
                 font-size: 10px;
                 padding: 4px 12px;
             }
 
             .events-grid {
-                grid-template-columns: 1fr;
-                gap: 18px;
+                gap: 10px;
             }
 
             .event-card .flyer-wrap {
-                height: 160px;
-            }
-            .event-card .info {
-                padding: 16px;
-            }
-            .event-card .info h3 {
-                font-size: 16px;
-            }
-            .event-card .info .price {
-                font-size: 22px;
+                aspect-ratio: 1/1;
             }
 
-            .buy-btn {
+            .event-card .info h3 {
+                font-size: 13px;
+            }
+
+            .event-card .info .meta {
+                font-size: 10px;
+            }
+
+            .event-card .info .price {
                 font-size: 14px;
-                padding: 13px;
+            }
+
+            .event-card .info .price-row {
+                padding: 4px 8px;
+                margin: 4px 0 6px 0;
             }
 
             .section-title {
                 font-size: 18px;
-                margin: 24px 0 12px 0;
+                margin: 20px 0 12px 0;
             }
             .section-title .emoji {
-                font-size: 24px;
+                font-size: 22px;
             }
 
             .search-bar input {
@@ -1023,17 +1167,54 @@
                 font-size: 11px;
                 padding: 6px 14px;
             }
+
+            .view-btn {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+
+            .cs-panel {
+                right: 12px;
+                bottom: 80px;
+                width: calc(100vw - 24px);
+                max-height: 70vh;
+            }
+
+            .cs-toggle {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 16px;
+                right: 16px;
+            }
+
+            .event-detail-box .detail-body h2 {
+                font-size: 20px;
+            }
+            .event-detail-box .detail-body .detail-price {
+                font-size: 22px;
+            }
         }
 
         @media (min-width: 481px) and (max-width: 768px) {
             .header h1 {
                 font-size: 34px;
             }
+            .events-grid {
+                gap: 14px;
+            }
         }
 
         @media (min-width: 769px) and (max-width: 1024px) {
             .events-grid {
-                gap: 24px;
+                gap: 16px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .events-grid {
+                gap: 20px;
+                max-width: 900px;
             }
         }
 
@@ -1041,21 +1222,18 @@
                    SCROLLBAR
                    ============================================ */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: #050b08;
+            background: var(--bg);
         }
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #22c55e, #15803d);
             border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #15803d, #ffffff);
-        }
 
         /* ============================================
-                   GRAIN / FILM TEXTURE OVERLAY
+                   GRAIN OVERLAY
                    ============================================ */
         .grain-overlay {
             position: fixed;
@@ -1065,9 +1243,9 @@
             opacity: 0.035;
             mix-blend-mode: overlay;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            display: var(--decor-display);
         }
 
-        /* Decorative party elements only make sense on the dark theme */
         .grain-overlay,
         .party-particles,
         .glow-orb,
@@ -1075,148 +1253,6 @@
             display: var(--decor-display);
         }
 
-        /* ============================================
-                   CUSTOMER SERVICE WIDGET
-                   ============================================ */
-        .cs-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: none;
-            background: #16a34a;
-            color: white;
-            font-size: 22px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
-        }
-
-        .cs-toggle:hover {
-            background: #15803d;
-        }
-
-        .cs-panel {
-            position: fixed;
-            bottom: 84px;
-            right: 20px;
-            z-index: 1000;
-            width: 320px;
-            max-width: calc(100vw - 40px);
-            max-height: 440px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            backdrop-filter: blur(20px);
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(10px);
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .cs-panel.open {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-
-        .cs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--card-border);
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .cs-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .cs-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 280px;
-        }
-
-        .cs-message {
-            font-size: 13px;
-            line-height: 1.4;
-            padding: 8px 12px;
-            border-radius: 10px;
-            max-width: 85%;
-        }
-
-        .cs-message.bot {
-            background: var(--input-bg);
-            color: var(--text);
-            align-self: flex-start;
-        }
-
-        .cs-message.user {
-            background: #16a34a;
-            color: white;
-            align-self: flex-end;
-        }
-
-        .cs-whatsapp-link {
-            display: block;
-            text-align: center;
-            background: #16a34a;
-            color: white;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            text-decoration: none;
-            margin-top: 4px;
-        }
-
-        .cs-form {
-            display: flex;
-            gap: 6px;
-            padding: 12px;
-            border-top: 1px solid var(--card-border);
-        }
-
-        .cs-form input {
-            flex: 1;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--input-border);
-            background: var(--input-bg);
-            color: var(--text);
-            font-size: 13px;
-        }
-
-        .cs-form button {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 8px;
-            background: #16a34a;
-            color: white;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        /* ============================================
-                   REDUCED MOTION - ACCESSIBILITY
-                   ============================================ */
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -1240,7 +1276,7 @@
     <div class="grain-overlay"></div>
 
     <!-- ==========================================
-    PARTY PARTICLES (ANIMATED BACKGROUND)
+    PARTY PARTICLES
     ========================================== -->
     <div class="party-particles">
         <div class="party-particle"></div>
@@ -1257,11 +1293,10 @@
     GLOWING ORBS
     ========================================== -->
     <div class="glow-orb purple"></div>
-    <div class="glow-orb pink"></div>
     <div class="glow-orb gold"></div>
 
     <!-- ==========================================
-    HEADER - PARTY VIBE WITH IMAGE
+    HEADER
     ========================================== -->
     <header class="header">
         <canvas id="partyCanvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
@@ -1282,7 +1317,7 @@
     ========================================== -->
     <div class="search-section">
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search events by title, venue, or organizer..." />
+            <input type="text" id="searchInput" placeholder="🔍 Search events by title, venue, or organizer..." />
         </div>
         <div class="view-toggle" id="viewToggle">
             <button class="view-btn active" data-view="upcoming">Upcoming</button>
@@ -1309,11 +1344,52 @@
     </div>
 
     <!-- ==========================================
-    JAVASCRIPT - COMPLETE WORKING VERSION
+    EVENT DETAIL MODAL
+    ========================================== -->
+    <div class="event-detail-overlay" id="eventDetailOverlay">
+        <div class="event-detail-box" id="eventDetailBox">
+            <button class="detail-close" id="detailCloseBtn" aria-label="Close">✕</button>
+            <img class="detail-flyer" id="detailFlyer" src="" alt="Event flyer" />
+            <div class="detail-body">
+                <h2 id="detailTitle">Event Title</h2>
+                <div class="detail-organizer" id="detailOrganizer">Organizer</div>
+                <div class="detail-meta"><span>📍</span> <strong>Venue:</strong> <span id="detailVenue">Venue</span></div>
+                <div class="detail-meta"><span>📅</span> <strong>Date:</strong> <span id="detailDate">Date</span></div>
+                <div class="detail-meta"><span>🏷️</span> <strong>Category:</strong> <span id="detailCategory">Category</span></div>
+                <div class="detail-price" id="detailPrice">₦0 <small>(+ ₦100 fee)</small></div>
+                <div class="detail-description" id="detailDescription">Event description goes here.</div>
+                <button class="detail-buy-btn" id="detailBuyBtn">🎟️ Buy Ticket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    CUSTOMER SERVICE WIDGET
+    ========================================== -->
+    <button id="csToggle" class="cs-toggle" aria-label="Customer service">
+        ?
+        <span class="cs-badge">!</span>
+    </button>
+    <div id="csPanel" class="cs-panel">
+        <div class="cs-header">
+            <span><span class="cs-header-icon">💬</span> Help Center</span>
+            <button id="csClose" class="cs-close">✕</button>
+        </div>
+        <div id="csMessages" class="cs-messages">
+            <div class="cs-message bot">👋 Hi there! Ask me anything about events, tickets, or the platform. If I can't help, I'll connect you to admin on WhatsApp.</div>
+        </div>
+        <form id="csForm" class="cs-form">
+            <input type="text" id="csInput" placeholder="Type your question..." autocomplete="off" />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <!-- ==========================================
+    JAVASCRIPT
     ========================================== -->
     <script>
         // ============================================
-        // SUPABASE CONFIG - YOUR CREDENTIALS
+        // SUPABASE CONFIG
         // ============================================
         const SUPABASE_URL = "https://yfwxwqvksdsugxizaksj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
@@ -1328,8 +1404,33 @@
         const loadingState = document.getElementById('loadingState');
         const searchInput = document.getElementById('searchInput');
         const categoryBtns = document.querySelectorAll('.category-btn');
+        const viewBtns = document.querySelectorAll('.view-btn');
+
+        // Detail modal
+        const detailOverlay = document.getElementById('eventDetailOverlay');
+        const detailCloseBtn = document.getElementById('detailCloseBtn');
+        const detailFlyer = document.getElementById('detailFlyer');
+        const detailTitle = document.getElementById('detailTitle');
+        const detailOrganizer = document.getElementById('detailOrganizer');
+        const detailVenue = document.getElementById('detailVenue');
+        const detailDate = document.getElementById('detailDate');
+        const detailCategory = document.getElementById('detailCategory');
+        const detailPrice = document.getElementById('detailPrice');
+        const detailDescription = document.getElementById('detailDescription');
+        const detailBuyBtn = document.getElementById('detailBuyBtn');
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        let allEvents = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let currentView = 'upcoming';
+        const ITEMS_PER_BATCH = 8;
+        let itemsShown = ITEMS_PER_BATCH;
+        let currentFilteredList = [];
+        let scrollObserver = null;
+        const loadedComments = {};
+        let selectedEventId = null;
 
         // ============================================
         // DARK / LIGHT MODE
@@ -1357,42 +1458,20 @@
                 localStorage.setItem('cf_theme', next);
             });
         }
-        const motionReady = !prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
-        if (motionReady) {
-            gsap.registerPlugin(ScrollTrigger);
-        }
-
-        let allEvents = [];
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let currentView = 'upcoming';
-        const ITEMS_PER_BATCH = 4;
-        let itemsShown = ITEMS_PER_BATCH;
-        let currentFilteredList = [];
-        let scrollObserver = null;
-        const loadedComments = {};
 
         // ============================================
-        // LOAD EVENTS (ONLY APPROVED)
+        // LOAD EVENTS
         // ============================================
         async function loadEvents() {
             try {
-                console.log('📡 Fetching approved events...');
-
                 const { data: events, error } = await sb
                     .from('events')
                     .select('*')
                     .eq('is_published', true)
                     .order('event_date', { ascending: true });
 
-                if (error) {
-                    console.error('❌ Supabase Error:', error);
-                    throw error;
-                }
+                if (error) throw error;
 
-                console.log('✅ Events fetched:', events ? events.length : 0);
-
-                // Hide loading
                 loadingState.style.display = 'none';
 
                 if (!events || events.length === 0) {
@@ -1416,27 +1495,23 @@
                     <div class="empty-state">
                         <h3>Error Loading Events</h3>
                         <p>${error.message}</p>
-                        <p style="font-size:12px;color:#6b7280;margin-top:8px;">
-                            Check console for details (F12 → Console)
-                        </p>
+                        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Check console for details</p>
                     </div>
                 `;
             }
         }
 
         // ============================================
-        // RENDER EVENTS
+        // RENDER EVENTS - COLLAGE 2x2
         // ============================================
         function renderEvents(events) {
             const now = new Date();
 
-            // Filter by category
             let filtered = events;
             if (currentCategory !== 'all') {
                 filtered = filtered.filter(e => e.category === currentCategory);
             }
 
-            // Filter by search
             if (searchQuery.trim()) {
                 const query = searchQuery.toLowerCase().trim();
                 filtered = filtered.filter(e =>
@@ -1446,32 +1521,11 @@
                 );
             }
 
-            // Split into upcoming and past
             const upcoming = filtered.filter(e => new Date(e.event_date) >= now);
             const past = filtered.filter(e => new Date(e.event_date) < now);
 
             currentFilteredList = currentView === 'upcoming' ? upcoming : past;
             itemsShown = ITEMS_PER_BATCH;
-
-            let headingHtml = '';
-
-            if (currentView === 'upcoming') {
-                headingHtml = upcoming.length > 0
-                    ? `<div class="section-title">
-                           Upcoming Events
-                           <span class="line"></span>
-                           <span class="count-badge">${upcoming.length}</span>
-                       </div>`
-                    : '';
-            } else {
-                headingHtml = past.length > 0
-                    ? `<div class="section-title past">
-                           Past Events
-                           <span class="line"></span>
-                           <span class="count-badge">${past.length}</span>
-                       </div>`
-                    : '';
-            }
 
             if (filtered.length === 0) {
                 eventsContainer.innerHTML = `
@@ -1485,16 +1539,14 @@
 
             if (currentFilteredList.length === 0) {
                 eventsContainer.innerHTML = currentView === 'upcoming'
-                    ? `<div class="empty-state">
-                           <h3>No Upcoming Events Yet</h3>
-                           <p>Check back soon, or browse past events.</p>
-                       </div>`
-                    : `<div class="empty-state">
-                           <h3>No Past Events</h3>
-                           <p>Nothing here yet.</p>
-                       </div>`;
+                    ? `<div class="empty-state"><h3>No Upcoming Events</h3><p>Check back soon!</p></div>`
+                    : `<div class="empty-state"><h3>No Past Events</h3><p>Nothing here yet.</p></div>`;
                 return;
             }
+
+            const headingHtml = currentView === 'upcoming'
+                ? `<div class="section-title">🔥 Upcoming Events <span class="line"></span><span class="count-badge">${upcoming.length}</span></div>`
+                : `<div class="section-title past">📅 Past Events <span class="line"></span><span class="count-badge">${past.length}</span></div>`;
 
             eventsContainer.innerHTML = headingHtml +
                 `<div class="events-grid" id="eventsGrid"></div>` +
@@ -1505,8 +1557,7 @@
         }
 
         // ============================================
-        // APPEND A BATCH OF CARDS (used for both initial
-        // render and infinite scroll "load more")
+        // APPEND EVENT CARDS
         // ============================================
         async function appendEventCards(events) {
             const grid = document.getElementById('eventsGrid');
@@ -1523,23 +1574,105 @@
                     sb.from('event_comments').select('event_id').in('event_id', ids)
                 ]);
 
-                (likesRes.data || []).forEach(function(row) {
+                (likesRes.data || []).forEach(row => {
                     socialData[row.event_id].likeCount++;
                     if (row.device_id === deviceId) socialData[row.event_id].likedByMe = true;
                 });
 
-                (commentsRes.data || []).forEach(function(row) {
+                (commentsRes.data || []).forEach(row => {
                     socialData[row.event_id].commentCount++;
                 });
             } catch (err) {
-                console.log('Could not load likes/comments (tables may not exist yet):', err.message);
+                // Tables may not exist yet — silent fail
             }
 
-            grid.insertAdjacentHTML('beforeend', events.map(function(event) {
+            grid.insertAdjacentHTML('beforeend', events.map(event => {
                 return createEventCard(event, currentView, socialData[event.id]);
             }).join(''));
 
-            animateEventCards();
+            // Attach click listeners for detail view
+            grid.querySelectorAll('.event-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const id = this.dataset.eventId;
+                    if (id) openEventDetail(id);
+                });
+            });
+        }
+
+        // ============================================
+        // CREATE EVENT CARD - COLLAGE STYLE
+        // ============================================
+        function createEventCard(event, status, social) {
+            social = social || { likeCount: 0, likedByMe: false, commentCount: 0 };
+            const eventDate = new Date(event.event_date);
+            const now = new Date();
+            const isPast = status === 'past';
+
+            let statusClass = 'past';
+            let statusText = 'Past';
+
+            if (!isPast) {
+                const diffMs = eventDate - now;
+                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+
+                if (diffDays <= 1 && diffDays >= 0) {
+                    statusClass = 'ongoing';
+                    statusText = diffHours <= 24 ? `${diffHours}h left` : 'Tomorrow';
+                } else if (diffDays <= 3) {
+                    statusClass = 'ongoing';
+                    statusText = `In ${diffDays}d`;
+                } else {
+                    statusClass = 'upcoming';
+                    statusText = `In ${diffDays}d`;
+                }
+            }
+
+            let countdownText = '';
+            if (!isPast) {
+                const diffMs = eventDate - now;
+                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+                if (diffHours <= 48 && diffHours > 0) {
+                    const h = Math.floor(diffMs / (1000 * 60 * 60));
+                    const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                    countdownText = `${h}h ${m}m`;
+                } else if (diffHours > 0) {
+                    const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    countdownText = `${d}d`;
+                }
+            }
+
+            const priceHtml = event.is_free
+                ? `<span class="price free-price">FREE</span>`
+                : `<span class="price">₦${event.price}</span>`;
+
+            const feeHtml = event.is_free
+                ? `<span class="fee-badge">No fee</span>`
+                : `<span class="fee-badge">+ ₦100 fee</span>`;
+
+            return `
+                <div class="event-card" data-event-id="${event.id}">
+                    <div class="flyer-wrap">
+                        <img src="${event.banner_url || ''}" class="flyer" alt="${event.title}" 
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect width=%22400%22 height=%22400%22 fill=%22%230d2818%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%234ade80%22 font-size=%2240%22%3E🎉%3C/text%3E%3C/svg%3E'" />
+                        <div class="flyer-overlay">
+                            <span class="status-tag ${statusClass}">${statusText}</span>
+                            ${countdownText ? `<span class="countdown">${countdownText}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="info">
+                        <div class="category-tag">${event.category || 'General'}</div>
+                        <h3>${event.title}</h3>
+                        <div class="organizer-tag">👤 ${event.organizer_name}</div>
+                        <div class="meta"><span class="icon">📍</span> ${event.venue}</div>
+                        <div class="meta"><span class="icon">📅</span> ${eventDate.toLocaleDateString()}</div>
+                        <div class="price-row">
+                            ${priceHtml}
+                            ${feeHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // ============================================
@@ -1565,143 +1698,88 @@
         }
 
         // ============================================
-        // CREATE EVENT CARD
+        // EVENT DETAIL MODAL - TAP TO EXPAND
         // ============================================
-        function createEventCard(event, status, social) {
-            social = social || { likeCount: 0, likedByMe: false, commentCount: 0 };
-            const eventDate = new Date(event.event_date);
-            const now = new Date();
-            const isPast = status === 'past';
+        function openEventDetail(eventId) {
+            const event = allEvents.find(e => e.id === eventId);
+            if (!event) return;
 
-            let statusClass = 'past';
-            let statusText = 'Past';
+            selectedEventId = eventId;
 
-            if (!isPast) {
-                const diffMs = eventDate - now;
-                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+            detailFlyer.src = event.banner_url || '';
+            detailFlyer.alt = event.title;
+            detailTitle.textContent = event.title;
+            detailOrganizer.textContent = '👤 ' + event.organizer_name;
+            detailVenue.textContent = event.venue;
+            detailDate.textContent = new Date(event.event_date).toLocaleString();
+            detailCategory.textContent = event.category || 'General';
+            detailDescription.textContent = event.description || 'No description provided.';
 
-                if (diffDays <= 1 && diffDays >= 0) {
-                    statusClass = 'ongoing';
-                    statusText = diffHours <= 24 ? `${diffHours}h left` : 'Tomorrow';
-                } else if (diffDays <= 3) {
-                    statusClass = 'ongoing';
-                    statusText = `In ${diffDays} days`;
-                } else {
-                    statusClass = 'upcoming';
-                    statusText = `In ${diffDays} days`;
-                }
+            if (event.is_free) {
+                detailPrice.innerHTML = 'FREE <small>No ticket needed</small>';
+                detailBuyBtn.textContent = '🎟️ RSVP Free';
+            } else {
+                detailPrice.innerHTML = `₦${event.price} <small>(+ ₦100 fee)</small>`;
+                detailBuyBtn.textContent = '🎟️ Buy Ticket';
             }
 
-            let countdownText = '';
-            if (!isPast) {
-                const diffMs = eventDate - now;
-                const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
-                if (diffHours <= 48 && diffHours > 0) {
-                    const h = Math.floor(diffMs / (1000 * 60 * 60));
-                    const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                    countdownText = `${h}h ${m}m`;
-                } else if (diffHours > 0) {
-                    const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                    countdownText = `${d}d`;
-                }
+            // Check if event is past
+            if (new Date(event.event_date) < new Date()) {
+                detailBuyBtn.disabled = true;
+                detailBuyBtn.textContent = '📅 Event Passed';
+            } else {
+                detailBuyBtn.disabled = false;
             }
 
-            const buttonDisabled = isPast ? 'disabled' : '';
-            const buttonClass = isPast ? 'buy-btn past-event' : 'buy-btn';
-            let buttonText = isPast ? 'Event Passed' : 'Buy Ticket';
-            if (!isPast && event.is_free) {
-                buttonText = 'RSVP Free';
-            }
+            // Store event id on the button
+            detailBuyBtn.dataset.eventId = event.id;
 
-            const priceRowHtml = event.is_free
-                ? `<div class="price-row">
-                       <span class="price free-price">FREE</span>
-                       <span class="fee-badge">No ticket needed</span>
-                   </div>`
-                : `<div class="price-row">
-                       <span class="price">₦${event.price} <small>(+ ₦100 fee)</small></span>
-                       <span class="fee-badge">incl. fee</span>
-                   </div>`;
-
-            return `
-                <div class="event-card">
-                    <div class="flyer-wrap">
-                        <img src="${event.banner_url || ''}" class="flyer" alt="${event.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%230d2818%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%234ade80%22 font-size=%2220%22%3EEvent%3C/text%3E%3C/svg%3E'" />
-                        <div class="flyer-overlay">
-                            <span class="status-tag ${statusClass}">${statusText}</span>
-                            ${countdownText ? `<span class="countdown">${countdownText}</span>` : ''}
-                        </div>
-                    </div>
-                    <div class="info">
-                        <h3>${event.title}</h3>
-                        <div class="organizer-tag">${event.organizer_name}</div>
-                        <div class="category-tag">${event.category || 'General'}</div>
-                        <div class="meta">
-                            <strong>Venue:</strong>
-                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue)}"
-                               target="_blank" rel="noopener" class="venue-link" onclick="event.stopPropagation()">
-                                ${event.venue} <span class="map-arrow">↗</span>
-                            </a>
-                        </div>
-                        <div class="meta"><span class="icon">📅</span> <strong>Date:</strong> ${eventDate.toLocaleString()}</div>
-                        ${priceRowHtml}
-
-                        <div class="social-row">
-                            <button class="like-btn ${social.likedByMe ? 'liked' : ''}" onclick="toggleLike('${event.id}', this)">
-                                <span class="heart">${social.likedByMe ? '❤️' : '🤍'}</span>
-                                <span class="like-count">${social.likeCount}</span>
-                            </button>
-                            <button class="comment-toggle-btn" onclick="toggleComments('${event.id}', this)">
-                                💬 <span class="comment-count" id="commentCount-${event.id}">${social.commentCount}</span>
-                            </button>
-                        </div>
-
-                        <div class="comments-panel" id="commentsPanel-${event.id}">
-                            <div class="comments-list" id="commentsList-${event.id}"></div>
-                            <form class="comment-form" onsubmit="return submitComment(event, '${event.id}')">
-                                <input type="text" placeholder="Name" class="comment-name-input" maxlength="40" required />
-                                <input type="text" placeholder="Say something..." class="comment-text-input" maxlength="200" required />
-                                <button type="submit">Post</button>
-                            </form>
-                        </div>
-
-                        <button class="${buttonClass}" onclick="openModal('${event.id}')" ${buttonDisabled}>
-                            ${buttonText}
-                        </button>
-                    </div>
-                </div>
-            `;
+            detailOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
         }
 
+        function closeEventDetail() {
+            detailOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+            selectedEventId = null;
+        }
+
+        // Close detail with button or outside click
+        detailCloseBtn.addEventListener('click', closeEventDetail);
+        detailOverlay.addEventListener('click', function(e) {
+            if (e.target === this) closeEventDetail();
+        });
+
+        // Buy button in detail modal
+        detailBuyBtn.addEventListener('click', function() {
+            const id = this.dataset.eventId;
+            if (id) openModal(id);
+        });
+
         // ============================================
-        // OPEN MODAL - REDIRECT TO PAYMENT OR RSVP PAGE
+        // OPEN MODAL - REDIRECT TO PAYMENT / RSVP
         // ============================================
         async function openModal(eventId) {
             try {
-                console.log('🎫 Opening event:', eventId);
-
                 const { data: event, error } = await sb
                     .from('events')
                     .select('*')
                     .eq('id', eventId)
                     .single();
 
-                if (error) {
-                    console.error('❌ Error fetching event:', error);
-                    throw error;
-                }
+                if (error) throw error;
 
                 if (new Date(event.event_date) < new Date()) {
-                    alert('📅 This event has already passed. Check out our upcoming events!');
+                    alert('📅 This event has already passed.');
+                    closeEventDetail();
                     return;
                 }
 
+                closeEventDetail();
+
                 if (event.is_free) {
-                    console.log('✅ Redirecting to RSVP page (free event)');
                     window.location.href = `rsvp.html?eventId=${event.id}`;
                 } else {
-                    console.log('✅ Redirecting to payment page');
                     window.location.href = `payment.html?eventId=${event.id}`;
                 }
 
@@ -1728,10 +1806,6 @@
             });
         });
 
-        // ============================================
-        // UPCOMING / PAST VIEW TOGGLE
-        // ============================================
-        const viewBtns = document.querySelectorAll('.view-btn');
         viewBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 if (this.dataset.view === currentView) return;
@@ -1749,252 +1823,128 @@
         });
 
         // ============================================
-        // CINEMATIC MOTION - HERO INTRO
+        // CUSTOMER SERVICE - ENHANCED
         // ============================================
-        function initHeroIntro() {
-            if (!motionReady) return;
+        const CS_ADMIN_PHONE = '2348146275644';
+        const CS_FAQ = [
+            { keywords: ['refund', 'money back', 'cancel'], answer: "Refunds are handled case-by-case. Message the event organizer directly, or contact admin on WhatsApp for urgent issues." },
+            { keywords: ['ticket', 'buy', 'pay', 'payment'], answer: 'Tap an event, fill in your details, upload your payment receipt, then wait for admin to confirm. Your page updates automatically when confirmed.' },
+            { keywords: ['free', 'rsvp'], answer: "Free events just need your name and email — no payment, no waiting for confirmation." },
+            { keywords: ['qr', 'scan', 'entry', 'door'], answer: 'If your event has an "Online Ticket" QR code, it\'s shown right on your confirmation page once payment is confirmed. Show that at the door.' },
+            { keywords: ['submit', 'organizer', 'host', 'create event'], answer: 'Use the "Submit Event" page. You\'ll get a private edit link afterward — save it, it\'s the only way to update your event later.' },
+            { keywords: ['edit', 'change', 'update event'], answer: "Use the private edit link you got when you submitted your event. If you lost it, contact admin on WhatsApp and they can help." },
+            { keywords: ['pending', 'waiting', 'confirm'], answer: 'Pending means admin hasn\'t verified your payment receipt yet. This is usually quick — the page updates on its own once confirmed.' },
+            { keywords: ['how to', 'help', 'support'], answer: "I'm here to help! You can ask about tickets, events, submissions, or anything else. If I can't answer, I'll connect you to admin on WhatsApp." },
+            { keywords: ['eventflow', 'platform', 'about'], answer: "EventFlow is a campus events platform where students can discover events, buy tickets, and organizers can submit their events for approval." },
+        ];
 
-            gsap.set(['.header h1', '.header p', '.header .badge', '.search-section'], { opacity: 1 });
-
-            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-            tl.from('.header h1', { opacity: 0, y: 40, scale: 0.92, filter: 'blur(16px)', duration: 1.1 })
-              .from('.header p', { opacity: 0, y: 20, duration: 0.7 }, '-=0.6')
-              .from('.header .badge', { opacity: 0, y: 16, scale: 0.85, duration: 0.5, stagger: 0.12 }, '-=0.4')
-              .from('.search-section', { opacity: 0, y: 24, duration: 0.7 }, '-=0.3')
-              .set(['.header h1', '.header p', '.header .badge', '.search-section'], { clearProps: 'all' });
-        }
-
-        // ============================================
-        // CINEMATIC MOTION - MOUSE PARALLAX ON ORBS
-        // ============================================
-        function initOrbParallax() {
-            if (prefersReducedMotion) return;
-            const orbs = document.querySelectorAll('.glow-orb');
-            if (!orbs.length) return;
-
-            window.addEventListener('mousemove', function(e) {
-                const x = (e.clientX / window.innerWidth) - 0.5;
-                const y = (e.clientY / window.innerHeight) - 0.5;
-                orbs.forEach(function(orb, i) {
-                    const depth = (i + 1) * 16;
-                    const centered = orb.classList.contains('gold') ? 'translate(-50%, -50%) ' : '';
-                    orb.style.transform = `${centered}translate(${x * depth}px, ${y * depth}px)`;
-                });
-            }, { passive: true });
-        }
-
-        // ============================================
-        // CINEMATIC MOTION - MAGNETIC BUTTONS
-        // ============================================
-        function initMagneticButtons() {
-            if (prefersReducedMotion) return;
-
-            eventsContainer.addEventListener('mousemove', function(e) {
-                const btn = e.target.closest('.buy-btn:not(.past-event):not(:disabled)');
-                if (!btn) return;
-                const rect = btn.getBoundingClientRect();
-                const relX = e.clientX - rect.left - rect.width / 2;
-                const relY = e.clientY - rect.top - rect.height / 2;
-                btn.style.transform = `translate(${relX * 0.2}px, ${relY * 0.35}px)`;
-            });
-
-            eventsContainer.addEventListener('mouseout', function(e) {
-                const btn = e.target.closest('.buy-btn');
-                if (btn) btn.style.transform = '';
-            });
-        }
-
-        // ============================================
-        // SMOOTH SCROLL (LENIS)
-        // ============================================
-        function initSmoothScroll() {
-            if (prefersReducedMotion || typeof Lenis === 'undefined') return;
-
-            const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-
-            if (motionReady) {
-                lenis.on('scroll', ScrollTrigger.update);
-                gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
-                gsap.ticker.lagSmoothing(0);
-            } else {
-                (function raf(time) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                })();
-            }
-        }
-
-        // ============================================
-        // CINEMATIC EVENT CARD SCROLL-REVEAL
-        // ============================================
-        function animateEventCards() {
-            const cards = document.querySelectorAll('.event-card:not([data-revealed])');
-            if (!cards.length) return;
-
-            cards.forEach(function(card) { card.setAttribute('data-revealed', '1'); });
-
-            if (!motionReady) {
-                // Existing CSS fadeInUp keyframe (already in place) handles this
-                // fallback nicely when the motion library isn't available.
-                return;
-            }
-
-            cards.forEach(function(card, i) {
-                // Stop the CSS keyframe fallback from fighting with GSAP's own values.
-                card.style.animation = 'none';
-
-                gsap.fromTo(card,
-                    { opacity: 0, y: 70, scale: 0.9, filter: 'blur(12px)' },
-                    {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        filter: 'blur(0px)',
-                        duration: 0.9,
-                        delay: (i % 3) * 0.08,
-                        ease: 'power3.out',
-                        scrollTrigger: {
-                            trigger: card,
-                            start: 'top 90%',
-                            once: true
-                        },
-                        onComplete: function() {
-                            gsap.set(card, { clearProps: 'all' });
-                        }
-                    }
-                );
-            });
-        }
-
-        // ============================================
-        // LIKES
-        // ============================================
-        async function toggleLike(eventId, btnEl) {
-            const deviceId = getDeviceId();
-            const heartSpan = btnEl.querySelector('.heart');
-            const countSpan = btnEl.querySelector('.like-count');
-            const wasLiked = btnEl.classList.contains('liked');
-            const prevCount = parseInt(countSpan.textContent, 10) || 0;
-
-            // Optimistic UI update
-            btnEl.classList.toggle('liked');
-            heartSpan.textContent = wasLiked ? '🤍' : '❤️';
-            countSpan.textContent = wasLiked ? Math.max(0, prevCount - 1) : prevCount + 1;
-
-            try {
-                if (wasLiked) {
-                    const { error } = await sb.from('event_likes')
-                        .delete()
-                        .eq('event_id', eventId)
-                        .eq('device_id', deviceId);
-                    if (error) throw error;
-                } else {
-                    const { error } = await sb.from('event_likes')
-                        .insert([{ event_id: eventId, device_id: deviceId }]);
-                    if (error) throw error;
+        function csFindAnswer(question) {
+            const q = question.toLowerCase();
+            for (const entry of CS_FAQ) {
+                if (entry.keywords.some(k => q.includes(k))) {
+                    return entry.answer;
                 }
-            } catch (err) {
-                console.error('Like toggle failed, reverting:', err);
-                btnEl.classList.toggle('liked');
-                heartSpan.textContent = wasLiked ? '❤️' : '🤍';
-                countSpan.textContent = prevCount;
             }
+            return null;
         }
 
-        // ============================================
-        // COMMENTS
-        // ============================================
-        async function toggleComments(eventId, btnEl) {
-            const panel = document.getElementById('commentsPanel-' + eventId);
-            if (!panel) return;
+        function initCustomerService() {
+            const toggleBtn = document.getElementById('csToggle');
+            const panel = document.getElementById('csPanel');
+            const closeBtn = document.getElementById('csClose');
+            const messagesEl = document.getElementById('csMessages');
+            const form = document.getElementById('csForm');
+            const input = document.getElementById('csInput');
 
-            const isOpen = panel.classList.contains('open');
-            panel.classList.toggle('open', !isOpen);
-
-            if (!isOpen && !loadedComments[eventId]) {
-                await loadComments(eventId);
-            }
-        }
-
-        async function loadComments(eventId) {
-            const list = document.getElementById('commentsList-' + eventId);
-            if (list) list.innerHTML = '<p class="comments-status">Loading comments…</p>';
-
-            try {
-                const { data, error } = await sb
-                    .from('event_comments')
-                    .select('*')
-                    .eq('event_id', eventId)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                loadedComments[eventId] = data || [];
-                renderCommentsList(eventId);
-            } catch (err) {
-                console.error('Error loading comments:', err);
-                if (list) list.innerHTML = '<p class="comments-status">Could not load comments.</p>';
-            }
-        }
-
-        function renderCommentsList(eventId) {
-            const list = document.getElementById('commentsList-' + eventId);
-            const countEl = document.getElementById('commentCount-' + eventId);
-            const comments = loadedComments[eventId] || [];
-
-            if (countEl) countEl.textContent = comments.length;
-            if (!list) return;
-
-            if (comments.length === 0) {
-                list.innerHTML = '<p class="comments-status">No comments yet — be the first!</p>';
+            if (!toggleBtn || !panel || !closeBtn || !messagesEl || !form || !input) {
+                console.warn('💬 Customer service elements missing – skipping.');
                 return;
             }
 
-            list.innerHTML = comments.map(function(c) {
-                return `<div class="comment-item"><strong>${escapeHtml(c.name)}</strong><p>${escapeHtml(c.comment)}</p></div>`;
-            }).join('');
-        }
-
-        async function submitComment(domEvent, eventId) {
-            domEvent.preventDefault();
-            const form = domEvent.target;
-            const nameInput = form.querySelector('.comment-name-input');
-            const textInput = form.querySelector('.comment-text-input');
-            const name = nameInput.value.trim();
-            const text = textInput.value.trim();
-
-            if (!name || !text) return false;
-
-            try {
-                const { error } = await sb.from('event_comments').insert([{ event_id: eventId, name: name, comment: text }]);
-                if (error) throw error;
-                nameInput.value = '';
-                textInput.value = '';
-                await loadComments(eventId);
-            } catch (err) {
-                console.error('Error posting comment:', err);
-                alert('Could not post your comment: ' + err.message);
+            function addMessage(text, from) {
+                const div = document.createElement('div');
+                div.className = 'cs-message ' + from;
+                div.textContent = text;
+                messagesEl.appendChild(div);
+                messagesEl.scrollTop = messagesEl.scrollHeight;
             }
-            return false;
-        }
 
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
+            toggleBtn.addEventListener('click', function() {
+                panel.classList.toggle('open');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                panel.classList.remove('open');
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const question = input.value.trim();
+                if (!question) return;
+
+                addMessage(question, 'user');
+                input.value = '';
+
+                const answer = csFindAnswer(question);
+                setTimeout(function() {
+                    if (answer) {
+                        addMessage(answer, 'bot');
+                    } else {
+                        addMessage("I'm not sure about that one. Let me connect you to the admin directly on WhatsApp.", 'bot');
+                        const waLink = document.createElement('a');
+                        waLink.href = `https://wa.me/${CS_ADMIN_PHONE}?text=${encodeURIComponent('Hi, I have a question about EventFlow: ' + question)}`;
+                        waLink.target = '_blank';
+                        waLink.className = 'cs-whatsapp-link';
+                        waLink.textContent = '📱 Ask Admin on WhatsApp';
+                        messagesEl.appendChild(waLink);
+                        messagesEl.scrollTop = messagesEl.scrollHeight;
+                    }
+                }, 500);
+            });
+
+            // Auto-open on first visit after 3 seconds
+            if (!sessionStorage.getItem('cs_visited')) {
+                setTimeout(function() {
+                    panel.classList.add('open');
+                    sessionStorage.setItem('cs_visited', '1');
+                }, 3000);
+            }
         }
 
         // ============================================
-        // ANIMATED PARTY ATMOSPHERE (canvas)
-        // Floating light/bokeh particles ambient in the hero,
-        // plus a one-time confetti burst on load.
+        // DEVICE ID & VISIT TRACKING
+        // ============================================
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('cf_device_id');
+            if (!deviceId) {
+                deviceId = (window.crypto && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+                localStorage.setItem('cf_device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        function initVisitTracking() {
+            try {
+                const deviceId = getDeviceId();
+                sb.from('site_visits')
+                    .insert([{ device_id: deviceId, page: 'index' }])
+                    .then(function(res) {
+                        if (res.error) console.log('Visit log skipped:', res.error.message);
+                    });
+            } catch (err) {
+                // Silent fail
+            }
+        }
+
+        // ============================================
+        // PARTY ATMOSPHERE CANVAS
         // ============================================
         function initPartyAtmosphere() {
             const canvas = document.getElementById('partyCanvas');
-            if (!canvas) return;
-
-            if (prefersReducedMotion) {
-                canvas.style.display = 'none';
+            if (!canvas || prefersReducedMotion) {
+                if (canvas) canvas.style.display = 'none';
                 return;
             }
 
@@ -2015,7 +1965,7 @@
             window.addEventListener('resize', resize);
 
             const bokehColors = ['255,255,255', '134,239,172', '74,222,128', '34,197,94'];
-            const bokeh = Array.from({ length: 26 }, function() {
+            const bokeh = Array.from({ length: 22 }, function() {
                 return {
                     x: Math.random() * w,
                     y: Math.random() * h,
@@ -2026,23 +1976,6 @@
                     color: bokehColors[Math.floor(Math.random() * bokehColors.length)]
                 };
             });
-
-            const confettiColors = ['#4ade80', '#ffffff', '#16a34a', '#ffffff', '#86efac'];
-            let confetti = Array.from({ length: 60 }, function() {
-                return {
-                    x: Math.random() * w,
-                    y: -20 - Math.random() * h,
-                    size: 4 + Math.random() * 5,
-                    speedY: 1.5 + Math.random() * 2.5,
-                    speedX: (Math.random() - 0.5) * 1.5,
-                    rotation: Math.random() * 360,
-                    spin: (Math.random() - 0.5) * 8,
-                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-                    life: 1
-                };
-            });
-            let confettiActive = true;
-            setTimeout(function() { confettiActive = false; }, 2200);
 
             let hidden = false;
             document.addEventListener('visibilitychange', function() {
@@ -2066,144 +1999,8 @@
                     ctx.fillStyle = 'rgba(' + p.color + ',' + p.alpha + ')';
                     ctx.fill();
                 });
-
-                if (confettiActive || confetti.some(function(c) { return c.life > 0.02; })) {
-                    confetti.forEach(function(c) {
-                        if (!confettiActive) c.life -= 0.02;
-                        if (c.life <= 0) return;
-                        c.y += c.speedY;
-                        c.x += c.speedX;
-                        c.rotation += c.spin;
-                        if (c.y > h + 20 && confettiActive) {
-                            c.y = -20;
-                            c.x = Math.random() * w;
-                        }
-                        ctx.save();
-                        ctx.globalAlpha = Math.max(c.life, 0);
-                        ctx.translate(c.x, c.y);
-                        ctx.rotate((c.rotation * Math.PI) / 180);
-                        ctx.fillStyle = c.color;
-                        ctx.fillRect(-c.size / 2, -c.size / 3, c.size, c.size * 0.6);
-                        ctx.restore();
-                    });
-                }
             }
             frame();
-        }
-
-        // ============================================
-        // SHARED DEVICE ID (used for visit tracking + likes)
-        // ============================================
-        // ============================================
-        // CUSTOMER SERVICE WIDGET
-        // ============================================
-        const CS_ADMIN_PHONE = '2348146275644';
-        const CS_FAQ = [
-            { keywords: ['refund', 'money back', 'cancel'], answer: "Refunds are handled case-by-case. Message the event organizer through their event page, or contact admin below if it's urgent." },
-            { keywords: ['ticket', 'buy', 'pay', 'payment'], answer: 'Tap an event, fill in your details, upload your payment receipt, then wait for admin to confirm — you\'ll see it update automatically on that same page.' },
-            { keywords: ['free', 'rsvp'], answer: "Free events just need your name and email — no payment, no waiting for confirmation." },
-            { keywords: ['qr', 'scan', 'entry', 'door'], answer: 'If your event has an "Online Ticket" QR code, it\'s shown right on your confirmation page once payment is confirmed. Show that at the door.' },
-            { keywords: ['submit', 'organizer', 'host', 'create event'], answer: 'Use the "Submit Event" page. You\'ll get a private edit link afterward — save it, since it\'s the only way to update your event later.' },
-            { keywords: ['edit', 'change', 'update event'], answer: "Use the private edit link you got when you submitted your event. If you lost it, contact admin below and they can look it up." },
-            { keywords: ['pending', 'waiting', 'confirm'], answer: 'Pending means admin hasn\'t verified your payment receipt yet. This is usually quick — the page updates on its own once it\'s confirmed.' },
-        ];
-
-        function csFindAnswer(question) {
-            const q = question.toLowerCase();
-            for (const entry of CS_FAQ) {
-                if (entry.keywords.some(k => q.includes(k))) {
-                    return entry.answer;
-                }
-            }
-            return null;
-        }
-
-        // 🔥 FIX: Added null-check so the error doesn't stop events from loading
-        function initCustomerService() {
-            const toggleBtn = document.getElementById('csToggle');
-            const panel = document.getElementById('csPanel');
-            const closeBtn = document.getElementById('csClose');
-            const messagesEl = document.getElementById('csMessages');
-            const form = document.getElementById('csForm');
-            const input = document.getElementById('csInput');
-
-            // Exit early if any element is missing, so the rest of the page works
-            if (!toggleBtn || !panel || !closeBtn || !messagesEl || !form || !input) {
-                console.warn('💬 Customer service elements missing – skipping.');
-                return;
-            }
-
-            function addMessage(text, from) {
-                const div = document.createElement('div');
-                div.className = 'cs-message ' + from;
-                div.textContent = text;
-                messagesEl.appendChild(div);
-                messagesEl.scrollTop = messagesEl.scrollHeight;
-            }
-
-            toggleBtn.addEventListener('click', function() {
-                panel.classList.toggle('open');
-            });
-            closeBtn.addEventListener('click', function() {
-                panel.classList.remove('open');
-            });
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const question = input.value.trim();
-                if (!question) return;
-
-                addMessage(question, 'user');
-                input.value = '';
-
-                const answer = csFindAnswer(question);
-                setTimeout(function() {
-                    if (answer) {
-                        addMessage(answer, 'bot');
-                    } else {
-                        addMessage("I'm not sure about that one. Tap below to ask the admin directly on WhatsApp.", 'bot');
-                        const waLink = document.createElement('a');
-                        waLink.href = `https://wa.me/${CS_ADMIN_PHONE}?text=${encodeURIComponent('Hi, I have a question about EventFlow: ' + question)}`;
-                        waLink.target = '_blank';
-                        waLink.className = 'cs-whatsapp-link';
-                        waLink.textContent = 'Ask Admin on WhatsApp';
-                        messagesEl.appendChild(waLink);
-                        messagesEl.scrollTop = messagesEl.scrollHeight;
-                    }
-                }, 400);
-            });
-        }
-
-        function getDeviceId() {
-            let deviceId = localStorage.getItem('cf_device_id');
-            if (!deviceId) {
-                deviceId = (window.crypto && crypto.randomUUID)
-                    ? crypto.randomUUID()
-                    : 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-                localStorage.setItem('cf_device_id', deviceId);
-            }
-            return deviceId;
-        }
-
-        // ============================================
-        // SITE VISIT TRACKING
-        // "Viewers" = every page load logged (counted every time)
-        // "Users"   = distinct device IDs (counted once per device, ever)
-        // ============================================
-        function initVisitTracking() {
-            try {
-                const deviceId = getDeviceId();
-
-                sb.from('site_visits')
-                    .insert([{ device_id: deviceId, page: 'index' }])
-                    .then(function(res) {
-                        if (res.error) {
-                            console.log('Visit log skipped:', res.error.message);
-                        }
-                    });
-            } catch (err) {
-                console.log('Visit tracking unavailable:', err);
-            }
         }
 
         // ============================================
@@ -2211,47 +2008,22 @@
         // ============================================
         initThemeToggle();
         initCustomerService();
-        initSmoothScroll();
-        initHeroIntro();
-        initOrbParallax();
-        initMagneticButtons();
         initPartyAtmosphere();
         initVisitTracking();
 
+        // Load events
         loadEvents();
 
         // Auto-refresh every 60 seconds
         setInterval(loadEvents, 60000);
 
-        console.log('EventFlow Live!');
+        console.log('✅ EventFlow Live!');
         console.log('📌 Features:');
-        console.log('  ✅ Party Vibe Background with Animation');
-        console.log('  ✅ Header with Event Image');
-        console.log('  ✅ Displays approved events');
-        console.log('  ✅ Category filters');
-        console.log('  ✅ Search events');
-        console.log('  ✅ Buy Ticket → Redirects to payment.html');
-        console.log('  ✅ Mobile responsive');
-        console.log('  ✅ Cinematic scroll motion:', motionReady ? 'ON (GSAP + Lenis)' : 'reduced/fallback');
+        console.log('  ✅ 2x2 Collage grid on all screens');
+        console.log('  ✅ Tap any event → full detail view');
+        console.log('  ✅ Light mode text visibility fixed');
+        console.log('  ✅ Enhanced customer service with auto-reply');
     </script>
-
-    <!-- ==========================================
-    CUSTOMER SERVICE WIDGET
-    ========================================== -->
-    <button id="csToggle" class="cs-toggle" aria-label="Customer service">?</button>
-    <div id="csPanel" class="cs-panel">
-        <div class="cs-header">
-            <span>Need Help?</span>
-            <button id="csClose" class="cs-close">×</button>
-        </div>
-        <div id="csMessages" class="cs-messages">
-            <div class="cs-message bot">Hi! Ask me anything about buying tickets, submitting events, or QR check-in. If I can't help, I'll point you to admin on WhatsApp.</div>
-        </div>
-        <form id="csForm" class="cs-form">
-            <input type="text" id="csInput" placeholder="Type your question..." />
-            <button type="submit">Send</button>
-        </form>
-    </div>
 
 </body>
 </html>
