@@ -653,7 +653,6 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
                 const newUrl = `${window.location.pathname}?eventId=${selectedEvent.id}&ref=${reference}`;
                 window.history.replaceState({}, '', newUrl);
 
-                sendWhatsAppNotification(waWindow, name, mail, phoneNum, selectedEvent, reference);
                 sendEmailNotification(name, mail, phoneNum, selectedEvent, reference);
 
                 // Ask our Edge Function to start a real Paystack transaction
@@ -680,7 +679,14 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
                     throw new Error(initData.error || 'Could not start Paystack checkout. Please try again.');
                 }
 
-                // Hand off to Paystack's hosted checkout page
+                // IMPORTANT: no `await` is allowed between these two lines.
+                // wa.me triggers an app-switch to WhatsApp on mobile the instant
+                // its URL is set, which can suspend this page's JS before the
+                // next line runs. Firing the Paystack redirect LAST, with zero
+                // async work in between, guarantees the customer still lands on
+                // Paystack even if the WhatsApp tab turns out to share the same
+                // window handle (common inside in-app/embedded browsers).
+                sendWhatsAppNotification(waWindow, name, mail, phoneNum, selectedEvent, reference);
                 window.location.href = initData.authorization_url;
 
             } catch (error) {
