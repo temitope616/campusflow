@@ -376,6 +376,25 @@
         let selectedEvent = null;
         let orderData = null;
         let orderId = null;
+        let platformFee = 100; // fallback until loaded from site_settings
+
+        // ============================================
+        // LOAD GLOBAL PLATFORM FEE (set by admin)
+        // ============================================
+        async function loadPlatformFee() {
+            try {
+                const { data, error } = await sb
+                    .from('site_settings')
+                    .select('platform_fee')
+                    .eq('id', 1)
+                    .single();
+                if (!error && data) {
+                    platformFee = Number(data.platform_fee);
+                }
+            } catch (err) {
+                console.warn('Could not load platform fee, using default ₦100');
+            }
+        }
 
         // ============================================
         // DIRECT DATABASE FETCH - ALWAYS FRESH
@@ -429,7 +448,7 @@
                 selectedEvent = event;
 
                 const chargeFee = event.charge_platform_fee !== false;
-                const feeAmount = chargeFee ? 100 : 0;
+                const feeAmount = chargeFee ? platformFee : 0;
                 const total = Number(event.price) + feeAmount;
 
                 document.getElementById('eventTitle').textContent = event.title;
@@ -440,7 +459,7 @@
 
                 const feeRow = document.getElementById('serviceFeeRow');
                 if (chargeFee) {
-                    document.getElementById('serviceFeeValue').textContent = '₦100';
+                    document.getElementById('serviceFeeValue').textContent = `₦${platformFee}`;
                     feeRow.style.display = 'flex';
                 } else {
                     feeRow.style.display = 'none';
@@ -666,7 +685,7 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
             try {
                 const reference = 'PSK-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
                 const chargeFee = selectedEvent.charge_platform_fee !== false;
-                const serviceFee = chargeFee ? 100 : 0;
+                const serviceFee = chargeFee ? platformFee : 0;
                 const totalAmount = Number(selectedEvent.price) + serviceFee;
 
                 // Create a pending order first
@@ -707,6 +726,7 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
                         amount_naira: totalAmount,
                         subaccount_code: selectedEvent.paystack_subaccount_code || null,
                         charge_platform_fee: chargeFee,
+                        fee_amount: serviceFee,
                         order_id: order.id,
                         reference: reference,
                         callback_url: window.location.href
@@ -764,6 +784,7 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
         // START
         // ============================================
         async function init() {
+            await loadPlatformFee();
             await loadEvent();
             await loadOrderStatus();
             startPolling();
