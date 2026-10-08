@@ -208,10 +208,42 @@
             }
         }
     </style>
+    
+    <!-- ADDED: Organizer Balance Snippet Styles -->
+    <style>
+      #balanceSection { margin-bottom: 24px; }
+      #balanceSection .bal-card {
+        background: #fff; border: 1px solid #e5e7eb; border-radius: 18px;
+        padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      }
+      #balanceSection .bal-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 14px; }
+      #balanceSection .bal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+      #balanceSection .bal-box { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; }
+      #balanceSection .bal-box.highlight { background: #ecfdf5; border-color: #86efac; }
+      #balanceSection .bal-box .bal-label { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+      #balanceSection .bal-box .bal-value { font-size: 19px; font-weight: 800; color: #1a1a2e; margin-top: 2px; }
+      #balanceSection .bal-box.highlight .bal-value { color: #16a34a; }
+      #balanceSection .bal-note { font-size: 11px; color: #9ca3af; line-height: 1.5; }
+      #balanceSection .bal-orders { margin-top: 10px; max-height: 240px; overflow-y: auto; }
+      #balanceSection .bal-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px;
+      }
+      #balanceSection .bal-row:last-child { border-bottom: none; }
+      #balanceSection .bal-who { color: #374151; font-weight: 600; }
+      #balanceSection .bal-when { color: #9ca3af; font-size: 10px; }
+      #balanceSection .bal-badge { padding: 2px 9px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+      #balanceSection .bal-badge.success { background: #d1fae5; color: #065f46; }
+      #balanceSection .bal-badge.pending { background: #fef3c7; color: #d97706; }
+      #balanceSection .bal-badge.failed { background: #fee2e2; color: #991b1b; }
+    </style>
 </head>
 <body>
 
     <div class="container">
+
+        <!-- ADDED: Organizer Balance Section -->
+        <div id="balanceSection"></div>
 
         <div id="loadingState" class="center-state">
             <p>Loading your event...</p>
@@ -582,6 +614,86 @@
         }
 
         loadEvent();
+    </script>
+
+    <!-- ADDED: Organizer Balance Snippet Script -->
+    <script>
+    (function() {
+      // Uses its own client + its own token lookup, independent of the
+      // rest of organizer-edit.html, so it can't clash with existing code.
+      const _balSupabaseUrl = "https://yfwxwqvksdsugxizaksj.supabase.co";
+      const _balSupabaseKey = "sb_publishable_vvacDvbRi-H7XcBesuCmmw_rcTe6gwO";
+      const _balSb = window.supabase.createClient(_balSupabaseUrl, _balSupabaseKey);
+      const _balToken = new URLSearchParams(window.location.search).get('token');
+
+      function _balFmtNaira(n) {
+        return '₦' + Number(n || 0).toLocaleString();
+      }
+
+      async function loadOrganizerBalance() {
+        const el = document.getElementById('balanceSection');
+        if (!el || !_balToken) return;
+
+        const { data: event, error: eventError } = await _balSb
+          .from('events')
+          .select('*')
+          .eq('edit_token', _balToken)
+          .single();
+
+        if (eventError || !event) return; // stay silent, let the edit form show its own error
+
+        const { data: orders } = await _balSb
+          .from('orders')
+          .select('*')
+          .eq('event_id', event.id)
+          .order('created_at', { ascending: false });
+
+        const allOrders = orders || [];
+        const paid = allOrders.filter(o => o.status === 'success' || o.status === 'confirmed');
+        const pending = allOrders.filter(o => o.status === 'pending');
+        const earnings = paid.reduce((sum, o) => sum + Number(o.amount_paid || 0), 0);
+
+        el.innerHTML = `
+          <div class="bal-card">
+            <div class="bal-title">💰 Your Sales — ${event.title}</div>
+            <div class="bal-grid">
+              <div class="bal-box highlight">
+                <div class="bal-label">Your Earnings</div>
+                <div class="bal-value">${_balFmtNaira(earnings)}</div>
+              </div>
+              <div class="bal-box">
+                <div class="bal-label">Tickets Sold</div>
+                <div class="bal-value">${paid.length}</div>
+              </div>
+              <div class="bal-box">
+                <div class="bal-label">Pending</div>
+                <div class="bal-value">${pending.length}</div>
+              </div>
+              <div class="bal-box">
+                <div class="bal-label">Total Orders</div>
+                <div class="bal-value">${allOrders.length}</div>
+              </div>
+            </div>
+            <div class="bal-note">💡 Paystack pays your earnings directly to your bank account on their normal schedule, minus their own processing fee. The platform's ₦100 fee is separate and goes to EventFlow, not you.</div>
+            <div class="bal-orders">
+              ${allOrders.length === 0 ? '<div style="text-align:center;color:#9ca3af;font-size:12px;padding:12px 0;">No orders yet.</div>' : allOrders.slice(0, 30).map(o => `
+                <div class="bal-row">
+                  <div>
+                    <div class="bal-who">${o.customer_name || 'Unknown'}</div>
+                    <div class="bal-when">${new Date(o.created_at).toLocaleString()}</div>
+                  </div>
+                  <span class="bal-badge ${o.status === 'success' || o.status === 'confirmed' ? 'success' : o.status === 'failed' || o.status === 'rejected' ? 'failed' : 'pending'}">
+                    ${o.status === 'success' || o.status === 'confirmed' ? '✅ Paid' : o.status === 'failed' || o.status === 'rejected' ? '❌ Failed' : '⏳ Pending'}
+                  </span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      loadOrganizerBalance();
+    })();
     </script>
 </body>
 </html>
