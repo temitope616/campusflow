@@ -514,8 +514,15 @@
         // LOAD EXISTING ORDER STATUS (e.g. after Paystack redirect)
         // ============================================
         async function loadOrderStatus() {
-            const order = await fetchLatestOrderStatus();
+            let order = await fetchLatestOrderStatus();
             if (!order) return;
+
+            // We're back from Paystack and the order is still pending — ask
+            // Paystack directly whether it actually succeeded instead of
+            // waiting on the webhook, which can be slow or misconfigured.
+            if (order.status === 'pending') {
+                order = (await verifyPaymentNow(order.paystack_ref)) || order;
+            }
 
             orderData = order;
             orderId = order.id;
@@ -533,29 +540,27 @@
         }
 
         // ============================================
-        // WHATSAPP NOTIFICATION
+        // VERIFY DIRECTLY WITH PAYSTACK (fixes "stuck on pending")
         // ============================================
-        function sendWhatsAppNotification(waWindow, name, email, phone, event, reference) {
-            const confirmLink = `${window.location.origin}/payment-confirm.html?ref=${reference}`;
-
-            let message = `🎉 *NEW TICKET PURCHASE STARTED!*%0A%0A`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
-            message += `👤 *Customer:* ${name}%0A`;
-            message += `📧 *Email:* ${email}%0A`;
-            message += `📱 *Phone:* ${phone || 'N/A'}%0A`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
-            message += `📋 *Event:* ${event.title}%0A`;
-            message += `📍 *Venue:* ${event.venue}%0A`;
-            message += `🎫 *Reference:* ${reference}%0A`;
-            message += `📌 *Status:* ⏳ Redirecting to Paystack%0A`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━%0A`;
-            message += `🔗 *Track:* ${confirmLink}`;
-
-            if (ADMIN_PHONE && waWindow) {
-                const waUrl = `https://wa.me/${ADMIN_PHONE}?text=${message}`;
-                waWindow.location.href = waUrl;
-            } else if (waWindow) {
-                waWindow.close();
+        async function verifyPaymentNow(reference) {
+            try {
+                const res = await fetch(`${FUNCTIONS_URL}/verify-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({ reference })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    console.error('verify-payment error:', data.error);
+                    return null;
+                }
+                return data.order || null;
+            } catch (err) {
+                console.error('verify-payment failed:', err);
+                return null;
             }
         }
 
@@ -619,10 +624,6 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
             payNowBtn.disabled = true;
             payNowBtn.classList.add('loading');
 
-            // Open a blank tab synchronously (before any await) so the browser
-            // doesn't block it as a "late" popup once async work finishes.
-            const waWindow = window.open('', '_blank');
-
             try {
                 const reference = 'PSK-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
                 const chargeFee = selectedEvent.charge_platform_fee !== false;
@@ -679,14 +680,7 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
                     throw new Error(initData.error || 'Could not start Paystack checkout. Please try again.');
                 }
 
-                // IMPORTANT: no `await` is allowed between these two lines.
-                // wa.me triggers an app-switch to WhatsApp on mobile the instant
-                // its URL is set, which can suspend this page's JS before the
-                // next line runs. Firing the Paystack redirect LAST, with zero
-                // async work in between, guarantees the customer still lands on
-                // Paystack even if the WhatsApp tab turns out to share the same
-                // window handle (common inside in-app/embedded browsers).
-                sendWhatsAppNotification(waWindow, name, mail, phoneNum, selectedEvent, reference);
+                // Straight to Paystack — no popups, no detours.
                 window.location.href = initData.authorization_url;
 
             } catch (error) {
@@ -706,14 +700,23 @@ Track: ${window.location.origin}/payment-confirm.html?ref=${reference}`
 
         function startPolling() {
             if (pollInterval) clearInterval(pollInterval);
+            let pollCount = 0;
             pollInterval = setInterval(async () => {
-                if (orderRef) {
-                    const order = await fetchLatestOrderStatus();
-                    if (order && order.status !== (orderData ? orderData.status : null)) {
-                        orderData = order;
-                        orderId = order.id;
-                        updateStatusDisplay(order.status);
-                    }
+                if (!orderRef) return;
+                pollCount++;
+
+                let order = await fetchLatestOrderStatus();
+
+                // Still pending after a few DB checks? Ask Paystack directly
+                // instead of waiting indefinitely on the webhook.
+                if (order && order.status === 'pending' && pollCount % 3 === 0) {
+                    order = (await verifyPaymentNow(order.paystack_ref)) || order;
+                }
+
+                if (order && order.status !== (orderData ? orderData.status : null)) {
+                    orderData = order;
+                    orderId = order.id;
+                    updateStatusDisplay(order.status);
                 }
             }, 3000);
         }
