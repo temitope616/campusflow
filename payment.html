@@ -300,6 +300,10 @@
                 <div class="icon">⏳</div>
                 <h2 id="statusTitle">Payment Pending</h2>
                 <p id="statusMessage">Waiting for payment confirmation.</p>
+                <button class="btn-confirm-payment" id="checkStatusBtn" style="margin-top:16px;font-size:15px;padding:12px;display:none;">
+                    <span class="btn-text">🔄 Check Payment Status Now</span>
+                    <div class="spinner-small"></div>
+                </button>
             </div>
 
             <div class="receipt-box" id="receiptDisplay">
@@ -507,7 +511,42 @@
                 statusMessage.textContent = 'Waiting for payment confirmation.';
                 statusBadge.textContent = '⏳ Pending';
                 statusBadge.className = 'status-badge pending';
+                const checkBtn = document.getElementById('checkStatusBtn');
+                if (checkBtn) checkBtn.style.display = 'block';
             }
+
+            if (status === 'success' || status === 'confirmed' || status === 'failed' || status === 'rejected') {
+                const checkBtn = document.getElementById('checkStatusBtn');
+                if (checkBtn) checkBtn.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // MANUAL "CHECK STATUS NOW" BUTTON
+        // ============================================
+        const checkStatusBtn = document.getElementById('checkStatusBtn');
+        if (checkStatusBtn) {
+            checkStatusBtn.addEventListener('click', async function() {
+                if (!orderRef) return;
+                checkStatusBtn.disabled = true;
+                checkStatusBtn.classList.add('loading');
+                try {
+                    const order = await verifyPaymentNow(orderRef);
+                    if (order) {
+                        orderData = order;
+                        orderId = order.id;
+                        updateStatusDisplay(order.status);
+                        if (order.status === 'pending') {
+                            alert('Paystack still shows this payment as pending or not completed yet. If you already paid, please wait a moment and try again — if this persists, contact support with your reference: ' + orderRef);
+                        }
+                    } else {
+                        alert('Could not check status right now. Please try again in a moment.');
+                    }
+                } finally {
+                    checkStatusBtn.disabled = false;
+                    checkStatusBtn.classList.remove('loading');
+                }
+            });
         }
 
         // ============================================
